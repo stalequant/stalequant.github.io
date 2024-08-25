@@ -100,6 +100,38 @@
                         fill: '-1',
                         stepped: true,
                         pointRadius: 0
+                    },
+                    {
+                        label: 'Bybit Trades',
+                        data: [],
+                        borderColor: '#FF0000',
+                        backgroundColor: '#FF0000',
+                        borderWidth: 0,
+                        pointStyle: 'circle',
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        fill: false,
+                        showLine: false
+                    },
+                    {
+                        label: 'Bybit Bid',
+                        data: [],
+                        borderColor: '#FF0000',
+                        backgroundColor: 'rgba(255, 0, 0, 0.4)',
+                        borderWidth: 2,
+                        fill: '+1',
+                        stepped: true,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Bybit Ask',
+                        data: [],
+                        borderColor: '#FF0000',
+                        backgroundColor: 'rgba(255, 0, 0, 0.4)',
+                        borderWidth: 2,
+                        fill: '-1',
+                        stepped: true,
+                        pointRadius: 0
                     }
                 ]
             },
@@ -144,6 +176,7 @@
         const wsHyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
         const wsBinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@bookTicker`);
         const wsBinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@aggTrade`);
+        const wsBybit = new WebSocket('wss://stream.bybit.com/v5/public/linear');
         const dataWindow = 30000; // 30 seconds of data
         let lastUpdateTime = Date.now();
 
@@ -217,6 +250,47 @@
             }
         };
 
+        wsBybit.onopen = function() {
+            console.log('Bybit WebSocket is connected');
+            wsBybit.send(JSON.stringify({
+                "req_id": "orderbook_" + coin,
+                "op": "subscribe",
+                "args": [`orderbook.1.${coin}USDT`]
+            }));
+            wsBybit.send(JSON.stringify({
+                "req_id": "trades_" + coin,
+                "op": "subscribe",
+                "args": [`publicTrade.${coin}USDT`]
+            }));
+        };
+
+        wsBybit.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            
+            if (message.topic && message.topic.startsWith('orderbook.')) {
+                const data = message.data;
+                if (data && data.b && data.b.length > 0 && data.a && data.a.length > 0) {
+                    const bid = parseFloat(data.b[0][0]);
+                    const ask = parseFloat(data.a[0][0]);
+                    const timestamp = message.cts;
+
+                    addData(7, timestamp, bid); // Bybit Bid
+                    addData(8, timestamp, ask); // Bybit Ask
+                }
+            }
+
+            if (message.topic && message.topic.startsWith('publicTrade.')) {
+                const trades = message.data;
+                if (trades && trades.length > 0) {
+                    trades.forEach(trade => {
+                        const tradePrice = parseFloat(trade.p);
+                        const tradeTime = trade.T;
+                        addData(6, tradeTime, tradePrice); // Bybit Trades
+                    });
+                }
+            }
+        };
+
         function addData(datasetIndex, time, value) {
             coinChart.data.datasets[datasetIndex].data.push({x: time, y: value});
         }
@@ -275,6 +349,14 @@
 
         wsBinanceAggTrade.onclose = function() {
             console.log('Binance AggTrade WebSocket is closed');
+        };
+
+        wsBybit.onerror = function(error) {
+            console.error('Bybit WebSocket Error: ', error);
+        };
+
+        wsBybit.onclose = function() {
+            console.log('Bybit WebSocket is closed');
         };
     </script>
 </body>
