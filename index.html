@@ -194,7 +194,6 @@
 
         wsHyperliquid.onmessage = function(event) {
             const message = JSON.parse(event.data);
-            const currentTime = Date.now();
 
             if (message.channel === "l2Book" && message.data.coin === coin) {
                 const etime = parseFloat(message.data.time);
@@ -203,8 +202,8 @@
                     const bid = parseFloat(levels[0][0].px);
                     const ask = parseFloat(levels[1][0].px);
 
-                    addData(1, currentTime, bid);
-                    addData(2, currentTime, ask);
+                    addData(1, timestamp, bid);
+                    addData(2, timestamp, ask);
                 }
             }
 
@@ -212,8 +211,8 @@
                 message.data.forEach(trade => {
                     if (trade.coin === coin) {
                         const tradePrice = parseFloat(trade.px);
-                        const tradeTime = trade.time;
-                        addData(0, tradeTime, tradePrice);
+                        const timestamp = trade.time;
+                        addData(0, timestamp, tradePrice);
                     }
                 });
             }
@@ -225,15 +224,14 @@
 
         wsBinanceBookTicker.onmessage = function(event) {
             const message = JSON.parse(event.data);
-            const currentTime = Date.now();
 
             if (message.e === "bookTicker" && message.s === `${coin}USDT`) {
                 const bid = parseFloat(message.b);
                 const ask = parseFloat(message.a);
-                const etime = parseFloat(message.E);
+                const timestamp = parseFloat(message.E);
 
-                addData(4, etime, bid); // Binance Bid
-                addData(5, etime, ask); // Binance Ask
+                addData(4, timestamp, bid); // Binance Bid
+                addData(5, timestamp, ask); // Binance Ask
             }
         };
 
@@ -245,8 +243,8 @@
             const message = JSON.parse(event.data);
             if (message.e === "aggTrade" && message.s === `${coin}USDT`) {
                 const tradePrice = parseFloat(message.p);
-                const tradeTime = message.T;
-                addData(3, tradeTime, tradePrice); // Binance Trades
+                const timestamp = message.T;
+                addData(3, timestamp, tradePrice); // Binance Trades
             }
         };
 
@@ -284,8 +282,8 @@
                 if (trades && trades.length > 0) {
                     trades.forEach(trade => {
                         const tradePrice = parseFloat(trade.p);
-                        const tradeTime = trade.T;
-                        addData(6, tradeTime, tradePrice); // Bybit Trades
+                        const timestamp = trade.T;
+                        addData(6, timestamp, tradePrice); // Bybit Trades
                     });
                 }
             }
