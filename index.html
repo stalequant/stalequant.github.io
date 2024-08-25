@@ -50,24 +50,44 @@
                         showLine: false
                     },
                     {
-                        label: `HL Bid`,
+                        label: `HL Bid-Ask`,
                         data: [],
-                        borderColor: 'hsl(172,47%,51%)',
-                        backgroundColor: 'hsla(172,47%,51%,0.5)',
-                        borderWidth: 2,
+                        backgroundColor: 'hsla(172,47%,51%,0.33)',
+                        borderWidth: 0,
                         fill: '+1',
                         stepped: true,
                         pointRadius: 0
                     },
                     {
-                        label: `HL Ask`,
+                        label: `HL Ask HIDE`,
                         data: [],
-                        borderColor: 'hsl(172,47%,51%)',
-                        backgroundColor: 'hsla(172,47%,51%,0.5)',
-                        borderWidth: 2,
+                        backgroundColor: 'hsla(172,47%,51%,0.33)',
+                        borderWidth: 0,
                         fill: '-1',
                         stepped: true,
+                        pointRadius: 0,
+			display: false
+                    },
+                    {
+                        label: `HL $1000 depth`,
+                        data: [],
+                        borderColor: 'hsl(172,47%,51%)',
+                        borderWidth: 2,
+                        fill: false,
+			borderDash: [10,5],
+                        stepped: true,
                         pointRadius: 0
+                    },
+                    {
+                        label: `HL AskD HIDE`,
+                        data: [],
+                        borderColor: 'hsl(172,47%,51%)',
+                        borderWidth: 2,
+                        fill: false,
+			borderDash: [10,5],
+                        stepped: true,
+                        pointRadius: 0,
+			display: false
                     },
                     {
                         label: 'Binance Trades',
@@ -82,55 +102,42 @@
                         showLine: false
                     },
                     {
-                        label: 'Binance Bid',
+                        label: 'Binance Bid-Ask',
                         data: [],
-                        borderColor: '#FCD535',
-                        backgroundColor: 'rgba(252, 213, 53, 0.5)',
-                        borderWidth: 2,
-                        fill: '+1',
-                        stepped: true,
-                        pointRadius: 0
-                    },
-                    {
-                        label: 'Binance Ask',
-                        data: [],
-                        borderColor: '#FCD535',
-                        backgroundColor: 'rgba(252, 213, 53, 0.5)',
-                        borderWidth: 2,
-                        fill: '-1',
-                        stepped: true,
-                        pointRadius: 0
-                    },
-                    {
-                        label: 'Bybit Trades',
-                        data: [],
-                        borderColor: '#FF0000',
-                        backgroundColor: '#FF0000',
+                        backgroundColor: 'rgba(252, 213, 53, 0.25)',
                         borderWidth: 0,
-                        pointStyle: 'circle',
-                        pointRadius: 8,
-                        pointHoverRadius: 10,
-                        fill: false,
-                        showLine: false
-                    },
-                    {
-                        label: 'Bybit Bid',
-                        data: [],
-                        borderColor: '#FF0000',
-                        backgroundColor: 'rgba(255, 0, 0, 0.4)',
-                        borderWidth: 2,
                         fill: '+1',
                         stepped: true,
                         pointRadius: 0
                     },
                     {
-                        label: 'Bybit Ask',
+                        label: 'Binance Ask HIDE',
                         data: [],
-                        borderColor: '#FF0000',
-                        backgroundColor: 'rgba(255, 0, 0, 0.4)',
-                        borderWidth: 2,
+                        backgroundColor: 'rgba(252, 213, 53, 0.25)',
+                        borderWidth: 0,
                         fill: '-1',
                         stepped: true,
+                        pointRadius: 0,
+			display: false
+                    },
+                    {
+                        label: 'Binance $1000 Depth',
+                        data: [],
+                        borderColor: '#FCD535',
+                        borderWidth: 2,
+			borderDash: [10,5],
+                        fill: false,
+                        stepped: true,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Binance AskD HIDE',
+                        data: [],
+                        borderColor: '#FCD535',
+                        borderWidth: 2,
+			borderDash: [10,5],
+                        stepped: true,
+                        fill: false,
                         pointRadius: 0
                     }
                 ]
@@ -166,7 +173,11 @@
                     },
                     legend: {
                         labels: {
-                            color: 'white'
+                            color: 'white',
+                            filter: function(item, chart) {
+                                // Return false to hide the legend item
+                                return !item.text.includes('HIDE');
+                            }
                         }
                     }
                 }
@@ -174,9 +185,9 @@
         });
 
         const wsHyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
-        const wsBinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@bookTicker`);
+        const wsBinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@depth20`);
         const wsBinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@aggTrade`);
-        const wsBybit = new WebSocket('wss://stream.bybit.com/v5/public/linear');
+        // const wsBybit = new WebSocket('wss://stream.bybit.com/v5/public/linear');
         const dataWindow = 30000; // 30 seconds of data
         let lastUpdateTime = Date.now();
 
@@ -198,12 +209,40 @@
             if (message.channel === "l2Book" && message.data.coin === coin) {
                 const timestamp = parseFloat(message.data.time);
                 const levels = message.data.levels;
+		const reqLiq = 1000;
                 if (levels && levels.length >= 2) {
                     const bid = parseFloat(levels[0][0].px);
                     const ask = parseFloat(levels[1][0].px);
+		    console.log(message.data);
+                    let sum = 0;
+                    let i = 0;
+                    while (i < levels[0].length && sum < reqLiq) {
+                        sum += parseFloat(levels[0][i].sz);
+                        i++;
+                    }
+                    if (sum >= reqLiq) {
+                        deepBid = parseFloat(levels[0][i-1].px);
+                    } else if (levels[0].length > 0) {
+                        deepBid = parseFloat(levels[0][levels[0].length - 1].px) / 1.01;
+                    }
+		    
+                    let sumA = 0;
+                    let iA = 0;
+                    while (iA < levels[1].length && sumA < reqLiq) {
+                        sumA += parseFloat(levels[1][iA].sz);
+                        iA++;
+                    }
+                    if (sumA >= reqLiq) {
+                        deepAsk = parseFloat(levels[1][iA-1].px);
+                    } else if (levels[1].length > 0) {
+                        deepAsk = parseFloat(levels[1][levels[1].length - 1].px) * 1.01;
+                    }
+
 
                     addData(1, timestamp, bid);
                     addData(2, timestamp, ask);
+                    addData(3, timestamp, deepBid);
+                    addData(4, timestamp, deepAsk);
                 }
             }
 
@@ -225,13 +264,43 @@
         wsBinanceBookTicker.onmessage = function(event) {
             const message = JSON.parse(event.data);
 
-            if (message.e === "bookTicker" && message.s === `${coin}USDT`) {
-                const bid = parseFloat(message.b);
-                const ask = parseFloat(message.a);
-                const timestamp = parseFloat(message.E);
+            if (message.e === "depthUpdate" && message.s === `${coin}USDT`) {	
+		    const reqLiq = 1000;
+                    const bid = parseFloat(message.b[0][0]);
+                    const ask = parseFloat(message.a[0][0]);      
+	            const timestamp = parseFloat(message.E);
 
-                addData(4, timestamp, bid); // Binance Bid
-                addData(5, timestamp, ask); // Binance Ask
+
+                    let sum = 0;
+                    let i = 0;
+                    while (i < message.b.length && sum < reqLiq) {
+                        sum += parseFloat(message.b[i][1]);
+                        i++;
+                    }
+                    if (sum >= reqLiq) {
+                        deepBid = parseFloat(message.b[i-1][0]);
+                    } else if (message.b.length > 0) {
+                        deepBid = parseFloat(message.b[message.b.length - 1][0]) / 1.01;
+                    }
+		    
+                    let sumA = 0;
+                    let iA = 0;
+                    while (iA < message.a.length && sumA < reqLiq) {
+                        sumA += parseFloat(message.a[iA][1]);
+                        iA++;
+                    }
+                    if (sumA >= reqLiq) {
+                        deepAsk = parseFloat(message.a[iA-1][0]);
+                    } else if (message.a.length > 0) {
+                        deepAsk = parseFloat(message.a[message.a.length - 1][0]) * 1.01;
+                    }
+
+                    addData(6, timestamp, bid); // Binance Bid
+                    addData(7, timestamp, ask); // Binance Ask
+                    addData(8, timestamp, deepBid); // Binance Bid
+                    addData(9, timestamp, deepAsk); // Binance Ask
+
+
             }
         };
 
@@ -244,11 +313,11 @@
             if (message.e === "aggTrade" && message.s === `${coin}USDT`) {
                 const tradePrice = parseFloat(message.p);
                 const timestamp = message.T;
-                addData(3, timestamp, tradePrice); // Binance Trades
+                addData(5, timestamp, tradePrice); // Binance Trades
             }
         };
 
-        wsBybit.onopen = function() {
+   /*     wsBybit.onopen = function() {
             console.log('Bybit WebSocket is connected');
             wsBybit.send(JSON.stringify({
                 "req_id": "orderbook_" + coin,
@@ -272,8 +341,8 @@
                     const ask = parseFloat(data.a[0][0]);
                     const timestamp = message.cts;
 
-                    addData(7, timestamp, bid); // Bybit Bid
-                    addData(8, timestamp, ask); // Bybit Ask
+                    addData(9, timestamp, bid); // Bybit Bid
+                    addData(10, timestamp, ask); // Bybit Ask
                 }
             }
 
@@ -283,11 +352,11 @@
                     trades.forEach(trade => {
                         const tradePrice = parseFloat(trade.p);
                         const timestamp = trade.T;
-                        addData(6, timestamp, tradePrice); // Bybit Trades
+                        addData(8, timestamp, tradePrice); // Bybit Trades
                     });
                 }
             }
-        };
+        }; */
 
         function addData(datasetIndex, time, value) {
             coinChart.data.datasets[datasetIndex].data.push({x: time, y: value});
@@ -296,7 +365,7 @@
         function updateChart(currentTime) {
             // Remove old data points
             coinChart.data.datasets.forEach(dataset => {
-                dataset.data = dataset.data.filter(point => point.x > currentTime - dataWindow);
+                dataset.data = dataset.data.filter(point => point.x > currentTime - dataWindow*1.5);
             });
 
             // Update x-axis range
