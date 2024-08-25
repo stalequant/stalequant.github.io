@@ -69,7 +69,7 @@
 			display: false
                     },
                     {
-                        label: `HL $5000 depth`,
+                        label: `HL $1000 depth`,
                         data: [],
                         borderColor: 'hsl(172,47%,51%)',
                         borderWidth: 2,
@@ -121,7 +121,7 @@
 			display: false
                     },
                     {
-                        label: 'Binance $5000 Depth',
+                        label: 'Binance $1000 Depth',
                         data: [],
                         borderColor: '#FCD535',
                         borderWidth: 2,
@@ -141,10 +141,10 @@
                         pointRadius: 0
                     },
                     {
-                        label: 'Binance Spot Trades HIDE',
+                        label: 'Binance Spot Trades',
                         data: [],
-                        borderColor: '#FCD535',
-                        backgroundColor: '#FCD535',
+                        borderColor: '#FC0535',
+                        backgroundColor: '#FC0535',
                         borderWidth: 0,
                         pointStyle: 'circle',
                         pointRadius: 8,
@@ -153,9 +153,9 @@
                         showLine: false
                     },
                     {
-                        label: 'Binance Spot Bid-Ask HIDE',
+                        label: 'Binance Spot Bid-Ask (lag)',
                         data: [],
-                        backgroundColor: 'rgba(252, 213, 53, 0.25)',
+                        backgroundColor: 'rgba(252, 05, 53, 0.25)',
                         borderWidth: 0,
                         fill: '+1',
                         stepped: true,
@@ -164,7 +164,7 @@
                     {
                         label: 'Binance Spot Ask HIDE',
                         data: [],
-                        backgroundColor: 'rgba(252, 213, 53, 0.25)',
+                        backgroundColor: 'rgba(252, 05, 53, 0.25)',
                         borderWidth: 0,
                         fill: '-1',
                         stepped: true,
@@ -172,9 +172,9 @@
 			display: false
                     },
                     {
-                        label: 'Binance Spot $5000 Depth HIDE',
+                        label: 'Binance Spot $1000 Depth (lag)',
                         data: [],
-                        borderColor: '#FCD535',
+                        borderColor: '#FC0535',
                         borderWidth: 2,
 			borderDash: [10,5],
                         fill: false,
@@ -184,7 +184,7 @@
                     {
                         label: 'Binance Spot AskD HIDE',
                         data: [],
-                        borderColor: '#FCD535',
+                        borderColor: '#FC0535',
                         borderWidth: 2,
 			borderDash: [10,5],
                         stepped: true,
@@ -238,8 +238,8 @@
         const wsHyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
         const wsBinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@depth20@100ms`);
         const wsBinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@aggTrade`);
-        const wsBinanceSpotBookTicker = new WebSocket(`wss://stream.binance.com/ws/${coin.toUpperCase()}USDT@depth20@100ms`);
-        const wsBinanceSpotAggTrade = new WebSocket(`wss://stream.binance.com/ws/${coin.toUpperCase()}USDT@aggTrade`);
+        const wsBinanceSpotBookTicker = new WebSocket(`wss://stream.binance.com:443/ws/${coin.toLowerCase()}usdt@depth20@100ms`);
+        const wsBinanceSpotAggTrade = new WebSocket(`wss://stream.binance.com:443/ws/${coin.toLowerCase()}usdt@aggTrade`);
         const dataWindow = 30000; // 30 seconds of data
         let lastUpdateTime = Date.now();
 
@@ -265,7 +265,6 @@
                 if (levels && levels.length >= 2) {
                     const bid = parseFloat(levels[0][0].px);
                     const ask = parseFloat(levels[1][0].px);
-		    console.log(message.data);
                     let sum = 0;
                     let i = 0;
                     while (i < levels[0].length && sum < reqLiq) {
@@ -308,6 +307,16 @@
                 });
             }
         };
+
+        wsHyperliquid.onerror = function(error) {
+            console.error('Hyperliquid WebSocket Error: ', error);
+        };
+
+        wsHyperliquid.onclose = function() {
+            console.log('Hyperliquid WebSocket is closed');
+        };
+
+
 
         wsBinanceBookTicker.onopen = function() {
             console.log('Binance BookTicker WebSocket is connected');
@@ -369,6 +378,110 @@
             }
         };
 
+        wsBinanceBookTicker.onerror = function(error) {
+            console.error('Binance BookTicker WebSocket Error: ', error);
+        };
+
+        wsBinanceBookTicker.onclose = function() {
+            console.log('Binance BookTicker WebSocket is closed');
+        };
+
+        wsBinanceAggTrade.onerror = function(error) {
+            console.error('Binance AggTrade WebSocket Error: ', error);
+        };
+
+        wsBinanceAggTrade.onclose = function() {
+            console.log('Binance AggTrade WebSocket is closed');
+        };
+
+
+
+
+
+        wsBinanceSpotBookTicker.onopen = function() {
+            console.log('BinanceSpot BookTicker WebSocket is connected');
+        };
+
+        wsBinanceSpotBookTicker.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            const currentTime = Date.now();
+		    const reqLiq = 5000;
+                    const bid = parseFloat(message.bids[0][0]);
+                    const ask = parseFloat(message.asks[0][0]);      
+	            const timestamp = parseFloat(message.E);
+
+
+                    let sum = 0;
+                    let i = 0;
+                    while (i < message.bids.length && sum < reqLiq) {
+                        sum += parseFloat(message.bids[i][1]) * parseFloat(message.bids[i][0]);
+                        i++;
+                    }
+                    if (i <2 || sum >= reqLiq) {
+                        deepBid = parseFloat(message.bids[i-1][0]);
+                    } else if (message.bids.length > 0) {
+                        deepBid = parseFloat(message.bids[message.bids.length - 1][0]) / 1.01;
+                    }
+		    
+                    let sumA = 0;
+                    let iA = 0;
+                    while (iA < message.asks.length && sumA < reqLiq) {
+                        sumA += parseFloat(message.asks[iA][1]) * parseFloat(message.asks[iA][0]);
+                        iA++;
+                    }
+                    if (iA <2 || sumA >= reqLiq) {
+                        deepAsk = parseFloat(message.asks[iA-1][0]);
+                    } else if (message.asks.length > 0) {
+                        deepAsk = parseFloat(message.asks[message.asks.length - 1][0]) * 1.01;
+                    }
+
+                    addData(11, currentTime, bid); // BinanceSpot Bid
+                    addData(12, currentTime, ask); // BinanceSpot Ask
+                    addData(13, currentTime, deepBid); // BinanceSpot Bid
+                    addData(14, currentTime, deepAsk); // BinanceSpot Ask
+
+
+
+        };
+
+        wsBinanceSpotAggTrade.onopen = function() {
+            console.log('BinanceSpot AggTrade WebSocket is connected');
+        };
+
+        wsBinanceSpotAggTrade.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            if (message.e === "aggTrade" && message.s === `${coin}USDT`) {
+                const tradePrice = parseFloat(message.p);
+                const timestamp = message.T;
+                addData(10, timestamp, tradePrice); // BinanceSpot Trades
+            }
+        };
+
+        wsBinanceSpotBookTicker.onerror = function(error) {
+            console.error('BinanceSpot BookTicker WebSocket Error: ', error);
+        };
+
+        wsBinanceSpotBookTicker.onclose = function() {
+            console.log('BinanceSpot BookTicker WebSocket is closed');
+        };
+
+        wsBinanceSpotAggTrade.onerror = function(error) {
+            console.error('BinanceSpot AggTrade WebSocket Error: ', error);
+        };
+
+        wsBinanceSpotAggTrade.onclose = function() {
+            console.log('BinanceSpot AggTrade WebSocket is closed');
+        };
+
+
+
+
+
+
+
+
+
+
         function addData(datasetIndex, time, value) {
             coinChart.data.datasets[datasetIndex].data.push({x: time, y: value});
         }
@@ -405,29 +518,7 @@
 
         smoothScroll(); // Start the smooth scrolling
 
-        wsHyperliquid.onerror = function(error) {
-            console.error('Hyperliquid WebSocket Error: ', error);
-        };
 
-        wsHyperliquid.onclose = function() {
-            console.log('Hyperliquid WebSocket is closed');
-        };
-
-        wsBinanceBookTicker.onerror = function(error) {
-            console.error('Binance BookTicker WebSocket Error: ', error);
-        };
-
-        wsBinanceBookTicker.onclose = function() {
-            console.log('Binance BookTicker WebSocket is closed');
-        };
-
-        wsBinanceAggTrade.onerror = function(error) {
-            console.error('Binance AggTrade WebSocket Error: ', error);
-        };
-
-        wsBinanceAggTrade.onclose = function() {
-            console.log('Binance AggTrade WebSocket is closed');
-        };
     </script>
 </body>
 </html>
