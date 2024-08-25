@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Coin Data Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: black;
+            color: white;
+        }
+        #chart-container {
+            width: 80%;
+            height: 80%;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="chartTitle">Dynamic Coin Data Chart</h1>
+    <div id="chart-container">
+        <canvas id="coinChart"></canvas>
+    </div>
+
+    <script>
+        // Get the coin from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const coin = urlParams.get('coin') || 'BTC';
+        document.getElementById('chartTitle').textContent = `${coin} Data Chart`;
+
+        const ctx = document.getElementById('coinChart').getContext('2d');
+        const coinChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: `HL Trades`,
+                        data: [],
+                        borderColor: 'hsl(172,47%,51%)',
+                        backgroundColor: 'hsl(172,47%,51%)',
+                        borderWidth: 0,
+                        pointStyle: 'circle',
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        fill: false,
+                        showLine: false
+                    },
+                    {
+                        label: `HL Bid`,
+                        data: [],
+                        borderColor: 'hsl(172,47%,51%)',
+                        backgroundColor: 'hsla(172,47%,51%,0.5)',
+                        borderWidth: 2,
+                        fill: '+1',
+                        stepped: true,
+                        pointRadius: 0
+                    },
+                    {
+                        label: `HL Ask`,
+                        data: [],
+                        borderColor: 'hsl(172,47%,51%)',
+                        backgroundColor: 'hsla(172,47%,51%,0.5)',
+                        borderWidth: 2,
+                        fill: '-1',
+                        stepped: true,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Binance Trades',
+                        data: [],
+                        borderColor: '#FCD535',
+                        backgroundColor: '#FCD535',
+                        borderWidth: 0,
+                        pointStyle: 'circle',
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        fill: false,
+                        showLine: false
+                    },
+                    {
+                        label: 'Binance Bid',
+                        data: [],
+                        borderColor: '#FCD535',
+                        backgroundColor: 'rgba(252, 213, 53, 0.5)',
+                        borderWidth: 2,
+                        fill: '+1',
+                        stepped: true,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Binance Ask',
+                        data: [],
+                        borderColor: '#FCD535',
+                        backgroundColor: 'rgba(252, 213, 53, 0.5)',
+                        borderWidth: 2,
+                        fill: '-1',
+                        stepped: true,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                animation: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        grid: {
+                            display: false,
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            display: false,
+                            color: 'white'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: 'white'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+
+        const wsHyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
+        const wsBinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@bookTicker`);
+        const wsBinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@aggTrade`);
+        const dataWindow = 30000; // 30 seconds of data
+        let lastUpdateTime = Date.now();
+
+        wsHyperliquid.onopen = function() {
+            console.log('Hyperliquid WebSocket is connected');
+            wsHyperliquid.send(JSON.stringify({
+                "method": "subscribe",
+                "subscription": { "type": "l2Book", "coin": coin }
+            }));
+            wsHyperliquid.send(JSON.stringify({
+                "method": "subscribe",
+                "subscription": { "type": "trades", "coin": coin }
+            }));
+        };
+
+        wsHyperliquid.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            const currentTime = Date.now();
+
+            if (message.channel === "l2Book" && message.data.coin === coin) {
+                const etime = parseFloat(message.data.time);
+                const levels = message.data.levels;
+                if (levels && levels.length >= 2) {
+                    const bid = parseFloat(levels[0][0].px);
+                    const ask = parseFloat(levels[1][0].px);
+
+                    addData(1, currentTime, bid);
+                    addData(2, currentTime, ask);
+                }
+            }
+
+            if (message.channel === "trades" && message.data.length > 0) {
+                message.data.forEach(trade => {
+                    if (trade.coin === coin) {
+                        const tradePrice = parseFloat(trade.px);
+                        const tradeTime = trade.time;
+                        addData(0, tradeTime, tradePrice);
+                    }
+                });
+            }
+        };
+
+        wsBinanceBookTicker.onopen = function() {
+            console.log('Binance BookTicker WebSocket is connected');
+        };
+
+        wsBinanceBookTicker.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            const currentTime = Date.now();
+
+            if (message.e === "bookTicker" && message.s === `${coin}USDT`) {
+                const bid = parseFloat(message.b);
+                const ask = parseFloat(message.a);
+                const etime = parseFloat(message.E);
+
+                addData(4, etime, bid); // Binance Bid
+                addData(5, etime, ask); // Binance Ask
+            }
+        };
+
+        wsBinanceAggTrade.onopen = function() {
+            console.log('Binance AggTrade WebSocket is connected');
+        };
+
+        wsBinanceAggTrade.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            if (message.e === "aggTrade" && message.s === `${coin}USDT`) {
+                const tradePrice = parseFloat(message.p);
+                const tradeTime = message.T;
+                addData(3, tradeTime, tradePrice); // Binance Trades
+            }
+        };
+
+        function addData(datasetIndex, time, value) {
+            coinChart.data.datasets[datasetIndex].data.push({x: time, y: value});
+        }
+
+        function updateChart(currentTime) {
+            // Remove old data points
+            coinChart.data.datasets.forEach(dataset => {
+                dataset.data = dataset.data.filter(point => point.x > currentTime - dataWindow);
+            });
+
+            // Update x-axis range
+            coinChart.options.scales.x.min = currentTime - dataWindow;
+            coinChart.options.scales.x.max = currentTime;
+
+            coinChart.update('none');
+        }
+
+        // Smooth scrolling update loop
+        function smoothScroll() {
+            const currentTime = Date.now();
+            const elapsed = currentTime - lastUpdateTime;
+            lastUpdateTime = currentTime;
+
+            // Move all data points to the left
+            coinChart.data.datasets.forEach(dataset => {
+                dataset.data.forEach(point => {
+                    point.x -= elapsed;
+                });
+            });
+
+            updateChart(currentTime);
+            requestAnimationFrame(smoothScroll);
+        }
+
+        smoothScroll(); // Start the smooth scrolling
+
+        wsHyperliquid.onerror = function(error) {
+            console.error('Hyperliquid WebSocket Error: ', error);
+        };
+
+        wsHyperliquid.onclose = function() {
+            console.log('Hyperliquid WebSocket is closed');
+        };
+
+        wsBinanceBookTicker.onerror = function(error) {
+            console.error('Binance BookTicker WebSocket Error: ', error);
+        };
+
+        wsBinanceBookTicker.onclose = function() {
+            console.log('Binance BookTicker WebSocket is closed');
+        };
+
+        wsBinanceAggTrade.onerror = function(error) {
+            console.error('Binance AggTrade WebSocket Error: ', error);
+        };
+
+        wsBinanceAggTrade.onclose = function() {
+            console.log('Binance AggTrade WebSocket is closed');
+        };
+    </script>
+</body>
+</html>
