@@ -16,21 +16,56 @@
         }
         #chart-container {
             width: 80%;
-            height: 80%;
+            height: 80vh;
+            position: relative;
+        }
+        #watermark {
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            font-size: 48px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        #custom-legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 25px;
+            cursor: pointer;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+        .legend-text {
+            color: white;
+
         }
     </style>
 </head>
 <body>
     <h1 id="chartTitle">Dynamic Coin Data Chart</h1>
     <div id="chart-container">
+        <div id="watermark">stalequant.github.io/public/</div>
         <canvas id="coinChart"></canvas>
     </div>
+    <div id="custom-legend"></div>
 
     <script>
         // Get the coin from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const coin = urlParams.get('coin') || 'INJ';
-        document.getElementById('chartTitle').textContent = `${coin} Data Chart`;
+	const defaultCoins = ['BTC', 'ETH', 'TRX','XRP','DOGE','LINK','BCH','AVAX','MATIC','SOL', 'ADA', 'INJ'];
+
+	// Get the coin from URL parameters or choose a random one from the list
+	const coin = urlParams.get('coin') || defaultCoins[Math.floor(Math.random() * defaultCoins.length)];
+
+        document.getElementById('chartTitle').textContent = `${coin} orderbooks and trades. Choose a coin by appending &coin=${coin} to the URL`;
 
         const ctx = document.getElementById('coinChart').getContext('2d');
         const coinChart = new Chart(ctx, {
@@ -44,50 +79,52 @@
                         backgroundColor: 'hsl(172,47%,51%)',
                         borderWidth: 0,
                         pointStyle: 'circle',
-                        pointRadius: 8,
-                        pointHoverRadius: 10,
+                        pointRadius: 5, 
                         fill: false,
                         showLine: false
                     },
                     {
-                        label: `HL Bid-Ask`,
+                        label: `HL Bid`,
                         data: [],
-                        backgroundColor: 'hsla(172,47%,51%,0.33)',
+                        backgroundColor: 'hsla(172,47%,51%,0.2)',
                         borderWidth: 0,
                         fill: '+1',
                         stepped: true,
+		        hidden: true,  // Start hidden
+
                         pointRadius: 0
                     },
                     {
-                        label: `HL Ask HIDE`,
+                        label: `HL Ask`,
                         data: [],
-                        backgroundColor: 'hsla(172,47%,51%,0.33)',
+                        backgroundColor: 'hsla(172,47%,51%,0.2)',
                         borderWidth: 0,
                         fill: '-1',
+		        hidden: true,  // Start hidden
                         stepped: true,
                         pointRadius: 0,
-			display: false
+                        display: false
                     },
                     {
-                        label: `HL $5000 depth`,
+                        label: `HL $5000 depth bid`,
                         data: [],
                         borderColor: 'hsl(172,47%,51%)',
                         borderWidth: 2,
                         fill: false,
-			borderDash: [2,2],
+                        
                         stepped: true,
                         pointRadius: 0
                     },
                     {
-                        label: `HL AskD HIDE`,
+                        label: `HL $5000 depth ask`,
                         data: [],
                         borderColor: 'hsl(172,47%,51%)',
                         borderWidth: 2,
                         fill: false,
-			borderDash: [2,2],
+                        
                         stepped: true,
                         pointRadius: 0,
-			display: false
+                        display: false
                     },
                     {
                         label: 'Binance Trades',
@@ -96,46 +133,48 @@
                         backgroundColor: '#FCD535',
                         borderWidth: 0,
                         pointStyle: 'circle',
-                        pointRadius: 8,
-                        pointHoverRadius: 10,
+                        pointRadius: 5,
+                        
                         fill: false,
                         showLine: false
                     },
                     {
-                        label: 'Binance Bid-Ask',
+                        label: 'Binance Bid',
                         data: [],
-                        backgroundColor: 'rgba(252, 213, 53, 0.25)',
+                        backgroundColor: 'rgba(252, 213, 53, 0.2)',
                         borderWidth: 0,
                         fill: '+1',
+		        hidden: true,  // Start hidden
                         stepped: true,
                         pointRadius: 0
                     },
                     {
-                        label: 'Binance Ask HIDE',
+                        label: 'Binance Ask',
                         data: [],
-                        backgroundColor: 'rgba(252, 213, 53, 0.25)',
+                        backgroundColor: 'rgba(252, 213, 53, 0.2)',
                         borderWidth: 0,
                         fill: '-1',
                         stepped: true,
+		        hidden: true,  // Start hidden
                         pointRadius: 0,
-			display: false
+                        display: false
                     },
                     {
-                        label: 'Binance $5000 Depth',
+                        label: 'Binance $5000 Bid',
                         data: [],
                         borderColor: '#FCD535',
                         borderWidth: 2,
-			borderDash: [2,2],
+                        
                         fill: false,
                         stepped: true,
                         pointRadius: 0
                     },
                     {
-                        label: 'Binance AskD HIDE',
+                        label: 'Binance $5000 Ask',
                         data: [],
                         borderColor: '#FCD535',
                         borderWidth: 2,
-			borderDash: [2,2],
+                        
                         stepped: true,
                         fill: false,
                         pointRadius: 0
@@ -147,46 +186,46 @@
                         backgroundColor: '#FC0535',
                         borderWidth: 0,
                         pointStyle: 'circle',
-                        pointRadius: 8,
-                        pointHoverRadius: 10,
+                        pointRadius: 5,
+                        
                         fill: false,
                         showLine: false
                     },
                     {
-                        label: 'Binance Spot Bid-Ask',
+                        label: 'Binance Spot Bid',
                         data: [],
-                        backgroundColor: 'rgba(252, 05, 53, 0.25)',
+                        backgroundColor: 'rgba(252, 05, 53, 0.2)',
                         borderWidth: 0,
+		        hidden: true,  // Start hidden
                         fill: '+1',
                         stepped: true,
                         pointRadius: 0
                     },
                     {
-                        label: 'Binance Spot Ask HIDE',
+                        label: 'Binance Spot Ask',
                         data: [],
-                        backgroundColor: 'rgba(252, 05, 53, 0.25)',
+                        backgroundColor: 'rgba(252, 05, 53, 0.2)',
                         borderWidth: 0,
                         fill: '-1',
+		        hidden: true,  // Start hidden
                         stepped: true,
                         pointRadius: 0,
-			display: false
+                        display: false
                     },
                     {
-                        label: 'Binance Spot $5000 Depth',
+                        label: 'Binance Spot $5000 Bid',
                         data: [],
                         borderColor: '#FC0535',
                         borderWidth: 2,
-			borderDash: [2,2],
                         fill: false,
                         stepped: true,
                         pointRadius: 0
                     },
                     {
-                        label: 'Binance Spot AskD HIDE',
+                        label: 'Binance Spot  $5000 Ask',
                         data: [],
                         borderColor: '#FC0535',
                         borderWidth: 2,
-			borderDash: [2,2],
                         stepped: true,
                         fill: false,
                         pointRadius: 0
@@ -219,29 +258,67 @@
                 },
                 plugins: {
                     tooltip: {
-                        mode: 'index',
-                        intersect: false
+                        enabled: false
                     },
                     legend: {
-                        labels: {
-                            color: 'white',
-                            filter: function(item, chart) {
-                                // Return false to hide the legend item
-                                return !item.text.includes('HIDE');
-                            }
-                        }
+                        display: false
                     }
                 }
             }
         });
+
+        // Custom legend
+        const legendItems = [
+            { text: 'Hyperliquid', color: 'hsl(172,47%,51%)', style: 'square', datasets: [0, 1, 2, 3, 4] },
+            { text: 'Binance', color: '#FCD535', style: 'square', datasets: [5, 6, 7, 8, 9] },
+            { text: 'Binance Spot', color: '#FC0535', style: 'square', datasets: [10, 11, 12, 13, 14] },
+            { text: 'Trades', color: 'white', pointStyle: 'circle', datasets: [0, 5, 10] },
+            { text: 'Spread at $5000', color: 'white', style: 'line', datasets: [3, 4, 8, 9, 13, 14] },
+            { text: 'Bid-Ask', color: 'rgba(255,255,255,0.5)', style: 'square', datasets: [1, 2, 6,7, 11, 12] }
+        ];
+
+        const legendContainer = document.getElementById('custom-legend');
+        legendItems.forEach((item, index) => {
+            const legendItem = document.createElement('div');
+            legendItem.className = 'legend-item';
+            
+            const color = document.createElement('div');
+            color.className = 'legend-color';
+            color.style.backgroundColor = item.color;
+            if (item.style === 'line') {
+                color.style.height = '2px';
+                color.style.marginTop = '4px';
+                color.style.marginBottom = '4px';
+            } else if (item.style === 'circle') {
+                color.style.borderRadius = '50%';
+            }
+            
+            const text = document.createElement('span');
+            text.className = 'legend-text';
+            text.textContent = item.text;
+            
+            legendItem.appendChild(color);
+            legendItem.appendChild(text);
+            legendContainer.appendChild(legendItem);
+            
+    legendItem.onclick = function() {
+        item.datasets.forEach(datasetIndex => {
+                const meta = coinChart.getDatasetMeta(datasetIndex);
+                meta.hidden = !meta.hidden;
+        });
+	coinChart.update();
+    };
+});
+
+        const dataWindow = 30000; // 30 seconds of data
+        let lastUpdateTime = Date.now();
 
         const wsHyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
         const wsBinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@depth20@100ms`);
         const wsBinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@aggTrade`);
         const wsBinanceSpotBookTicker = new WebSocket(`wss://stream.binance.com:443/ws/${coin.toLowerCase()}usdt@depth20@100ms`);
         const wsBinanceSpotAggTrade = new WebSocket(`wss://stream.binance.com:443/ws/${coin.toLowerCase()}usdt@aggTrade`);
-        const dataWindow = 30000; // 30 seconds of data
-        let lastUpdateTime = Date.now();
+
 
         wsHyperliquid.onopen = function() {
             console.log('Hyperliquid WebSocket is connected');
