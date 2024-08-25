@@ -29,7 +29,7 @@
     <script>
         // Get the coin from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const coin = urlParams.get('coin') || 'INJ';
+        const coin = urlParams.get('coin') || 'ETH';
         document.getElementById('chartTitle').textContent = `${coin} Data Chart`;
 
         const ctx = document.getElementById('coinChart').getContext('2d');
