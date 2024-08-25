@@ -196,7 +196,7 @@
             const message = JSON.parse(event.data);
 
             if (message.channel === "l2Book" && message.data.coin === coin) {
-                const etime = parseFloat(message.data.time);
+                const timestamp = parseFloat(message.data.time);
                 const levels = message.data.levels;
                 if (levels && levels.length >= 2) {
                     const bid = parseFloat(levels[0][0].px);
