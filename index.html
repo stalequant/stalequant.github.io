@@ -29,7 +29,7 @@
     <script>
         // Get the coin from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const coin = urlParams.get('coin') || 'BTC';
+        const coin = urlParams.get('coin') || 'INJ';
         document.getElementById('chartTitle').textContent = `${coin} Data Chart`;
 
         const ctx = document.getElementById('coinChart').getContext('2d');
@@ -74,7 +74,7 @@
                         borderColor: 'hsl(172,47%,51%)',
                         borderWidth: 2,
                         fill: false,
-			borderDash: [10,5],
+			borderDash: [2,2],
                         stepped: true,
                         pointRadius: 0
                     },
@@ -84,7 +84,7 @@
                         borderColor: 'hsl(172,47%,51%)',
                         borderWidth: 2,
                         fill: false,
-			borderDash: [10,5],
+			borderDash: [2,2],
                         stepped: true,
                         pointRadius: 0,
 			display: false
@@ -125,7 +125,7 @@
                         data: [],
                         borderColor: '#FCD535',
                         borderWidth: 2,
-			borderDash: [10,5],
+			borderDash: [2,2],
                         fill: false,
                         stepped: true,
                         pointRadius: 0
@@ -135,7 +135,7 @@
                         data: [],
                         borderColor: '#FCD535',
                         borderWidth: 2,
-			borderDash: [10,5],
+			borderDash: [2,2],
                         stepped: true,
                         fill: false,
                         pointRadius: 0
@@ -153,7 +153,7 @@
                         showLine: false
                     },
                     {
-                        label: 'Binance Spot Bid-Ask (lag)',
+                        label: 'Binance Spot Bid-Ask',
                         data: [],
                         backgroundColor: 'rgba(252, 05, 53, 0.25)',
                         borderWidth: 0,
@@ -172,11 +172,11 @@
 			display: false
                     },
                     {
-                        label: 'Binance Spot $1000 Depth (lag)',
+                        label: 'Binance Spot $1000 Depth',
                         data: [],
                         borderColor: '#FC0535',
                         borderWidth: 2,
-			borderDash: [10,5],
+			borderDash: [2,2],
                         fill: false,
                         stepped: true,
                         pointRadius: 0
@@ -186,7 +186,7 @@
                         data: [],
                         borderColor: '#FC0535',
                         borderWidth: 2,
-			borderDash: [10,5],
+			borderDash: [2,2],
                         stepped: true,
                         fill: false,
                         pointRadius: 0
