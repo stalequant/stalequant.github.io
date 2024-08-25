@@ -139,6 +139,57 @@
                         stepped: true,
                         fill: false,
                         pointRadius: 0
+                    },
+                    {
+                        label: 'Binance Spot Trades',
+                        data: [],
+                        borderColor: '#FCD535',
+                        backgroundColor: '#FCD535',
+                        borderWidth: 0,
+                        pointStyle: 'circle',
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        fill: false,
+                        showLine: false
+                    },
+                    {
+                        label: 'Binance Spot Bid-Ask',
+                        data: [],
+                        backgroundColor: 'rgba(252, 213, 53, 0.25)',
+                        borderWidth: 0,
+                        fill: '+1',
+                        stepped: true,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Binance Spot Ask HIDE',
+                        data: [],
+                        backgroundColor: 'rgba(252, 213, 53, 0.25)',
+                        borderWidth: 0,
+                        fill: '-1',
+                        stepped: true,
+                        pointRadius: 0,
+			display: false
+                    },
+                    {
+                        label: 'Binance Spot $1000 Depth',
+                        data: [],
+                        borderColor: '#FCD535',
+                        borderWidth: 2,
+			borderDash: [10,5],
+                        fill: false,
+                        stepped: true,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Binance Spot AskD HIDE',
+                        data: [],
+                        borderColor: '#FCD535',
+                        borderWidth: 2,
+			borderDash: [10,5],
+                        stepped: true,
+                        fill: false,
+                        pointRadius: 0
                     }
                 ]
             },
@@ -185,9 +236,10 @@
         });
 
         const wsHyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
-        const wsBinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@depth20`);
+        const wsBinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@depth20@100ms`);
         const wsBinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@aggTrade`);
-        // const wsBybit = new WebSocket('wss://stream.bybit.com/v5/public/linear');
+        const wsBinanceSpotBookTicker = new WebSocket(`wss://stream.binance.com/ws/${coin.toUpperCase()}USDT@depth20@100ms`);
+        const wsBinanceSpotAggTrade = new WebSocket(`wss://stream.binance.com/ws/${coin.toUpperCase()}USDT@aggTrade`);
         const dataWindow = 30000; // 30 seconds of data
         let lastUpdateTime = Date.now();
 
@@ -209,7 +261,7 @@
             if (message.channel === "l2Book" && message.data.coin === coin) {
                 const timestamp = parseFloat(message.data.time);
                 const levels = message.data.levels;
-		const reqLiq = 1000;
+		const reqLiq = 5000;
                 if (levels && levels.length >= 2) {
                     const bid = parseFloat(levels[0][0].px);
                     const ask = parseFloat(levels[1][0].px);
@@ -217,7 +269,7 @@
                     let sum = 0;
                     let i = 0;
                     while (i < levels[0].length && sum < reqLiq) {
-                        sum += parseFloat(levels[0][i].sz);
+                        sum += parseFloat(levels[0][i].sz) * parseFloat(levels[0][i].px);
                         i++;
                     }
                     if (sum >= reqLiq) {
@@ -229,7 +281,7 @@
                     let sumA = 0;
                     let iA = 0;
                     while (iA < levels[1].length && sumA < reqLiq) {
-                        sumA += parseFloat(levels[1][iA].sz);
+                        sumA += parseFloat(levels[1][iA].sz) * parseFloat(levels[1][i].px);
                         iA++;
                     }
                     if (sumA >= reqLiq) {
@@ -265,7 +317,7 @@
             const message = JSON.parse(event.data);
 
             if (message.e === "depthUpdate" && message.s === `${coin}USDT`) {	
-		    const reqLiq = 1000;
+		    const reqLiq = 5000;
                     const bid = parseFloat(message.b[0][0]);
                     const ask = parseFloat(message.a[0][0]);      
 	            const timestamp = parseFloat(message.E);
@@ -274,10 +326,10 @@
                     let sum = 0;
                     let i = 0;
                     while (i < message.b.length && sum < reqLiq) {
-                        sum += parseFloat(message.b[i][1]);
+                        sum += parseFloat(message.b[i][1]) * parseFloat(message.b[i][0]);
                         i++;
                     }
-                    if (sum >= reqLiq) {
+                    if (i <2 || sum >= reqLiq) {
                         deepBid = parseFloat(message.b[i-1][0]);
                     } else if (message.b.length > 0) {
                         deepBid = parseFloat(message.b[message.b.length - 1][0]) / 1.01;
@@ -286,10 +338,10 @@
                     let sumA = 0;
                     let iA = 0;
                     while (iA < message.a.length && sumA < reqLiq) {
-                        sumA += parseFloat(message.a[iA][1]);
+                        sumA += parseFloat(message.a[iA][1]) * parseFloat(message.a[iA][0]);
                         iA++;
                     }
-                    if (sumA >= reqLiq) {
+                    if (iA <2 || sumA >= reqLiq) {
                         deepAsk = parseFloat(message.a[iA-1][0]);
                     } else if (message.a.length > 0) {
                         deepAsk = parseFloat(message.a[message.a.length - 1][0]) * 1.01;
@@ -316,47 +368,6 @@
                 addData(5, timestamp, tradePrice); // Binance Trades
             }
         };
-
-   /*     wsBybit.onopen = function() {
-            console.log('Bybit WebSocket is connected');
-            wsBybit.send(JSON.stringify({
-                "req_id": "orderbook_" + coin,
-                "op": "subscribe",
-                "args": [`orderbook.1.${coin}USDT`]
-            }));
-            wsBybit.send(JSON.stringify({
-                "req_id": "trades_" + coin,
-                "op": "subscribe",
-                "args": [`publicTrade.${coin}USDT`]
-            }));
-        };
-
-        wsBybit.onmessage = function(event) {
-            const message = JSON.parse(event.data);
-            
-            if (message.topic && message.topic.startsWith('orderbook.')) {
-                const data = message.data;
-                if (data && data.b && data.b.length > 0 && data.a && data.a.length > 0) {
-                    const bid = parseFloat(data.b[0][0]);
-                    const ask = parseFloat(data.a[0][0]);
-                    const timestamp = message.cts;
-
-                    addData(9, timestamp, bid); // Bybit Bid
-                    addData(10, timestamp, ask); // Bybit Ask
-                }
-            }
-
-            if (message.topic && message.topic.startsWith('publicTrade.')) {
-                const trades = message.data;
-                if (trades && trades.length > 0) {
-                    trades.forEach(trade => {
-                        const tradePrice = parseFloat(trade.p);
-                        const timestamp = trade.T;
-                        addData(8, timestamp, tradePrice); // Bybit Trades
-                    });
-                }
-            }
-        }; */
 
         function addData(datasetIndex, time, value) {
             coinChart.data.datasets[datasetIndex].data.push({x: time, y: value});
@@ -416,14 +427,6 @@
 
         wsBinanceAggTrade.onclose = function() {
             console.log('Binance AggTrade WebSocket is closed');
-        };
-
-        wsBybit.onerror = function(error) {
-            console.error('Bybit WebSocket Error: ', error);
-        };
-
-        wsBybit.onclose = function() {
-            console.log('Bybit WebSocket is closed');
         };
     </script>
 </body>
