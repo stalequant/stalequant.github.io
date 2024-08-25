@@ -29,7 +29,7 @@
     <script>
         // Get the coin from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const coin = urlParams.get('coin') || 'BTC';
+        const coin = urlParams.get('coin') || 'INJ';
         document.getElementById('chartTitle').textContent = `${coin} Data Chart`;
 
         const ctx = document.getElementById('coinChart').getContext('2d');
@@ -69,7 +69,7 @@
 			display: false
                     },
                     {
-                        label: `HL $1000 depth`,
+                        label: `HL $5000 depth`,
                         data: [],
                         borderColor: 'hsl(172,47%,51%)',
                         borderWidth: 2,
@@ -121,7 +121,7 @@
 			display: false
                     },
                     {
-                        label: 'Binance $1000 Depth',
+                        label: 'Binance $5000 Depth',
                         data: [],
                         borderColor: '#FCD535',
                         borderWidth: 2,
@@ -172,7 +172,7 @@
 			display: false
                     },
                     {
-                        label: 'Binance Spot $1000 Depth',
+                        label: 'Binance Spot $5000 Depth',
                         data: [],
                         borderColor: '#FC0535',
                         borderWidth: 2,
