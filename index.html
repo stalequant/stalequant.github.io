@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Coin Data Chart</title>
+    <title>hyperliquid and binance consolidated orderflow with stalegun demo</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,14 +19,13 @@
             color: white;
         }
         #chart-container {
-            width: 80%;
-            height: 80vh;
+            width: 100%;
+            height: 80%;
             position: relative;
+            margin: 0 auto;
         }
         #watermark {
             position: absolute;
-            top: 90%;
-            left: 50%;
             font-size: 48px;
             opacity: 0.1;
             pointer-events: none;
@@ -43,19 +46,221 @@
             height: 20px;
             margin-right: 5px;
         }
-        .legend-text {
-            color: white;
+        .operation-form {
+
+            margin-top: 20px;
+        }
+        .form-row {
+	    color: white;
+	    margin-left:20px;
+            background-color: #111;
+            display: flex;
+            align-items: center;
+        }
+
+
+        .form-row label {
+            display: inline-block;
+            min-width: 100px;
+        }
+        input[type="number"] {
+            width: 80px;        
+	    background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 5px;
+        }
+        button {
+            margin-right: 10px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #222;
+            color: #ccc;
+            font-size: .8em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-transform: uppercase;
+        }
+        button.selected {
+            background-color: #5a6d9e;
+            color: #fff;
+        }
+        .button-group {
+            display: flex;
+            gap: 0px;
+        }
+        .button-group button {
+            flex: 1;
+        }
+        .expandable {
+            background-color: #222;
+            padding: 10px;
+            display: none;
+            margin-top: 5px;
+        }
+        .expandable div {
+            margin-bottom: 10px;
+        }
+        .expandable p {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        .expandable button {
+            margin: 2px;
+            padding: 5px 10px;
+        }
+        .action-buttons {
+            margin-top: 15px;
+            text-decoration: line-through;
+        }
+        .action-buttons button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #5a6d9e;
 
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #222;
+        }
+        .cancel-button {
+            background-color: #722;
+            color: #fff;
+            padding: 5px 10px;
+        }
+        .cancel-all-button {
+            background-color: #722;
+            color: #fff;
+            padding: 5px 10px;
+            margin: 0;
+        }
+        .time-slider {
+            width: 80%;
+            margin: 5px 0;
+        }
+
+	.ui-autocomplete {
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #555;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .ui-menu-item-wrapper {
+            padding: 5px;
+        }
+        .ui-state-active {
+            background-color: #5a6d9e;
+            color: #fff;
+        }
+        #coinInput {
+            width: 120px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 5px;
+        }
+
     </style>
 </head>
 <body>
-    <h1 id="chartTitle">Dynamic Coin Data Chart</h1>
+    <div class="operation-form">
+        <div class="form-row">
+            <label>stalegun aimed at </label>
+ <input type="text" id="coinInput" placeholder="BTC" style="margin:10px;"></input>
+</div></div>
+
     <div id="chart-container">
         <div id="watermark">stalequant.github.io/public/</div>
         <canvas id="coinChart"></canvas>
     </div>
     <div id="custom-legend"></div>
+
+    <div class="operation-form">
+        <div class="form-row">
+ <label  >
+order stalegun airstrike 
+</label>
+	</div>
+        <div class="form-row">
+            <label>what?</label>
+            <div class="button-group">
+                <button onclick="setOperation('buy', this)">BUY</button>
+                <button onclick="setOperation('sell', this)">SELL</button>
+            </div>
+            <input type="number" id="quantity" placeholder="quantity" style="  margin-left: 10px;">
+            <input type="number" id="dollars" placeholder="dollars" style="  margin-left: 10px;">     
+        </div>
+        </div>
+        <div class="form-row">            <label>over:</label>
+            <input type="range" id="timeInterval" min="0" max="100" value="50">
+            <span id="timeIntervalValue">12 hours</span>
+        </div>
+        <div class="form-row ppp">
+            <label>how?</label>
+            <div class="button-group">
+                <button onclick="setAdaptive('adaptive', this)">ADAPTIVE</button>
+                <button onclick="setAdaptive('aggressive', this)">AGGRESSIVE</button>
+                <button onclick="setAdaptive('price', this)">CHEAPEST</button>
+                <button onclick="toggleDetails(this)">CUSTOM</button>
+            </div>
+        </div>
+
+        <div id="details" class="expandable">
+            <div>
+                <p>taker:</p>
+                <button onclick="toggleDetail(this)">HIDDEN TWAP</button>
+                <button onclick="toggleDetail(this)">PSEUDO-VWAP</button>
+                <button onclick="toggleDetail(this)">SNIPE LIMITS</button>
+            </div>
+            <div>
+                <p>maker:</p>
+                <button onclick="toggleDetail(this)">TOP OF THE BOOK</button>
+                <button onclick="toggleDetail(this)">DEEP BOOK</button>
+            </div>
+            <div>
+                <p>offchain:</p>
+                <button onclick="toggleDetail(this)">MATCH WITH OTHER USERS</button>
+                <button onclick="toggleDetail(this)">DARK POOLS</button>
+                <button onclick="toggleDetail(this)">RFQ</button>
+            </div>
+        </div>
+        <div class="form-row action-buttons">
+            <button>DEMO IT</button>
+            <button>DO IT</button>
+<label>(canceled because i fear litiguous burgers)</label>
+        </div>
+    </div>
+
+    <div class="operation-form">
+ <div  class = "form form-row">
+existing stalegun airstrikes 
+</div> 
+ <div  class = "form form-row" style="width:100%">
+    <table>
+        <tr>
+            <th>operation</th>
+            <th>done</th>
+            <th>of</th>
+            <th>after</th>
+            <th>of</th>
+            <th>at price</th>
+            <th><button class="cancel-all-button" onclick="cancelAllOperations()">CANCEL ALL</button></th>
+        </tr>
+    </table>
+</div>
+</div>
+
 
     <script>
         // Get the coin from URL parameters
@@ -63,9 +268,7 @@
 	const defaultCoins = ['BTC', 'ETH', 'TRX','XRP','DOGE','LINK','BCH','AVAX','MATIC','SOL', 'ADA', 'INJ'];
 
 	// Get the coin from URL parameters or choose a random one from the list
-	const coin = urlParams.get('coin') || defaultCoins[Math.floor(Math.random() * defaultCoins.length)];
-
-        document.getElementById('chartTitle').textContent = `${coin} orderbooks and trades. Choose a coin by appending &coin=${coin} to the URL`;
+	const coin = urlParams.get('coin') || 'BTC';
 
         const ctx = document.getElementById('coinChart').getContext('2d');
         const coinChart = new Chart(ctx, {
@@ -596,6 +799,100 @@
         smoothScroll(); // Start the smooth scrolling
 
 
+
+
+        function toggleDetails(button) {
+            const details = document.getElementById('details');
+            if (details.style.display === 'none' || details.style.display === '') {
+                details.style.display = 'block';
+                button.classList.add('selected');
+            } else {
+                details.style.display = 'none';
+                button.classList.remove('selected');
+            }
+        }
+
+        function setOperation(op, button) {
+            console.log('Operation set to:', op);
+            clearSelection(button.parentNode);
+            button.classList.add('selected');
+        }
+
+        function setAdaptive(type, button) {
+            console.log('Adaptive type set to:', type);
+            clearSelection(button.parentNode);
+            button.classList.add('selected');
+            document.getElementById('details').style.display = 'none';
+        }
+
+        function toggleDetail(button) {
+            button.classList.toggle('selected');
+        }
+
+        function clearSelection(parent) {
+            parent.querySelectorAll('button').forEach(btn => btn.classList.remove('selected'));
+        }
+
+        function cancelOperation(operationId) {
+            console.log('Canceling operation:', operationId);
+            // Add logic to cancel the specific operation
+        }
+
+        function cancelAllOperations() {
+            console.log('Canceling all operations');
+            // Add logic to cancel all operations
+        }
+
+        const timeInterval = document.getElementById('timeInterval');
+        const timeIntervalValue = document.getElementById('timeIntervalValue');
+        
+        function logSlider(position) {
+            // position will be between 0 and 100
+            const minp = 0;
+            const maxp = 100;
+
+            // The result should be between 1 minute and 1 day (in minutes)
+            const minv = Math.log(10);
+            const maxv = Math.log(1440*7);
+
+            // calculate adjustment factor
+            const scale = (maxv - minv) / (maxp - minp);
+
+            return Math.exp(minv + scale * (position - minp));
+        }
+
+        function formatTime(minutes) {
+            if (minutes < 60) {
+                return Math.round(minutes) + ' minutes';
+            } else if (minutes < 1440) {
+                return (minutes / 60).toFixed(1) + ' hours';
+            } else {              
+                return (minutes / 60/24).toFixed(1) + ' days';
+            }
+        }
+
+        timeInterval.addEventListener('input', function() {
+            const logValue = logSlider(this.value);
+            timeIntervalValue.textContent = formatTime(logValue);
+        });
+
+        // Initialize the slider value
+        timeInterval.value = 60;
+        timeInterval.dispatchEvent(new Event('input'));
+
+        const coinParam = urlParams.get('coin') || 'BTC'; 
+        const coins = ['SOL', 'DOGE', 'BTC', 'ETH', 'LINK', 'INJ', 'AVAX', 'MATIC', 'RENDER', 'TRX'];
+
+        $(document).ready(function() {
+            $('#coinInput').val(coinParam);
+            
+            $('#coinInput').autocomplete({
+                source: coins,
+                select: function(event, ui) {
+                    window.location.href = '?coin=' + ui.item.value;
+                }
+            });
+        });
     </script>
 </body>
 </html>
