@@ -263,27 +263,60 @@ existing stalegun airstrikes
 
 
     <script>
-        // Get the coin from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
 
-	const coin = urlParams.get('coin') || 'BTC'; 
-	const colorHL = '#44BEA4';
- 	   const colorBN = '#FF8424';
-  	  const colorBNS = '#A444BE';
-	const colorTrans = '#000000';
-	var hiddenLines = ['binance spot','bid-ask']; 
+const exchanges = ['hyperliquid', 'binance futures', 'binance spot'];
+
+const datasetTypes = ['trades', 'bid-ask', '$5k spread'];
+
+const buyOptions = [true, false];
+const reqLiq = 5000;
+const dataWindow = 30000; // 30 seconds of data
+
+const stepSizeMs = 5000; // 5 second
+
+// Get the coin from URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+
+
+const coinParam = urlParams.get('coin') || 'BTC'; 
+const coins = ['AAVE', 'ACE', 'ADA', 'AI', 'ALT', 'APE', 'APT', 'AR', 'ARB', 'ARK', 'ATOM', 'AVAX', 'BADGER', 'BANANA', 'BCH', 'BIGTIME', 'BLUR', 'BLZ', 'BNB', 'BNT', 'BOME', 'BRETT', 'BSV', 'BTC', 'CAKE', 'CFX', 'COMP', 'CRV', 'CYBER', 'DOGE', 'DOT', 'DYDX', 'DYM', 'ENA', 'ENS', 'ETC', 'ETH', 'ETHFI', 'FET', 'FIL', 'FTM', 'FTT', 'FXS', 'GALA', 'GAS', 'GMT', 'GMX', 'HBAR', 'ILV', 'IMX', 'INJ', 'IO', 'JTO', 'JUP', 'KAS', 'LDO', 'LINK', 'LISTA', 'LOOM', 'LTC', 'MANTA', 'MATIC', 'MAV', 'MAVIA', 'MEME', 'MEW', 'MINA', 'MKR', 'MYRO', 'NEAR', 'NEO', 'NOT', 'NTRN', 'OGN', 'OMNI', 'ONDO', 'OP', 'ORBS', 'ORDI', 'PENDLE', 'PEOPLE', 'PIXEL', 'POLYX', 'POPCAT', 'PYTH', 'RDNT', 'RENDER', 'REZ', 'RSR', 'RUNE', 'SAGA', 'SEI', 'SNX', 'SOL', 'STG', 'STRAX', 'STRK', 'STX', 'SUI', 'SUPER', 'SUSHI', 'TAO', 'TIA', 'TNSR', 'TON', 'TRB', 'TRX', 'TURBO', 'UMA', 'UNI', 'USTC', 'W', 'WIF', 'WLD', 'XAI', 'XRP', 'YGG', 'ZEN', 'ZETA', 'ZK', 'ZRO'];
+
+
+const colorHL = '#44BEA4';
+const colorBN = '#FF8424';
+const colorBNS = '#A444BE';
+const colorDark = '#FFFFFF11';
+const colorTrans = '#000000';
+
+var hiddenLines = ['bid-ask']; 
 const venueDtypeMapping = {};
 	
-	const locToStr = ( venue, dtype, side) =>{
-		return venue + 'x' +dtype+ 'x' + (side? 'b':'s');
-
+const locToStr = ( venue, dtype, side) =>{
+	return venue + 'x' +dtype+ 'x' + (side? 'b':'s');
 }
-        const addData = (venue, dtype, side, time, value)  => {
-            venueDtypeMapping[locToStr(venue, dtype, side)].data.push({x: time, y: value});
-        }
 
-const createBaseDataset = (venue, dtype, color, buy) => {
-  let newDataset =  {
+const addData = (venue, dtype, side, time, value)  => {
+	venueDtypeMapping[locToStr(venue, dtype, side)].data.push({x: time, y: value});
+}
+
+const createUnifiedDataset = (venue, dtype, buy) => {
+  let color;
+  switch (venue) {
+    case 'hyperliquid':
+      color = colorHL;
+      break;
+    case 'binance futures':
+      color = colorBN;
+      break;
+    case 'binance spot':
+      color = colorBNS;
+      break;
+    default:
+      console.warn(`Unknown venue: ${venue}`);
+      color = '#000000'; // Default color
+  }
+
+  const baseDataset = {
     venue,
     dtype,
     data: [],
@@ -292,46 +325,44 @@ const createBaseDataset = (venue, dtype, color, buy) => {
     pointRadius: 0,
     stepped: true
   };
-  venueDtypeMapping[locToStr(venue,dtype,buy)] = newDataset;
+
+  let specificDataset = {};
+
+  switch (dtype) {
+    case 'trades':
+      specificDataset = {
+        pointRadius: 7,
+        pointStyle: 'triangle',
+        pointBackgroundColor: colorTrans,
+        pointRotation: buy ? 0 : 180,
+        showLine: false
+      };
+      break;
+    case 'bid-ask':
+    case '$5k spread':
+      specificDataset = {
+        backgroundColor: `${color}10`,
+        borderColor: `${color}77`,
+        borderWidth: 2,
+        fill: buy ? "+1" : "-1"
+      };
+      break;
+    default:
+      console.warn(`Unknown dtype: ${dtype}`);
+  }
+
+  const newDataset = { ...baseDataset, ...specificDataset };
+  venueDtypeMapping[locToStr(venue, dtype, buy)] = newDataset;
   return newDataset;
 };
 
-const createTradeDataset = (venue, dtype, color, buy) => ({
-  ...createBaseDataset(venue, dtype, color, buy),
-  pointRadius: 7,
-  pointStyle: 'triangle',
-  pointBackgroundColor: colorTrans,
-  pointRotation: buy ? 0 : 180, 
-  showLine: false
-});
+const datasets = exchanges.flatMap(exchange => 
+  datasetTypes.flatMap(dtype => 
+    buyOptions.map(buy => createUnifiedDataset(exchange, dtype, buy))
+  )
+)  
 
-const createBidAskDataset = (venue, dtype, color, buy) => ({
-  ...createBaseDataset(venue, dtype, color, buy),
-  backgroundColor: `${color}10`, 
-  borderColor: `${color}77`,
-  borderWidth: 2,
-  fill: buy? "+1":"-1",
-});
-
-const createDepthDataset = (venue, dtype, color, buy, ) => ({
-  ...createBidAskDataset(venue, dtype, color, buy,),
-  backgroundColor: `${color}10`, 
-});
-
- 
-  
-	const exchanges = [
-  { name: 'hyperliquid', color: colorHL },
-  { name: 'binance futures', color: colorBN },
-  { name: 'binance spot', color: colorBNS }
-];
-
-const datasetTypes = [
-  { name: 'trades', fn: createTradeDataset },
-  { name: 'bid-ask', fn: createBidAskDataset },
-  { name: '$5k spread', fn: createDepthDataset }
-];
- function customTickGenerator(min, max, stepSize) {
+function customTickGenerator(min, max, stepSize) {
     const ticks = [];
     let curr = Math.ceil(0.5 + min / stepSize) * stepSize;
     while (curr <= max - stepSize/2) {
@@ -344,386 +375,241 @@ const datasetTypes = [
     }
     return ticks;
 }
-		    const reqLiq = 5000;
 
-const stepSizeMs = 5000; // 5 second
-        const ctx = document.getElementById('coinChart').getContext('2d');
-        const coinChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: exchanges.flatMap(exchange => 
-  datasetTypes.flatMap(dataset => [
-    dataset.fn(exchange.name, dataset.name, exchange.color, true),
-    dataset.fn(exchange.name, dataset.name, exchange.color, false)
-  ])
-)      },
-            options: {
-                responsive: true,
-		maintainAspectRatio: false,
-                animation: false,
-                scales: {
-                         x: {
-        type: 'time',
-        grid: {
-            display: false,
-            color: 'rgba(255, 255, 255, 0.1)'
-        },
-        time: {
-            unit: 'second',
-            stepSize: 5,
-            displayFormats: {
-                second: 'HH:mm:ss'
-            },
-        },
-        ticks: {
-            source: 'data',
-            autoSkip: false,
-            maxRotation: 0,
-            color: 'white'
-        },
-        min: undefined,
-        max: undefined,
-        afterBuildTicks: function(scale) {
-            scale.ticks = customTickGenerator(scale.min, scale.max, stepSizeMs);
-        }
-    },
-                    y: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: 'white',
+function updateChartData(chart) {
+        for (let i = 0; i < chart.data.datasets.length; i++) {
+        	const meta = chart.getDatasetMeta(i);
+	        meta.hidden = hiddenLines.includes(meta._dataset.venue) || hiddenLines.includes(meta._dataset.dtype);
+        }        
+	chart.update();
+}
 
-          maxTicksLimit: 5
-                        }
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        enabled: false
+
+
+Chart.defaults.backgroundColor = '#9BD0F5';
+Chart.defaults.borderColor = '#FFFFFF';
+Chart.defaults.color = '#FFFFFF';
+
+const ctx = document.getElementById('coinChart').getContext('2d');
+ctx.globalCompositeOperation = 'destination-over';
+
+const coinChart = new Chart(ctx, {
+    type: 'line',
+    data: { datasets: datasets },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'second',
+                    displayFormats: {
+                        second: 'HH:mm:ss'
                     },
-                    legend: {
-                        display: false
-                    }
-                }
+                },
+                ticks: {
+                    source: 'data',
+                    autoSkip: false,
+                    maxRotation: 0,
+                },
+                afterBuildTicks: function(scale) {
+                    scale.ticks = customTickGenerator(scale.min, scale.max, stepSizeMs);
+                },
+		grid: { 
+		    color: colorDark
+		},
+            },
+            y: {
+		grid: { 
+		    color: colorDark
+		},
             }
-        });
-
-        // Custom legend
-        const legendItems = [
-            { text: 'hyperliquid', color: colorHL, style: 'square'},
-            { text: 'binance futures', color: colorBN, style: 'square'},
-            { text: 'binance spot', color: colorBNS, style: 'square'},
-            { text: 'trades', color: 'white', style: 'circle' },
-            { text: '$5k spread', color: 'white', style: 'line' },
-            { text: 'bid-ask', color: 'rgba(255,255,255,0.3)', style: 'square'}
-        ];
-
-        const legendContainer = document.getElementById('custom-legend');
-        legendItems.forEach((item, index) => {
-            const legendItem = document.createElement('div');
-            legendItem.className = 'legend-item';
-            
-            const color = document.createElement('div');
-            color.className = 'legend-color';
-            color.style.backgroundColor = item.color;
-            if (item.style === 'line') {
-                color.style.height = '2px';
-                color.style.marginTop = '4px';
-                color.style.marginBottom = '4px';
-            } else if (item.style === 'circle') {
-                color.style.borderRadius = '50%';
+        },
+        plugins: {
+            tooltip: {
+                enabled: false
+            },
+            legend: {
+                display: false
             }
-            
-            const text = document.createElement('span');
-            text.className = 'legend-text';
-            text.textContent = item.text;
-            
-            legendItem.appendChild(color);
-            legendItem.appendChild(text);
-            legendContainer.appendChild(legendItem);
-            
+        }
+    }
+});
+
+// Custom legend
+const legendItems = [
+    { text: 'hyperliquid', color: colorHL, style: 'square'},
+    { text: 'binance futures', color: colorBN, style: 'square'},
+    { text: 'binance spot', color: colorBNS, style: 'square'},
+    { text: 'trades', color: 'white', style: 'circle' },
+    { text: '$5k spread', color: 'rgba(255,255,255,0.3)', style: 'square' },
+    { text: 'bid-ask', color: 'rgba(255,255,255,0.3)', style: 'square'}
+];
+
+const legendContainer = document.getElementById('custom-legend');
+legendItems.forEach((item, index) => {
+    const legendItem = document.createElement('div');
+    legendItem.className = 'legend-item';
+    
+    const color = document.createElement('div');
+    color.className = 'legend-color';
+    color.style.backgroundColor = item.color;
+    if (item.style === 'line') {
+        color.style.height = '2px';
+        color.style.marginTop = '4px';
+        color.style.marginBottom = '4px';
+    } else if (item.style === 'circle') {
+        color.style.borderRadius = '50%';
+    }
+    
+    const text = document.createElement('span');
+    text.className = 'legend-text';
+    text.textContent = item.text;
+    
+    legendItem.appendChild(color);
+    legendItem.appendChild(text);
+    legendContainer.appendChild(legendItem);
+    
     legendItem.onclick = function() {
         const itemText = item.text;
-	if (hiddenLines.includes(item.text)){
-		hiddenLines = hiddenLines.filter(elem => elem !== item.text);
-	} else { 
-     	 	hiddenLines.push(itemText);  // Fixed: use push correctly
-	}
-	
-        for (let i = 0; i < coinChart.data.datasets.length; i++) {
-        	const meta = coinChart.getDatasetMeta(i);
-	        meta.hidden = hiddenLines.includes(meta._dataset.venue) || hiddenLines.includes(meta._dataset.dtype);
+        if (hiddenLines.includes(itemText)) {
+            hiddenLines = hiddenLines.filter(elem => elem !== itemText);
+        } else { 
+            hiddenLines.push(itemText);
         }
+        
+        updateChartData(coinChart);
 
-	coinChart.update();
     };
 });
 
-        for (let i = 0; i < coinChart.data.datasets.length; i++) {
-        	const meta = coinChart.getDatasetMeta(i);
-	        meta.hidden = hiddenLines.includes(meta._dataset.venue) || hiddenLines.includes(meta._dataset.dtype);
+updateChartData(coinChart);
+      
+const wsHyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
+const wsBinanceOrderBook = new WebSocket(`wss://fstream.binance.com/ws/${coinParam.toLowerCase()}usdt@depth20@100ms`);
+const wsBinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coinParam.toLowerCase()}usdt@aggTrade`);
+const wsBinanceSpotOrderBook = new WebSocket(`wss://stream.binance.com:443/ws/${coinParam.toLowerCase()}usdt@depth20@100ms`);
+const wsBinanceSpotAggTrade = new WebSocket(`wss://stream.binance.com:443/ws/${coinParam.toLowerCase()}usdt@aggTrade`);
+
+var binanceLag = 0
+
+function getDepthPrice(orders) {
+    let sum = 0;
+    let i = 0;
+    while (i < orders.length) {
+        sum += parseFloat(orders[i][1]) * parseFloat(orders[i][0]);
+        if (sum > reqLiq) {
+            return parseFloat(orders[i][0]);
         }
- 
+        i++;
+    }
+    return parseFloat(orders[orders.length - 1][1]) / 1.01;
+}
 
-      ctx.globalCompositeOperation = 'destination-over';
-	coinChart.update();
+wsHyperliquid.onopen = function() {
+    wsHyperliquid.send(JSON.stringify({
+        "method": "subscribe",
+        "subscription": { "type": "l2Book", "coin": coinParam }
+    }));
+    wsHyperliquid.send(JSON.stringify({
+        "method": "subscribe",
+        "subscription": { "type": "trades", "coin": coinParam }
+    }));
+};
 
-        const dataWindow = 30000; // 30 seconds of data
-        let lastUpdateTime = Date.now();
+wsHyperliquid.onmessage = function(event) {
+    const venue = 'hyperliquid';
+    const message = JSON.parse(event.data);
 
-        const wshyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
-        const wsbinanceBookTicker = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@depth20@100ms`);
-        const wsbinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coin.toLowerCase()}usdt@aggTrade`);
-        const wsbinanceSpotBookTicker = new WebSocket(`wss://stream.binance.com:443/ws/${coin.toLowerCase()}usdt@depth20@100ms`);
-        const wsbinanceSpotAggTrade = new WebSocket(`wss://stream.binance.com:443/ws/${coin.toLowerCase()}usdt@aggTrade`);
+    if (message.channel === "l2Book" && message.data.coin === coinParam) {
+        const timestamp = parseFloat(message.data.time);
+        const levels = message.data.levels;
+        if (levels && levels.length >= 2) {
+            addData(venue, 'bid-ask', true, timestamp, parseFloat(levels[0][0].px));
+            addData(venue, 'bid-ask', false, timestamp, parseFloat(levels[1][0].px));
 
-	var binanceLag = 0
+            const deepBid = getDepthPrice(levels[0].map(item => [item.px, item.sz]));
+            addData(venue, '$5k spread', true, timestamp, deepBid);
 
-        wshyperliquid.onopen = function() {
-            console.log('hyperliquid WebSocket is connected');
-            wshyperliquid.send(JSON.stringify({
-                "method": "subscribe",
-                "subscription": { "type": "l2Book", "coin": coin }
-            }));
-            wshyperliquid.send(JSON.stringify({
-                "method": "subscribe",
-                "subscription": { "type": "trades", "coin": coin }
-            }));
-        };
+            const deepAsk = getDepthPrice(levels[1].map(item => [item.px, item.sz]));
+            addData(venue, '$5k spread', false, timestamp, deepAsk);
+        }
+    }
 
-
-        wshyperliquid.onmessage = function(event) {
-	    let venue = 'hyperliquid';
-            const message = JSON.parse(event.data);
-
-            if (message.channel === "l2Book" && message.data.coin === coin) {
-                const timestamp = parseFloat(message.data.time);
-                const levels = message.data.levels;
-                if (levels && levels.length >= 2) {
-                    addData(venue,'bid-ask',true, timestamp, parseFloat(levels[0][0].px));
-                    addData(venue,'bid-ask',false, timestamp, parseFloat(levels[1][0].px));
-
-                    let sum = 0;
-                    let i = 0;
-                    while (i < levels[0].length && sum < reqLiq) {
-                        sum += parseFloat(levels[0][i].sz) * parseFloat(levels[0][i].px);
-                        i++;
-                    }
-                    if (sum >= reqLiq) {
-                        deepBid = parseFloat(levels[0][i-1].px);
-                    } else if (levels[0].length > 0) {
-                        deepBid = parseFloat(levels[0][levels[0].length - 1].px) / 1.01;
-                    }
-		    
-                    let sumA = 0;
-                    let iA = 0;
-                    while (iA < levels[1].length && sumA < reqLiq) {
-                        sumA += parseFloat(levels[1][iA].sz) * parseFloat(levels[1][i].px);
-                        iA++;
-                    }
-                    if (sumA >= reqLiq) {
-                        deepAsk = parseFloat(levels[1][iA-1].px);
-                    } else if (levels[1].length > 0) {
-                        deepAsk = parseFloat(levels[1][levels[1].length - 1].px) * 1.01;
-                    } 
-                    addData(venue,'$5k spread',true, timestamp, deepBid);
-                    addData(venue,'$5k spread',false, timestamp, deepAsk);
-                }
+    if (message.channel === "trades" && message.data.length > 0) {
+        message.data.forEach(trade => {
+            if (trade.coin === coinParam) {
+                const tradePrice = parseFloat(trade.px);
+                const timestamp = trade.time;
+                addData(venue, 'trades', trade.side === "B", timestamp, tradePrice);
             }
-
-            if (message.channel === "trades" && message.data.length > 0) {
-
-
-                message.data.forEach(trade => {
-                    if (trade.coin === coin) {   
-                        const tradePrice = parseFloat(trade.px);
-                        const timestamp = trade.time;
-                 	addData(venue,'trades',trade.side === "B", timestamp, tradePrice);
-                    }
-                });
-            }
-        };
-
-        wshyperliquid.onerror = function(error) {
-            console.error('hyperliquid WebSocket Error: ', error);
-        };
-
-        wshyperliquid.onclose = function() {
-            console.log('hyperliquid WebSocket is closed');
-        };
-
-
-
-        wsbinanceBookTicker.onopen = function() {
-            console.log('binance BookTicker WebSocket is connected');
-        };
-
-        wsbinanceBookTicker.onmessage = function(event) {
+        });
+    }
+};
+  
+        wsBinanceOrderBook.onmessage = function(event) {
             const message = JSON.parse(event.data);
 	    let venue = 'binance futures';
 
-            if (message.e === "depthUpdate" && message.s === `${coin}USDT`) {	
+            if (message.e === "depthUpdate" && message.s === `${coinParam}USDT`) {	
 	            const timestamp = parseFloat(message.E);
+		    updateBinanceLag(timestamp)
+
                     addData(venue,'bid-ask',true, timestamp, parseFloat(message.b[0][0]));
                     addData(venue,'bid-ask',false, timestamp, parseFloat(message.a[0][0]));
 
-
-
-
-                    let sum = 0;
-                    let i = 0;
-                    while (i < message.b.length && sum < reqLiq) {
-                        sum += parseFloat(message.b[i][1]) * parseFloat(message.b[i][0]);
-                        i++;
-                    }
-                    if (i <2 || sum >= reqLiq) {
-                        deepBid = parseFloat(message.b[i-1][0]);
-                    } else if (message.b.length > 0) {
-                        deepBid = parseFloat(message.b[message.b.length - 1][0]) / 1.01;
-                    }
-		    
-                    let sumA = 0;
-                    let iA = 0;
-                    while (iA < message.a.length && sumA < reqLiq) {
-                        sumA += parseFloat(message.a[iA][1]) * parseFloat(message.a[iA][0]);
-                        iA++;
-                    }
-                    if (iA <2 || sumA >= reqLiq) {
-                        deepAsk = parseFloat(message.a[iA-1][0]);
-                    } else if (message.a.length > 0) {
-                        deepAsk = parseFloat(message.a[message.a.length - 1][0]) * 1.01;
-                    }
-			
- 
+                    const deepBid = getDepthPrice(message.b);
                     addData(venue,'$5k spread',true, timestamp, deepBid);
+                    const deepAsk = getDepthPrice(message.a);
                     addData(venue,'$5k spread',false, timestamp, deepAsk);
-
-		    let measuredLag = timestamp - Date.now() ;
-		    binanceLag = binanceLag * .8 + measuredLag*.2;
-
-
             }
         };
 
-        wsbinanceAggTrade.onopen = function() {
-            console.log('binance AggTrade WebSocket is connected');
-        };
-
-        wsbinanceAggTrade.onmessage = function(event) {
+        wsBinanceAggTrade.onmessage = function(event) {
 	    const venue = 'binance futures';
             const message = JSON.parse(event.data);
-            if (message.e === "aggTrade" && message.s === `${coin}USDT`) {
+            if (message.e === "aggTrade" && message.s === `${coinParam}USDT`) {
                 const tradePrice = parseFloat(message.p);
                 const timestamp = message.T;
+
 	        addData(venue, 'trades', !message.m, timestamp, tradePrice); // binance Trades
             }
         };
 
-        wsbinanceBookTicker.onerror = function(error) {
-            console.error('binance BookTicker WebSocket Error: ', error);
-        };
-
-        wsbinanceBookTicker.onclose = function() {
-            console.log('binance BookTicker WebSocket is closed');
-        };
-
-        wsbinanceAggTrade.onerror = function(error) {
-            console.error('binance AggTrade WebSocket Error: ', error);
-        };
-
-        wsbinanceAggTrade.onclose = function() {
-            console.log('binance AggTrade WebSocket is closed');
-        };
-
-
-
-
-
-        wsbinanceSpotBookTicker.onopen = function() {
-            console.log('binanceSpot BookTicker WebSocket is connected');
-        };
-
-        wsbinanceSpotBookTicker.onmessage = function(event) {
+function updateBinanceLag(timestamp){
+ 		    let measuredLag = Date.now() - timestamp;
+		    binanceLag = binanceLag * .9 + measuredLag*.1;
+}
+        wsBinanceSpotOrderBook.onmessage = function(event) {
 		const venue = 'binance spot';
-            const message = JSON.parse(event.data);
-            const currentTime = Date.now();
-	            const timestamp = parseFloat(message.E);
-                     addData(venue,'bid-ask',true, timestamp, parseFloat(message.bids[0][0]));
-                    addData(venue,'bid-ask',false, timestamp, parseFloat(message.asks[0][0]));
+                const message = JSON.parse(event.data);
+                const currentTime = Date.now();
+	        const timestamp = currentTime - binanceLag;
+                    
+		addData(venue,'bid-ask', true, timestamp, parseFloat(message.bids[0][0]));
+                addData(venue,'bid-ask', false, timestamp, parseFloat(message.asks[0][0]));
 
-
-
-
-
-
-                    let sum = 0;
-                    let i = 0;
-                    while (i < message.bids.length && sum < reqLiq) {
-                        sum += parseFloat(message.bids[i][1]) * parseFloat(message.bids[i][0]);
-                        i++;
-                    }
-                    if (i <2 || sum >= reqLiq) {
-                        deepBid = parseFloat(message.bids[i-1][0]);
-                    } else if (message.bids.length > 0) {
-                        deepBid = parseFloat(message.bids[message.bids.length - 1][0]) / 1.01;
-                    }
-		    
-                    let sumA = 0;
-                    let iA = 0;
-                    while (iA < message.asks.length && sumA < reqLiq) {
-                        sumA += parseFloat(message.asks[iA][1]) * parseFloat(message.asks[iA][0]);
-                        iA++;
-                    }
-                    if (iA <2 || sumA >= reqLiq) {
-                        deepAsk = parseFloat(message.asks[iA-1][0]);
-                    } else if (message.asks.length > 0) {
-                        deepAsk = parseFloat(message.asks[message.asks.length - 1][0]) * 1.01;
-                    }
-                   
-		    addData(venue,'$5k spread',true, currentTime+binanceLag, deepBid);
-                    addData(venue,'$5k spread',false, currentTime+binanceLag, deepAsk);
-
-
-
+                const deepBid = getDepthPrice(message.bids);
+                addData(venue,'$5k spread',true, timestamp, deepBid);
+                const deepAsk = getDepthPrice(message.asks);
+                addData(venue,'$5k spread',false, timestamp, deepAsk);
+		console.log([deepAsk,deepBid])
         };
-
-        wsbinanceSpotAggTrade.onopen = function() {
-            console.log('binanceSpot AggTrade WebSocket is connected');
-        };
-
-        wsbinanceSpotAggTrade.onmessage = function(event) {
+ 
+        wsBinanceSpotAggTrade.onmessage = function(event) {
 	    const venue = 'binance spot';
             const message = JSON.parse(event.data);
-            if (message.e === "aggTrade" && message.s === `${coin}USDT`) {
+            if (message.e === "aggTrade" && message.s === `${coinParam}USDT`) {
                 const tradePrice = parseFloat(message.p);
                 const timestamp = message.T;
+	        updateBinanceLag(timestamp)
+
 	        addData(venue, 'trades', !message.m, timestamp, tradePrice); // binance Trades
             }
-        };
-
-
-
-
-        wsbinanceSpotBookTicker.onerror = function(error) {
-            console.error('binanceSpot BookTicker WebSocket Error: ', error);
-        };
-
-        wsbinanceSpotBookTicker.onclose = function() {
-            console.log('binanceSpot BookTicker WebSocket is closed');
-        };
-
-        wsbinanceSpotAggTrade.onerror = function(error) {
-            console.error('binanceSpot AggTrade WebSocket Error: ', error);
-        };
-
-        wsbinanceSpotAggTrade.onclose = function() {
-            console.log('binanceSpot AggTrade WebSocket is closed');
-        };
-
-
-
-
+        }; 
+ 
 function updateChart(currentTime) {
     const oldestAllowedTime = currentTime - dataWindow * 1.5;
 
@@ -751,9 +637,6 @@ function updateChart(currentTime) {
 }
 
         smoothScroll(); // Start the smooth scrolling
-
-
-
 
         function toggleDetails(button) {
             const details = document.getElementById('details');
@@ -833,9 +716,6 @@ function updateChart(currentTime) {
         // Initialize the slider value
         timeInterval.value = 60;
         timeInterval.dispatchEvent(new Event('input'));
-
-        const coinParam = urlParams.get('coin') || 'BTC'; 
-        const coins = ['AAVE', 'ACE', 'ADA', 'AI', 'ALT', 'APE', 'APT', 'AR', 'ARB', 'ARK', 'ATOM', 'AVAX', 'BADGER', 'BANANA', 'BCH', 'BIGTIME', 'BLUR', 'BLZ', 'BNB', 'BNT', 'BOME', 'BRETT', 'BSV', 'BTC', 'CAKE', 'CFX', 'COMP', 'CRV', 'CYBER', 'DOGE', 'DOT', 'DYDX', 'DYM', 'ENA', 'ENS', 'ETC', 'ETH', 'ETHFI', 'FET', 'FIL', 'FTM', 'FTT', 'FXS', 'GALA', 'GAS', 'GMT', 'GMX', 'HBAR', 'ILV', 'IMX', 'INJ', 'IO', 'JTO', 'JUP', 'KAS', 'LDO', 'LINK', 'LISTA', 'LOOM', 'LTC', 'MANTA', 'MATIC', 'MAV', 'MAVIA', 'MEME', 'MEW', 'MINA', 'MKR', 'MYRO', 'NEAR', 'NEO', 'NOT', 'NTRN', 'OGN', 'OMNI', 'ONDO', 'OP', 'ORBS', 'ORDI', 'PENDLE', 'PEOPLE', 'PIXEL', 'POLYX', 'POPCAT', 'PYTH', 'RDNT', 'RENDER', 'REZ', 'RSR', 'RUNE', 'SAGA', 'SEI', 'SNX', 'SOL', 'STG', 'STRAX', 'STRK', 'STX', 'SUI', 'SUPER', 'SUSHI', 'TAO', 'TIA', 'TNSR', 'TON', 'TRB', 'TRX', 'TURBO', 'UMA', 'UNI', 'USTC', 'W', 'WIF', 'WLD', 'XAI', 'XRP', 'YGG', 'ZEN', 'ZETA', 'ZK', 'ZRO'];
 
         $(document).ready(function() {
             $('#coinInput').val(coinParam);
