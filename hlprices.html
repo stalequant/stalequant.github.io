@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyperliquid Point Value</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bs-primary: rgb(80, 210, 193);
+        }
+        body {
+            background-color: #F6FEFD;
+            color: #000;
+        }
+        .table {
+            color: #fff;
+        }
+        .table thead th {
+            color: var(--bs-primary);
+        }
+        .accent-color {
+            color: var(--bs-primary);
+        }
+        .emoji {
+            margin-right: 5px;
+            font-size: 14px;
+        }
+        a {
+            color: var(--bs-primary);    
+	    text-decoration: underline;
+        }
+        h1 {
+            font-family: 'OurFont', sans-serif;
+            color: #000;
+        }
+        .disclaimer {
+            font-size: 0.9em;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .github-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <table class="table table-dark table-striped">
+	<thead>
+<tr><th><div class="text-center "><p class="fs-5">Hyperliquid Point Value</p></div >
+</th></tr>
+
+<tr><td>
+
+        <div class="disclaimer">
+            These prices are for reference only. Listing is not constitute endorsement or financial advice. This was put together by <a href="https://twitter.com/stalequant" target="_blank">stalequant</a> who is not affiliated with <a href="https://hyperliquid.xyz" target="_blank">hyperliquid.xyz</a>.
+        </div>
+
+
+</td></tr>
+
+</thead></table>
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Source</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a></td>
+                    <td>Market</td>
+                    <td id="bubblyPrice">Loading...</td>
+                    <td id="bubblyStatus">Loading...</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a></td>
+                    <td>Market</td>
+                    <td id="whalesPrice">Loading...</td>
+                    <td id="whalesStatus">Loading...</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji">🔴</span><a href="https://hook.xyz/trade?orderType=MARKET&orderDirection=BUY&asset=HYPT&instrument=PERPETUAL" target="_blank">hook.xyz</a></td>
+                    <td>Market</td>
+                    <td id="hookPrice">Not implemented</td>
+                    <td id="hookStatus">-</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a></td>
+                    <td>Market</td>
+                    <td>Not implemented</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji">🟢</span><a href="https://twitter.com/stevenyuntcap/status/1828267383703920847" target="_blank">steven.hl</a></td>
+                    <td>Prediction</td>
+                    <td>$5-$10</td>
+                    <td>Non-live</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair</a></td>
+                    <td>Moon Math</td>
+                    <td>$800</td>
+                    <td>Non-live</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji">🟢</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod</a></td>
+                    <td>OTC</td>
+                    <td>Negotiated</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji">🟢</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick</a></td>
+                    <td>OTC</td>
+                    <td>Negotiated</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function fetchBubblyData() {
+            try {
+                const response = await fetch('https://api.bubbly.finance/data/v1/42161/price?address=0x807125cD6599d1f7CA5529dB78951A2828E2A948');
+                const data = await response.json();
+                document.getElementById('bubblyPrice').textContent = `$${parseFloat(data.data.usdPrice).toFixed(4)}`;
+                document.getElementById('bubblyStatus').textContent = 'Success';
+            } catch (error) {
+                document.getElementById('bubblyPrice').textContent = 'Error';
+                document.getElementById('bubblyStatus').textContent = 'Failed';
+            }
+        }
+
+        async function fetchWhalesData() {
+            try {
+                const response = await fetch('https://api-v2.whales.market/v2/offers?symbol=Hyperliquid&status=open&take=2');
+                const data = await response.json();
+                const firstOffer = data.data.list[0].offer_price_usd.toFixed(4);
+                const secondOffer = data.data.list[1].offer_price_usd.toFixed(4);
+                document.getElementById('whalesPrice').textContent = `$${secondOffer} - $${firstOffer}`;
+                document.getElementById('whalesStatus').textContent = 'Success';
+            } catch (error) {
+                document.getElementById('whalesPrice').textContent = 'Error';
+                document.getElementById('whalesStatus').textContent = 'Failed';
+            }
+        }
+
+        async function fetchHookData() {
+            try {
+                const query = `
+                    query {
+                        assets {
+                            id
+                            baseCurrency
+                            supportedInstrumentTypes
+                            name
+                            symbol
+                            preferredSubaccount
+                            marketHash
+                            mmBips
+                            imBips
+                        }
+                    }
+                `;
+
+                const requestBody = JSON.stringify({
+                    query: query,
+                    variables: {}
+                });
+
+                console.log('Hook API request:', {
+                    url: 'https://api-prod.hook.xyz/query',
+                    headers: {
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+			'Origin': 'https://hook.xyz',
+			'Referer': 'https://hook.xyz'
+                    },
+                    body: requestBody
+                });
+
+                const response = await fetch('https://goerli-api.hookdev.xyz/query', {
+                    method: 'POST',
+                    headers: {
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Connection': 'keep-alive'
+                    },
+                    body: requestBody
+                });
+
+                const data = await response.json();
+                console.log('Hook API response:', data);
+
+                // For demonstration purposes, we'll just display the number of assets returned
+                const assetCount = data.data.assets.length;
+                document.getElementById('hookPrice').textContent = `${assetCount} assets found`;
+                document.getElementById('hookStatus').textContent = 'Success';
+            } catch (error) {
+                console.error('Error fetching Hook data:', error);
+                document.getElementById('hookPrice').textContent = 'Error';
+                document.getElementById('hookStatus').textContent = 'Failed';
+            }
+        }
+
+        fetchBubblyData();
+        fetchWhalesData();
+        //fetchHookData();
+    </script>
+</body>
+</html>
+
