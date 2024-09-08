@@ -67,7 +67,7 @@
                 <tr>
                     <th style="width:40%;">Source</th>
                     <th style="width:20%;">Type</th>
-                    <th style="width:20%;">Price</th>
+                    <th style="width:20%;" colspan="3">Price</th>
                     <th style="width:20%;">Status</th>
                 </tr>
             </thead>
@@ -75,56 +75,70 @@
                 <tr>
                     <td><span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a></td>
                     <td>Market</td>
-                    <td id="bubblyPrice">Loading...</td>
+                    <td id="bubblyBid">-</td>
+                    <td>-</td>
+                    <td id="bubblyAsk">-</td>
                     <td id="bubblyStatus">Loading...</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a></td>
                     <td>Market</td>
-                    <td id="whalesPrice">Loading...</td>
+                    <td id="whalesBid">-</td>
+                    <td>-</td>
+                    <td id="whalesAsk">-</td>
                     <td id="whalesStatus">Loading...</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🔴</span><a href="https://hook.xyz/trade?orderType=MARKET&orderDirection=BUY&asset=HYPT&instrument=PERPETUAL" target="_blank">hook.xyz</a></td>
                     <td>Market</td>
-                    <td id="hookPrice">Not implemented</td>
-                    <td id="hookStatus">-</td>
+                    <td id="hookBid">-</td>
+                    <td>-</td>
+                    <td id="hookAsk">-</td>
+                    <td id="hookStatus">N/A</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a></td>
                     <td>Market</td>
-                    <td>Not implemented</td>
+                    <td id="hypurrBid">-</td>
                     <td>-</td>
+                    <td id="hypurrAsk">-</td>
+                    <td>N/A</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl</a></td>
                     <td>Prediction</td>
-                    <td>$5 - $10</td>
+                    <td >$5.00</td>
+                    <td>-</td>
+                    <td >$10.00</td>
                     <td>Non-live</td>
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair</a></td>
                     <td>Moon Math</td>
-                    <td>$799.00 - $800.00 </td>
+                    <td >$799.00</td>
+                    <td>-</td>
+                    <td >$800.00</td>
                     <td>Non-live</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL</a></td>
                     <td>Moon Math</td>
-                    <td>$30.00 - $86.00</td>
+                    <td >$30.00</td>
+                    <td>-</td>
+                    <td >$86.00</td> 
                     <td>Non-live</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod</a></td>
                     <td>OTC</td>
-                    <td>Negotiated</td>
+                    <td colspan="3">Negotiated</td>
                     <td>-</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick</a></td>
                     <td>OTC</td>
-                    <td>Negotiated</td>
+                    <td colspan="3">Negotiated</td>
                     <td>-</td>
                 </tr>
             </tbody>
@@ -145,7 +159,8 @@
                 if (balancedRange) {
                     const lowerPrice = parseFloat(balancedRange.lowerPrice) * 1e12;
                     const upperPrice = parseFloat(balancedRange.upperPrice) * 1e12;
-                    document.getElementById('bubblyPrice').textContent = `$${lowerPrice.toFixed(2)} - $${upperPrice.toFixed(2)}`;
+                    document.getElementById('bubblyBid').textContent = `$${lowerPrice.toFixed(2)}`;
+                    document.getElementById('bubblyAsk').textContent = `$${upperPrice.toFixed(2)}`;
                     document.getElementById('bubblyStatus').textContent = 'Success';
                 } else {
                     throw new Error('Balanced range not found');
@@ -168,13 +183,13 @@
                     console.log('Bubbly price is less than $0.1, triggering fallback');
                     await fetchBubblyFallback();
                 } else {
-                    document.getElementById('bubblyPrice').textContent = `$${price.toFixed(2)}`;
+                    document.getElementById('bubblyBid').textContent = `$${price.toFixed(2)}`;
+                    document.getElementById('bubblyAsk').textContent = `$${price.toFixed(2)}`;
                     document.getElementById('bubblyStatus').textContent = 'Success';
                 }
 		    
             } catch (error) {
                 console.error('Error fetching Bubbly fallback data:', error);
-                document.getElementById('bubblyPrice').textContent = 'Error';
                 document.getElementById('bubblyStatus').textContent = 'Failed';
             }
         }
@@ -184,15 +199,15 @@
                 const responseBids = await fetch('https://api-v2.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=buy&take=2');
                 const dataBids = await responseBids.json();
                 const bestBid = dataBids.data.list[0].offer_price_usd.toFixed(2);
+                document.getElementById('whalesBid').textContent = `$${bestBid}`;
 		    
                 const responseAsks = await fetch('https://api-v2.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=sell&take=2');
                 const dataAsks = await responseAsks.json();
                 const bestAsk = dataAsks.data.list[0].offer_price_usd.toFixed(2);
+                document.getElementById('whalesAsk').textContent = `$${bestAsk}`;
 
-                document.getElementById('whalesPrice').textContent = `$${bestBid} - $${bestAsk}`;
                 document.getElementById('whalesStatus').textContent = 'Success';
             } catch (error) {
-                document.getElementById('whalesPrice').textContent = 'Error';
                 document.getElementById('whalesStatus').textContent = 'Failed';
             }
         }
