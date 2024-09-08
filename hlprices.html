@@ -65,10 +65,10 @@
         <table class="table table-dark table-striped">
             <thead>
                 <tr>
-                    <th>Source</th>
-                    <th>Type</th>
-                    <th>Price</th>
-                    <th>Status</th>
+                    <th style="width:40%;">Source</th>
+                    <th style="width:20%;">Type</th>
+                    <th style="width:20%;">Price</th>
+                    <th style="width:20%;">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -146,7 +146,7 @@
                     const lowerPrice = parseFloat(balancedRange.lowerPrice) * 1e12;
                     const upperPrice = parseFloat(balancedRange.upperPrice) * 1e12;
                     document.getElementById('bubblyPrice').textContent = `$${lowerPrice.toFixed(2)} - $${upperPrice.toFixed(2)}`;
-                    document.getElementById('bubblyStatus').textContent = 'Fallback Success';
+                    document.getElementById('bubblyStatus').textContent = 'Success';
                 } else {
                     throw new Error('Balanced range not found');
                 }
