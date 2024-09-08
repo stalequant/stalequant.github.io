@@ -26,9 +26,15 @@
             margin-right: 5px;
             font-size: 14px;
         }
+        price-cell {
+            text-align: right;
+        }
+        price-neg {
+            text-align: center;
+        }
         a {
             color: var(--bs-primary);    
-	    text-decoration: underline;
+            text-decoration: underline;
         }
         h1 {
             font-family: 'OurFont', sans-serif;
@@ -55,7 +61,10 @@
 <tr><td>
 
         <div class="disclaimer">
-            These prices are for reference only. Listing is not constitute endorsement or financial advice. This was put together by <a href="https://twitter.com/stalequant" target="_blank">stalequant</a> who is not affiliated with <a href="https://hyperliquid.xyz" target="_blank">hyperliquid.xyz</a>.
+            These prices are for reference only. 
+            Listing is not constitute endorsement or financial advice. 
+            This was put together by <a href="https://twitter.com/stalequant" target="_blank">stalequant</a> 
+            who is not affiliated with <a href="https://hyperliquid.xyz" target="_blank">hyperliquid.xyz</a>.
         </div>
 
 
@@ -67,7 +76,7 @@
                 <tr>
                     <th style="width:30%;">Source</th>
                     <th style="width:20%;">Type</th>
-                    <th style="width:30%;" colspan="3">Price</th>
+                    <th style="width:30%; text-align: center;" colspan="3">Price</th>
                     <th style="width:20%;">Status</th>
                 </tr>
             </thead>
@@ -75,71 +84,71 @@
                 <tr>
                     <td><span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a></td>
                     <td>Market</td>
-                    <td id="bubblyBid">-</td>
+                    <td id="bubblyBid" class="price-cell">-</td>
                     <td>-</td>
-                    <td id="bubblyAsk">-</td>
+                    <td id="bubblyAsk" class="price-cell">-</td>
                     <td id="bubblyStatus">Loading...</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a></td>
                     <td>Market</td>
-                    <td id="whalesBid">-</td>
+                    <td id="whalesBid" class="price-cell">-</td>
                     <td>-</td>
-                    <td id="whalesAsk">-</td>
+                    <td id="whalesAsk" class="price-cell">-</td>
                     <td id="whalesStatus">Loading...</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🔴</span><a href="https://hook.xyz/trade?orderType=MARKET&orderDirection=BUY&asset=HYPT&instrument=PERPETUAL" target="_blank">hook.xyz</a></td>
                     <td>Market</td>
-                    <td id="hookBid">-</td>
+                    <td id="hookBid" class="price-cell">-</td>
                     <td>-</td>
-                    <td id="hookAsk">-</td>
+                    <td id="hookAsk" class="price-cell">-</td>
                     <td id="hookStatus">N/A</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a></td>
                     <td>Market</td>
-                    <td id="hypurrBid">-</td>
+                    <td id="hypurrBid" class="price-cell">-</td>
                     <td>-</td>
-                    <td id="hypurrAsk">-</td>
+                    <td id="hypurrAsk" class="price-cell">-</td>
                     <td>N/A</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl</a></td>
                     <td>Prediction</td>
-                    <td >$5.00</td>
+                    <td class="price-cell" >$5.00</td>
                     <td>-</td>
-                    <td >$10.00</td>
-                    <td>Non-live</td>
+                    <td class="price-cell" >$10.00</td>
+                    <td>N/A</td>
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair</a></td>
                     <td>Moon Math</td>
-                    <td >$799.00</td>
+                    <td class="price-cell" >$799.00</td>
                     <td>-</td>
-                    <td >$800.00</td>
-                    <td>Non-live</td>
+                    <td class="price-cell" >$800.00</td>
+                    <td>N/A</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL</a></td>
                     <td>Moon Math</td>
-                    <td >$30.00</td>
+                    <td  class="price-cell">$30.00</td>
                     <td>-</td>
-                    <td >$86.00</td> 
-                    <td>Non-live</td>
+                    <td  class="price-cell">$86.00</td> 
+                    <td>N/A</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod</a></td>
                     <td>OTC</td>
-                    <td colspan="3">Negotiated</td>
-                    <td>-</td>
+                    <td colspan="3" class="price-neg">Negotiated</td>
+                    <td>N/A</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick</a></td>
                     <td>OTC</td>
-                    <td colspan="3">Negotiated</td>
-                    <td>-</td>
+                    <td colspan="3" class="price-neg">Negotiated</td>
+                    <td>N/A</td>
                 </tr>
             </tbody>
         </table>
