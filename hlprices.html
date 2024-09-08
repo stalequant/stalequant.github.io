@@ -177,11 +177,15 @@
 
         async function fetchWhalesData() {
             try {
-                const response = await fetch('https://api-v2.whales.market/v2/offers?symbol=Hyperliquid&status=open&take=2');
-                const data = await response.json();
-                const firstOffer = data.data.list[0].offer_price_usd.toFixed(4);
-                const secondOffer = data.data.list[1].offer_price_usd.toFixed(4);
-                document.getElementById('whalesPrice').textContent = `$${secondOffer} - $${firstOffer}`;
+                const responseBids = await fetch('https://api-v2.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=buy&take=2');
+                const dataBids = await responseBids.json();
+                const bestBid = dataBids.data.list[0].offer_price_usd.toFixed(2);
+		    
+                const responseAsks = await fetch('https://api-v2.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=sell&take=2');
+                const dataAsks = await responseAsks.json();
+                const bestAsk = dataAsks.data.list[0].offer_price_usd.toFixed(2);
+
+                document.getElementById('whalesPrice').textContent = `$${bestBid} - $${bestAsk}`;
                 document.getElementById('whalesStatus').textContent = 'Success';
             } catch (error) {
                 document.getElementById('whalesPrice').textContent = 'Error';
