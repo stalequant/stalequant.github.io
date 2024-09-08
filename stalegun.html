@@ -11,134 +11,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <style>
-	body {
-	    margin:20px;
-}
-        #chart-container {
-            width: 100%;
-            height: 400px;
-            position: relative;
-        }
-        #watermark {
-            position: absolute;
-            font-size: 48px;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-        #custom-legend {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-right: 25px;
-            cursor: pointer;
-        }
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-        }
-        .operation-form {
-            margin-top: 20px;
-        }
-        .form-row {  
-            display: flex;
-            align-items: center;
-        } 
-        .form-row label {
-            display: inline-block;
-            min-width: 100px;
-        }
-        button {
-            margin-right: 10px;
-            padding: 10px 20px;
-            border: none;
-            font-size: .8em;
-            transition: background-color 0.3s;
-            text-transform: uppercase;
-        }
-        button.selected {
-            background-color: #5a6d9e;
-        }
- 
-        .button-group button {
-            flex: 1;
-        }
-        .expandable { 
-            padding: 10px;
-            display: none;
-            margin-top: 5px;
-        }
-        .expandable div {
-            margin-bottom: 10px;
-        }
-        .expandable p {
-            display: inline-block;
-            margin-right: 10px;
-            margin-bottom: 0;
-        }
-        .expandable button {
-            margin: 2px;
-            padding: 5px 10px;
-        }
-
-        .action-buttons button {
-            margin-top: 15px;
-            text-decoration: line-through;
-            padding: 10px 20px;
-            font-size: 1em;
-            background-color: #5a6d9e;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #444;
-        }
-
-        .cancel-button {
-            background-color: #722;
-            color: #fff;
-            padding: 5px 10px;
-        }
-        .cancel-all-button {
-            background-color: #722;
-            color: #fff;
-            padding: 5px 10px;
-            margin: 0;
-        }
-
-	.ui-autocomplete {
-            border: 1px solid #555;
-            max-height: 200px;
-            overflow-y: auto;
-        }
- 
-
-        #coinInput {
-            width: 120px;
-            border: 1px solid #555;
-            padding: 5px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="stalegun_styles.css">
 </head>
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-<div >
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <div class="operation-form">
         <div class="form-row">
-            <label>stalegun aimed at </label>
- <input type="text" id="coinInput" placeholder="BTC" style="margin:10px;"></input>
-</div></div>
+            <label>stalegun targeting at </label>
+            <input type="text" id="coinInput" placeholder="BTC" style="margin:10px;"></input>
+        </div>
+    </div>   
 
     <div id="chart-container">
         <div id="watermark">stalequant.github.io/</div>
@@ -148,544 +30,58 @@
 
     <div class="operation-form">
         <div class="form-row">
- <label  >
-order stalegun airstrike 
-</label>
-	</div>
+            <label  >
+            order stalegun airstrike 
+            </label>
+	    </div>
         <div class="form-row">
             <label>what?</label>
             <div class="button-group">
-                <button onclick="setOperation('buy', this)">BUY</button>
+                <button class="selected"  onclick="setOperation('buy', this)">BUY</button>
                 <button onclick="setOperation('sell', this)">SELL</button>
             </div>
-            <input type="number" id="quantity" placeholder="quantity" style="  margin-left: 10px;">
-            <input type="number" id="dollars" placeholder="dollars" style="  margin-left: 10px;">     
+            <input type="number" id="quantity" placeholder="quantity">
+            <input type="number" id="dollars" placeholder="dollars">     
         </div>
         </div>
         <div class="form-row">            <label>over:</label>
             <input type="range" id="timeInterval" min="0" max="100" value="50">
             <span id="timeIntervalValue">12 hours</span>
         </div>
-        <div class="form-row ppp">
-            <label>how?</label>
-            <div class="button-group">
-                <button onclick="setAdaptive('adaptive', this)">ADAPTIVE</button>
-                <button onclick="setAdaptive('aggressive', this)">AGGRESSIVE</button>
-                <button onclick="setAdaptive('price', this)">CHEAPEST</button>
-                <button onclick="toggleDetails(this)">CUSTOM</button>
-            </div>
-        </div>
-
-        <div id="details" class="expandable">
-            <div>
-                <p>taker:</p>
-                <button onclick="toggleDetail(this)">HIDDEN TWAP</button>
-                <button onclick="toggleDetail(this)">PSEUDO-VWAP</button>
-                <button onclick="toggleDetail(this)">SNIPE LIMITS</button>
-            </div>
-            <div>
-                <p>maker:</p>
-                <button onclick="toggleDetail(this)">TOP OF THE BOOK</button>
-                <button onclick="toggleDetail(this)">DEEP BOOK</button>
-            </div>
-            <div>
-                <p>offchain:</p>
-                <button onclick="toggleDetail(this)">MATCH WITH OTHER USERS</button>
-                <button onclick="toggleDetail(this)">DARK POOLS</button>
-                <button onclick="toggleDetail(this)">RFQ</button>
-            </div>
-        </div>
         <div class="form-row action-buttons">
-            <button>DEMO IT</button>
             <button>DO IT</button>
-<label>(canceled because i fear litiguous burgers)</label>
+            <label>(canceled because i fear litiguous burgers)</label>
         </div>
     </div>
 
     <div class="operation-form">
- <div  class = "form form-row">
-existing stalegun airstrikes 
-</div> 
- <div  class = "form form-row" style="width:100%">
-    <table>
-        <tr>
-            <th>operation</th>
-            <th>done</th>
-            <th>of</th>
-            <th>after</th>
-            <th>of</th>
-            <th>at price</th>
-            <th><button class="bg-danger" onclick="cancelAllOperations()">CANCEL ALL</button></th>
-        </tr>
-    </table>
-</div>
-</div>
-</div>
+        <div  class = "form form-row">
+            existing stalegun airstrikes 
+        </div> 
+        <div  class = "form form-row" style="width:100%">
+            <table>
+                <tr>
+                    <th>operation</th>
+                    <th>done</th>
+                    <th>of</th>
+                    <th>after</th>
+                    <th>of</th>
+                    <th>at price</th>
+                    <th><button class="bg-danger" onclick="cancelAllOperations()">CANCEL ALL</button></th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script src="stalegun_chart.js"></script>
+    <script src="stalegun_ui.js"></script>
+    <script src="stalegun_hyperliquiddata.js"></script>
+    <script src="stalegun_binancedata.js"></script>
+    <script src="stalegun_procdata.js"></script>
 
     <script>
+        hl_listeners = []
+        binance_listeners = []
 
-const exchanges = ['hyperliquid', 'binance futures', 'binance spot'];
-
-const datasetTypes = ['trades', 'bid-ask', '$5k spread'];
-
-const buyOptions = [true, false];
-const reqLiq = 5000;
-const dataWindow = 30000; // 30 seconds of data
-
-const stepSizeMs = 10000; // 5 second
-
-// Get the coin from URL parameters
-const urlParams = new URLSearchParams(window.location.search);
-
-
-const coinParam = urlParams.get('coin') || 'BTC'; 
-const coins = ['AAVE', 'ACE', 'ADA', 'AI', 'ALT', 'APE', 'APT', 'AR', 'ARB', 'ARK', 'ATOM', 'AVAX', 'BADGER', 'BANANA', 'BCH', 'BIGTIME', 'BLUR', 'BLZ', 'BNB', 'BNT', 'BOME', 'BRETT', 'BSV', 'BTC', 'CAKE', 'CFX', 'COMP', 'CRV', 'CYBER', 'DOGE', 'DOT', 'DYDX', 'DYM', 'ENA', 'ENS', 'ETC', 'ETH', 'ETHFI', 'FET', 'FIL', 'FTM', 'FTT', 'FXS', 'GALA', 'GAS', 'GMT', 'GMX', 'HBAR', 'ILV', 'IMX', 'INJ', 'IO', 'JTO', 'JUP', 'KAS', 'LDO', 'LINK', 'LISTA', 'LOOM', 'LTC', 'MANTA', 'MATIC', 'MAV', 'MAVIA', 'MEME', 'MEW', 'MINA', 'MKR', 'MYRO', 'NEAR', 'NEO', 'NOT', 'NTRN', 'OGN', 'OMNI', 'ONDO', 'OP', 'ORBS', 'ORDI', 'PENDLE', 'PEOPLE', 'PIXEL', 'POLYX', 'POPCAT', 'PYTH', 'RDNT', 'RENDER', 'REZ', 'RSR', 'RUNE', 'SAGA', 'SEI', 'SNX', 'SOL', 'STG', 'STRAX', 'STRK', 'STX', 'SUI', 'SUPER', 'SUSHI', 'TAO', 'TIA', 'TNSR', 'TON', 'TRB', 'TRX', 'TURBO', 'UMA', 'UNI', 'USTC', 'W', 'WIF', 'WLD', 'XAI', 'XRP', 'YGG', 'ZEN', 'ZETA', 'ZK', 'ZRO'];
-
-
-const colorHL = '#44BEA4';
-const colorBN = '#FF8424';
-const colorBNS = '#A444BE';
-const colorDark = '#FFFFFF11';
-const colorTrans = '#000000';
-
-var hiddenLines = ['bid-ask']; 
-const venueDtypeMapping = {};
-	
-const locToStr = ( venue, dtype, side) =>{
-	return venue + 'x' +dtype+ 'x' + (side? 'b':'s');
-}
-
-const addData = (venue, dtype, side, time, value)  => {
-        firstPoint = Math.min(firstPoint, time)
-	
-	venueDtypeMapping[locToStr(venue, dtype, side)].data.push({x: time, y: value});
-}
-
-const createUnifiedDataset = (venue, dtype, buy) => {
-  let color;
-  switch (venue) {
-    case 'hyperliquid':
-      color = colorHL;
-      break;
-    case 'binance futures':
-      color = colorBN;
-      break;
-    case 'binance spot':
-      color = colorBNS;
-      break;
-    default:
-      console.warn(`Unknown venue: ${venue}`);
-      color = '#000000'; // Default color
-  }
-
-  const baseDataset = {
-    venue,
-    dtype,
-    data: [],
-    borderColor: color,
-    borderWidth: 2,
-    pointRadius: 0,
-    stepped: true
-  };
-
-  let specificDataset = {};
-
-  switch (dtype) {
-    case 'trades':
-      specificDataset = {
-        pointRadius: 7,
-        pointStyle: 'triangle',
-        pointBackgroundColor: colorTrans,
-        pointRotation: buy ? 0 : 180,
-        showLine: false
-      };
-      break;
-    case 'bid-ask':
-    case '$5k spread':
-      specificDataset = {
-        backgroundColor: `${color}10`,
-        borderColor: `${color}77`,
-        borderWidth: 2,
-        fill: buy ? "+1" : "-1"
-      };
-      break;
-    default:
-      console.warn(`Unknown dtype: ${dtype}`);
-  }
-
-  const newDataset = { ...baseDataset, ...specificDataset };
-  venueDtypeMapping[locToStr(venue, dtype, buy)] = newDataset;
-  return newDataset;
-};
-
-const datasets = exchanges.flatMap(exchange => 
-  datasetTypes.flatMap(dtype => 
-    buyOptions.map(buy => createUnifiedDataset(exchange, dtype, buy))
-  )
-)  
-
-function customTickGenerator(min, max, stepSize) {
-    const ticks = [];
-    let curr = Math.ceil(0.25 + min / stepSize) * stepSize;
-    while (curr <= max - stepSize/4) {
-        ticks.push({
-            value: curr,
-            label: new Date(curr).toISOString(),  // Or any other format you prefer
-            major: false
-        });
-        curr += stepSize;
-    }
-    return ticks;
-}
-
-function updateChartData(chart) {
-        for (let i = 0; i < chart.data.datasets.length; i++) {
-        	const meta = chart.getDatasetMeta(i);
-	        meta.hidden = hiddenLines.includes(meta._dataset.venue) || hiddenLines.includes(meta._dataset.dtype);
-        }        
-	chart.update();
-}
-
-Chart.defaults.color = '#FFFFFF';
-
-const ctx = document.getElementById('coinChart').getContext('2d');
-ctx.globalCompositeOperation = 'destination-over';
-
-const coinChart = new Chart(ctx, {
-    type: 'line',
-    data: { datasets: datasets },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        scales: {
-            x: {
-                type: 'time',
-                time: {
-                    unit: 'second',
-                    displayFormats: {
-                        second: 'HH:mm:ss'
-                    },
-                },
-                ticks: {
-                    source: 'data',
-                    autoSkip: false,
-                    maxRotation: 0,
-                },
-                afterBuildTicks: function(scale) {
-                    scale.ticks = customTickGenerator(scale.min, scale.max, stepSizeMs);
-                },
-		grid: { 
-		    color: colorDark
-		},
-            },
-            y: {
-		grid: { 
-		    color: colorDark
-		},
-            }
-        },
-        plugins: {
-            tooltip: {
-                enabled: false
-            },
-            legend: {
-                display: false
-            }
-        }
-    }
-});
-
-// Custom legend
-const legendItems = [
-    { text: 'hyperliquid', color: colorHL, style: 'square'},
-    { text: 'binance futures', color: colorBN, style: 'square'},
-    { text: 'binance spot', color: colorBNS, style: 'square'},
-    { text: 'trades', color: 'white', style: 'circle' },
-    { text: '$5k spread', color: 'rgba(255,255,255,0.3)', style: 'square' },
-    { text: 'bid-ask', color: 'rgba(255,255,255,0.3)', style: 'square'}
-];
-
-const legendContainer = document.getElementById('custom-legend');
-legendItems.forEach((item, index) => {
-    const legendItem = document.createElement('div');
-    legendItem.className = 'legend-item';
-    
-    const color = document.createElement('div');
-    color.className = 'legend-color';
-    color.style.backgroundColor = item.color;
-
-    const text = document.createElement('span');
-    text.className = 'legend-text';
-    text.textContent = item.text;
-    
-    legendItem.appendChild(color);
-    legendItem.appendChild(text);
-    legendContainer.appendChild(legendItem);
-    
-    legendItem.onclick = function() {
-        const itemText = item.text;
-        if (hiddenLines.includes(itemText)) {
-            hiddenLines = hiddenLines.filter(elem => elem !== itemText);
-        } else { 
-            hiddenLines.push(itemText);
-        }
-        
-        updateChartData(coinChart);
-
-    };
-});
-
-updateChartData(coinChart);
-      
-const wsHyperliquid = new WebSocket('wss://api.hyperliquid.xyz/ws');
-const wsBinanceOrderBook = new WebSocket(`wss://fstream.binance.com/ws/${coinParam.toLowerCase()}usdt@depth20@100ms`);
-const wsBinanceAggTrade = new WebSocket(`wss://fstream.binance.com/ws/${coinParam.toLowerCase()}usdt@aggTrade`);
-const wsBinanceSpotOrderBook = new WebSocket(`wss://stream.binance.com:443/ws/${coinParam.toLowerCase()}usdt@depth20@100ms`);
-const wsBinanceSpotAggTrade = new WebSocket(`wss://stream.binance.com:443/ws/${coinParam.toLowerCase()}usdt@aggTrade`);
-
-const startTime = Date.now();
-var binanceLag = 0;
-var hyperliquidFirstCall = true;
-var firstPoint = Date.now()+120;
-
-function getDepthPrice(orders) {
-    let sum = 0;
-    let i = 0;
-    while (i < orders.length) {
-        sum += parseFloat(orders[i][1]) * parseFloat(orders[i][0]);
-        if (sum > reqLiq) {
-            return parseFloat(orders[i][0]);
-        }
-        i++;
-    }
-    return parseFloat(orders[orders.length - 1][1]) / 1.01;
-}
-
-wsHyperliquid.onopen = function() {
-    wsHyperliquid.send(JSON.stringify({
-        "method": "subscribe",
-        "subscription": { "type": "l2Book", "coin": coinParam }
-    }));
-    wsHyperliquid.send(JSON.stringify({
-        "method": "subscribe",
-        "subscription": { "type": "trades", "coin": coinParam }
-    }));
-};
-
-wsHyperliquid.onmessage = function(event) {
-    const venue = 'hyperliquid';
-    const message = JSON.parse(event.data);
-
-    if (message.channel === "l2Book" && message.data.coin === coinParam) {
-        const timestamp = parseFloat(message.data.time);
-        const levels = message.data.levels;
-        if (levels && levels.length >= 2) {
-            addData(venue, 'bid-ask', true, timestamp, parseFloat(levels[0][0].px));
-            addData(venue, 'bid-ask', false, timestamp, parseFloat(levels[1][0].px));
-
-            const deepBid = getDepthPrice(levels[0].map(item => [item.px, item.sz]));
-            addData(venue, '$5k spread', true, timestamp, deepBid);
-
-            const deepAsk = getDepthPrice(levels[1].map(item => [item.px, item.sz]));
-            addData(venue, '$5k spread', false, timestamp, deepAsk);
-        }
-    }
-
-    if (message.channel === "trades" && message.data.length > 0) {
-        if (hyperliquidFirstCall){
-		hyperliquidFirstCall = false;
-		return
-	}
-        message.data.forEach(trade => {
-            if (trade.coin === coinParam) {
-                const tradePrice = parseFloat(trade.px);
-                const timestamp = trade.time;
-                addData(venue, 'trades', trade.side === "B", timestamp, tradePrice);
-            }
-        });
-    }
-};
-  
-        wsBinanceOrderBook.onmessage = function(event) {
-            const message = JSON.parse(event.data);
-	    let venue = 'binance futures';
-
-            if (message.e === "depthUpdate" && message.s === `${coinParam}USDT`) {	
-	            const timestamp = parseFloat(message.E);
-		    updateBinanceLag(timestamp)
-
-                    addData(venue,'bid-ask',true, timestamp, parseFloat(message.b[0][0]));
-                    addData(venue,'bid-ask',false, timestamp, parseFloat(message.a[0][0]));
-
-                    const deepBid = getDepthPrice(message.b);
-                    addData(venue,'$5k spread',true, timestamp, deepBid);
-                    const deepAsk = getDepthPrice(message.a);
-                    addData(venue,'$5k spread',false, timestamp, deepAsk);
-            }
-        };
-
-        wsBinanceAggTrade.onmessage = function(event) {
-	    const venue = 'binance futures';
-            const message = JSON.parse(event.data);
-            if (message.e === "aggTrade" && message.s === `${coinParam}USDT`) {
-                const tradePrice = parseFloat(message.p);
-                const timestamp = message.T;
-
-	        addData(venue, 'trades', !message.m, timestamp, tradePrice); // binance Trades
-            }
-        };
-
-function updateBinanceLag(timestamp){
- 		    let measuredLag = Date.now() - timestamp;
-		    binanceLag = binanceLag * .9 + measuredLag*.1;
-}
-        wsBinanceSpotOrderBook.onmessage = function(event) {
-		const venue = 'binance spot';
-                const message = JSON.parse(event.data);
-                const currentTime = Date.now();
-	        const timestamp = currentTime - binanceLag;
-                    
-		addData(venue,'bid-ask', true, timestamp, parseFloat(message.bids[0][0]));
-                addData(venue,'bid-ask', false, timestamp, parseFloat(message.asks[0][0]));
-
-                const deepBid = getDepthPrice(message.bids);
-                addData(venue,'$5k spread',true, timestamp, deepBid);
-                const deepAsk = getDepthPrice(message.asks);
-                addData(venue,'$5k spread',false, timestamp, deepAsk);
-
-        };
- 
-        wsBinanceSpotAggTrade.onmessage = function(event) {
-	    const venue = 'binance spot';
-            const message = JSON.parse(event.data);
-            if (message.e === "aggTrade" && message.s === `${coinParam}USDT`) {
-                const tradePrice = parseFloat(message.p);
-                const timestamp = message.T;
-	        updateBinanceLag(timestamp)
-
-	        addData(venue, 'trades', !message.m, timestamp, tradePrice); // binance Trades
-            }
-        }; 
- 
-function updateChart(currentTime) {
-    const oldestAllowedTime = currentTime - dataWindow * 1.5;
-
-    coinChart.data.datasets.forEach(dataset => {
-        let i = 0;
-        while (i < dataset.data.length && dataset.data[i].x < oldestAllowedTime) {
-            i++;
-        }
-        if (i > 0) {
-            dataset.data.splice(0, i);
-        }
-    });
-
-    coinChart.options.scales.x.min = Math.max(firstPoint, currentTime - dataWindow);
-    coinChart.options.scales.x.max = currentTime;
-
-    coinChart.update('none');
-}
-
-        // Smooth scrolling update loop
-        function smoothScroll() {
-    const currentTime = Date.now();
-    updateChart(currentTime);
-    requestAnimationFrame(smoothScroll);
-}
-
-        smoothScroll(); // Start the smooth scrolling
-
-        function toggleDetails(button) {
-            const details = document.getElementById('details');
-            if (details.style.display === 'none' || details.style.display === '') {
-                details.style.display = 'block';
-                clearSelection(button.parentNode);
-                button.classList.add('selected');
-            } else {
-                details.style.display = 'none';
-                button.classList.remove('selected');
-            }
-        }
-
-        function setOperation(op, button) {
-            console.log('Operation set to:', op);
-            clearSelection(button.parentNode);
-            button.classList.add('selected');
-        }
-
-        function setAdaptive(type, button) {
-            console.log('Adaptive type set to:', type);
-            clearSelection(button.parentNode);
-            button.classList.add('selected');
-            document.getElementById('details').style.display = 'none';
-        }
-
-        function toggleDetail(button) {
-            button.classList.toggle('selected');
-        }
-
-        function clearSelection(parent) {
-            parent.querySelectorAll('button').forEach(btn => btn.classList.remove('selected'));
-        }
-
-        function cancelOperation(operationId) {
-            console.log('Canceling operation:', operationId);
-            // Add logic to cancel the specific operation
-        }
-
-        function cancelAllOperations() {
-            console.log('Canceling all operations');
-            // Add logic to cancel all operations
-        }
-
-        const timeInterval = document.getElementById('timeInterval');
-        const timeIntervalValue = document.getElementById('timeIntervalValue');
-        
-        function logSlider(position) {
-            // position will be between 0 and 100
-            const minp = 0;
-            const maxp = 100;
-
-            // The result should be between 1 minute and 1 day (in minutes)
-            const minv = Math.log(10);
-            const maxv = Math.log(1440*7);
-
-            // calculate adjustment factor
-            const scale = (maxv - minv) / (maxp - minp);
-
-            return Math.exp(minv + scale * (position - minp));
-        }
-
-        function formatTime(minutes) {
-            if (minutes < 60) {
-                return Math.round(minutes) + ' minutes';
-            } else if (minutes < 1440) {
-                return (minutes / 60).toFixed(1) + ' hours';
-            } else {              
-                return (minutes / 60/24).toFixed(1) + ' days';
-            }
-        }
-
-        timeInterval.addEventListener('input', function() {
-            const logValue = logSlider(this.value);
-            timeIntervalValue.textContent = formatTime(logValue);
-        });
-
-        // Initialize the slider value
-        timeInterval.value = 60;
-        timeInterval.dispatchEvent(new Event('input'));
-
-        $(document).ready(function() {
-            $('#coinInput').val(coinParam);
-            
-            $('#coinInput').autocomplete({
-                source: coins,
-                select: function(event, ui) {
-                    window.location.href = '?coin=' + ui.item.value;
-                }
-            });
-        });
     </script>
 </body>
 </html>

@@ -1,0 +1,130 @@
+body {
+    margin: 20px;
+}
+
+#chart-container {
+    width: 100%;
+    height: 400px;
+    position: relative;
+}
+
+#watermark {
+    position: absolute;
+    font-size: 48px;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+#custom-legend {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 25px;
+    cursor: pointer;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.operation-form {
+    margin-top: 20px;
+}
+
+.form-row {  
+    display: flex;
+    align-items: center;
+}
+
+.form-row label {
+    display: inline-block;
+    min-width: 100px;
+}
+
+button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    font-size: .8em;
+    transition: background-color 0.3s;
+    text-transform: uppercase;
+}
+
+button.selected {
+    background-color: #5a6d9e;
+}
+
+.button-group button {
+    flex: 1;
+}
+
+.expandable { 
+    padding: 10px;
+    display: none;
+    margin-top: 5px;
+}
+
+.expandable div {
+    margin-bottom: 10px;
+}
+
+.expandable p {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.expandable button {
+    margin: 2px;
+    padding: 5px 10px;
+}
+
+.action-buttons button {
+    margin-top: 15px;
+    text-decoration: line-through;
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #5a6d9e;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #444;
+}
+
+.cancel-button {
+    background-color: #722;
+    color: #fff;
+    padding: 5px 10px;
+}
+
+.cancel-all-button {
+    background-color: #722;
+    color: #fff;
+    padding: 5px 10px;
+    margin: 0;
+}
+
+.ui-autocomplete {
+    border: 1px solid #555;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#coinInput {
+    width: 120px;
+    border: 1px solid #555;
+    padding: 5px;
+}
