@@ -221,7 +221,7 @@
 
         async function fetchHookData() {
             try {
-		fetch('stale_prices.json').then(response => {
+		fetch('stale_prices.json?Math.random()').then(response => {
 		    if (!response.ok) {
 		      throw new Error('Network response was not ok ' + response.statusText);
 		    }
