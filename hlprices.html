@@ -85,7 +85,7 @@
                     <td><span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a></td>
                     <td>Market</td>
                     <td colspan="3" id="hypurr" class="price-cell">-</td>
-                    <td>Loading...</td>
+                    <td  id="hypurrStatus">Loading...</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a></td>
@@ -231,18 +231,15 @@
               	 	 document.getElementById('hypurr').textContent = `$${data['hf'].toFixed(2)}`;
               	 	 document.getElementById('hookAsk').textContent = `$${data['hook'][0].toFixed(2)}`;
               	 	 document.getElementById('hookBid').textContent = `$${data['hook'][1].toFixed(2)}`;
+	
+			document.getElementById('hypurrStatus').textContent = 'Success';
+			document.getElementById('hookStatus').textContent = 'Success';
 
-		    const jsonData = data;
 		  })
 		  .catch(error => {
 		    console.error('There was a problem with the fetch operation:', error);
 		  });
 		
-				   
-                // For demonstration purposes, we'll just display the number of assets returned
-                const assetCount = data.data.assets.length;
-                document.getElementById('hypurr').textContent = `${assetCount} assets found`;
-                document.getElementById('hookStatus').textContent = 'Success';
             } catch (error) {
                 console.error('Error fetching data:', error);
                 document.getElementById('hookPrice').textContent = 'Error';
