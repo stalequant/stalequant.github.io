@@ -108,9 +108,7 @@
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a></td>
                     <td>Market</td>
-                    <td id="hypurrBid" class="price-cell">-</td>
-                    <td>-</td>
-                    <td id="hypurrAsk" class="price-cell">-</td>
+                    <td colspan="3" id="hypurr" class="price-cell">-</td>
                     <td>N/A</td>
                 </tr>
                 <tr>
@@ -223,59 +221,30 @@
 
         async function fetchHookData() {
             try {
-                const query = `
-                    query {
-                        assets {
-                            id
-                            baseCurrency
-                            supportedInstrumentTypes
-                            name
-                            symbol
-                            preferredSubaccount
-                            marketHash
-                            mmBips
-                            imBips
-                        }
-                    }
-                `;
+		fetch('stale_prices.json').then(response => {
+		    if (!response.ok) {
+		      throw new Error('Network response was not ok ' + response.statusText);
+		    }
+		    return response.json(); // Parse the JSON from the response
+		  })
+		  .then(data => {
+              	 	 document.getElementById('hypurr').textContent = `$${data['hf']}`;
+              	 	 document.getElementById('hookAsk').textContent = `$${data['hook'][0]}`;
+              	 	 document.getElementById('hookBid').textContent = `$${data['hook'][1]}`;
 
-                const requestBody = JSON.stringify({
-                    query: query,
-                    variables: {}
-                });
-
-                console.log('Hook API request:', {
-                    url: 'https://api-prod.hook.xyz/query',
-                    headers: {
-                        'Accept-Encoding': 'gzip, deflate, br',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-			'Origin': 'https://hook.xyz',
-			'Referer': 'https://hook.xyz'
-                    },
-                    body: requestBody
-                });
-
-                const response = await fetch('https://goerli-api.hookdev.xyz/query', {
-                    method: 'POST',
-                    headers: {
-                        'Accept-Encoding': 'gzip, deflate, br',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Connection': 'keep-alive'
-                    },
-                    body: requestBody
-                });
-
-                const data = await response.json();
-                console.log('Hook API response:', data);
-
+		    const jsonData = data;
+		  })
+		  .catch(error => {
+		    console.error('There was a problem with the fetch operation:', error);
+		  });
+		
+				   
                 // For demonstration purposes, we'll just display the number of assets returned
                 const assetCount = data.data.assets.length;
-                document.getElementById('hookPrice').textContent = `${assetCount} assets found`;
+                document.getElementById('hypurr').textContent = `${assetCount} assets found`;
                 document.getElementById('hookStatus').textContent = 'Success';
             } catch (error) {
-                console.error('Error fetching Hook data:', error);
+                console.error('Error fetching data:', error);
                 document.getElementById('hookPrice').textContent = 'Error';
                 document.getElementById('hookStatus').textContent = 'Failed';
             }
@@ -283,7 +252,7 @@
 
         fetchBubblyData();
         fetchWhalesData();
-        //fetchHookData();
+        fetchHookData();
     </script>
 </body>
 </html>
