@@ -232,8 +232,8 @@
               	 	 document.getElementById('hookAsk').textContent = `$${data['hook'][0].toFixed(2)}`;
               	 	 document.getElementById('hookBid').textContent = `$${data['hook'][1].toFixed(2)}`;
 	
-			document.getElementById('hypurrStatus').textContent = data['date'];
-			document.getElementById('hookStatus').textContent = data['date'];
+			document.getElementById('hypurrStatus').textContent = `${data['date']}`;
+			document.getElementById('hookStatus').textContent = `${data['date']}`;
 
 		  })
 		  .catch(error => {
