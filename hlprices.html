@@ -228,9 +228,9 @@
 		    return response.json(); // Parse the JSON from the response
 		  })
 		  .then(data => {
-              	 	 document.getElementById('hypurr').textContent = `$${data['hf']}`;
-              	 	 document.getElementById('hookAsk').textContent = `$${data['hook'][0]}`;
-              	 	 document.getElementById('hookBid').textContent = `$${data['hook'][1]}`;
+              	 	 document.getElementById('hypurr').textContent = `$${data['hf'].toFixed(2)}`;
+              	 	 document.getElementById('hookAsk').textContent = `$${data['hook'][0].toFixed(2)}`;
+              	 	 document.getElementById('hookBid').textContent = `$${data['hook'][1].toFixed(2)}`;
 
 		    const jsonData = data;
 		  })
