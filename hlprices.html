@@ -73,12 +73,15 @@
 </thead></table>
         <table class="table table-dark table-striped">
             <thead>
-                <tr>
-                    <th style="width:28%;">Source</th>
-                    <th style="width:18%;">Type</th>
-                    <th style="width:28%; text-align: center;" colspan="3">Price</th>
-                    <th style="width:26%;">Status</th>
-                </tr>
+		    <tr>
+                    <th colspan="6">Value Per POINT</th>
+	                </tr>
+	                <tr>
+	                    <th style="width:28%;">Source</th>
+	                    <th style="width:18%;">Type</th>
+	                    <th style="width:28%; text-align: center;" colspan="3">Price</th>
+	                    <th style="width:26%;">Status</th>
+	                </tr>
             </thead>
             <tbody>
                 <tr>
@@ -153,12 +156,71 @@
             </tbody>
         </table>
 
+	    
+        <table class="table table-dark table-striped">
+            <thead>
+		    <tr>
+                    <th colspan="6">Value of TOTAL SUPPLY </th>
+	                </tr>
+	                <tr>
+	                    <th style="width:28%;">Source</th>
+	                    <th style="width:18%;">Type</th>
+	                    <th style="width:28%; text-align: center;" colspan="3">Price</th>
+	                    <th style="width:26%;">Status</th>
+	                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io Bid-Ask</a></td>
+                    <td>Market</td>
+                    <td colspan="3" id="gateT" class="price-cell">-</td>
+                    <td  id="gateTStatus">Loading...</td>
+                </tr>
+		    
+                <tr>
+                    <td><span class="emoji">🟢</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io @$10k depth</a></td>
+                    <td>Market</td>
+                    <td colspan="3" id="gateD" class="price-cell">-</td>
+                    <td  id="gateDStatus">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
+	async function getWithCORS(url_to_get) {
+		const CORSurl = 'https://corsproxy.io/?' + encodeURIComponent(url_to_get);
+		const response = await fetch(CORSurl);
+		const data = await response.json();
+		return data
+	}
+	function weightedAveragePricesGate(trades, targetOrderValue) {
+	    let totalOrderValue = 0;
+	    let weightedPriceSum = 0;
+	    
+	    for (let trade of trades) {
+	        let price = parseFloat(trade.price);           // Convert price to number
+	        let orderValue = parseFloat(trade.order_value); // Convert order_value to number
+	
+	        if (totalOrderValue + orderValue <= targetOrderValue) {
+	            // If adding this trade won't exceed the target, use the full order_value
+	            weightedPriceSum += price * orderValue;
+	            totalOrderValue += orderValue;
+	        } else {
+	            // If adding this trade exceeds the target, only take the necessary portion
+	            let remainingValue = targetOrderValue - totalOrderValue;
+	            weightedPriceSum += price * remainingValue;
+	            totalOrderValue += remainingValue;
+	            break; // Stop after reaching the target
+	        }
+	    }
+	
+	    // Calculate the weighted average price
+	    return totalOrderValue > 0 ? weightedPriceSum / totalOrderValue : 0;
+	}
         async function fetchBubblyData() {
             try {
 		const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/price?address=0x807125cD6599d1f7CA5529dB78951A2828E2A948'
@@ -228,6 +290,33 @@
             }
         }
 
+        async function fetchGateData() {
+            try {
+		const AsksData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=sell&status=no_transaction');
+		const BidsData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=buy&status=no_transaction');
+		const TradesData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=&status=transaction_completed');
+		
+		const BestAsk = Number(AsksData['data']['list'][0]['price'])*100;
+		const BestBid = Number(BidsData['data']['list'][0]['price'])*100;
+		const LastTrade = Number(TradesData['data']['list'][0]['price'])*100;
+		
+		const DeepAsk = weightedAveragePricesGate(AsksData['data']['list'],10000)*100;
+		const DeepBid = weightedAveragePricesGate(BidsData['data']['list'],10000)*100;
+		const DeepTrades = weightedAveragePricesGate(TradesData['data']['list'],10000)*100;
+
+		const FDV_range = `$${BestBid.toFixed(2)}b-$${BestAsk.toFixed(2)}, T $${LastTrade.toFixed(2)}b`;
+		document.getElementById('gateT').textContent = FDV_range;
+
+		const DFDV_range = `$${DeepBid.toFixed(2)}b-$${DeepAsk.toFixed(2)}b, T $${DeepTrades.toFixed(2)}b`;
+		document.getElementById('gateD').textContent = DFDV_range;
+
+                document.getElementById('gateTStatus').textContent = 'Success';
+                document.getElementById('gateDStatus').textContent = 'Success';
+            } catch (error) {
+                document.getElementById('gateTStatus').textContent = 'Failed';
+                document.getElementById('gateDStatus').textContent = 'Failed';
+            }
+        }
         async function fetchHookData() {
             try {
 		fetch('stale_prices.json?Math.random()').then(response => {
@@ -254,6 +343,7 @@
         fetchBubblyData();
         fetchWhalesData();
         fetchHookData();
+	fetchGateData();
     </script>
 </body>
 </html>
