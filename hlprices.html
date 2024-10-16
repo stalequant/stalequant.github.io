@@ -303,10 +303,10 @@
 		const DeepBid = weightedAveragePricesGate(BidsData['data']['list'],10000)*100;
 		const DeepTrades = weightedAveragePricesGate(TradesData['data']['list'],10000)*100;
 
-		const FDV_range = `$${BestBid.toFixed(3)}b-$${BestAsk.toFixed(3)}b, T $${LastTrade.toFixed(3)}b`;
+		const FDV_range = `$${BestBid.toFixed(2)}b-$${BestAsk.toFixed(2)}b, T $${LastTrade.toFixed(2)}b`;
 		document.getElementById('gateT').textContent = FDV_range;
 
-		const DFDV_range = `$${DeepBid.toFixed(3)}b-$${DeepAsk.toFixed(3)}b, T $${DeepTrades.toFixed(3)}b`;
+		const DFDV_range = `$${DeepBid.toFixed(2)}b-$${DeepAsk.toFixed(2)}b, T $${DeepTrades.toFixed(2)}b`;
 		document.getElementById('gateD').textContent = DFDV_range;
 
                 document.getElementById('gateTStatus').textContent = 'Success';
