@@ -178,7 +178,7 @@
                 </tr>
 		    
                 <tr>
-                    <td><span class="emoji">🟢</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io @$10k depth</a></td>
+                    <td><span class="emoji">🟢</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io @$25k depth</a></td>
                     <td>Market</td>
                     <td colspan="3" id="gateD" class="price-cell">-</td>
                     <td  id="gateDStatus">Loading...</td>
@@ -299,9 +299,9 @@
 		const BestBid = Number(BidsData['data']['list'][0]['price'])*100;
 		const LastTrade = Number(TradesData['data']['list'][0]['price'])*100;
 		
-		const DeepAsk = weightedAveragePricesGate(AsksData['data']['list'],10000)*100;
-		const DeepBid = weightedAveragePricesGate(BidsData['data']['list'],10000)*100;
-		const DeepTrades = weightedAveragePricesGate(TradesData['data']['list'],10000)*100;
+		const DeepAsk = weightedAveragePricesGate(AsksData['data']['list'],25000)*100;
+		const DeepBid = weightedAveragePricesGate(BidsData['data']['list'],25000)*100;
+		const DeepTrades = weightedAveragePricesGate(TradesData['data']['list'],25000)*100;
 
 		const FDV_range = `$${BestBid.toFixed(2)}b-$${BestAsk.toFixed(2)}b, T $${LastTrade.toFixed(2)}b`;
 		document.getElementById('gateT').textContent = FDV_range;
