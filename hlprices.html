@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,6 +100,19 @@
                     <td id="bubblyStatus">Loading...</td>
                 </tr>
                 <tr>
+                    <td><span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred)</a></td>
+                    <td>Market</td>
+                    <td id="gateIBid" class="price-cell">-</td>
+                    <td>-</td>
+                    <td id="gateIAsk" class="price-cell">-</td>
+                    <td id="gateIStatus">Loading...</td>
+                </tr>
+<tr>  <td colspan=6 style="padding-left: 20px;" class="form-range" > 
+         &#x2192; Assuming 
+    <input type="range" id="mySlider" min="0" max="100" value="30" oninput="update_inferred_values()">
+    <span id="sliderValue">30%</span> of TS given to points
+</td></tr>
+                <tr>
                     <td><span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a></td>
                     <td>Market</td>
                     <td id="whalesBid" class="price-cell">-</td>
@@ -154,7 +168,8 @@
                     <td>N/A</td>
                 </tr>
             </tbody>
-        </table>
+        </table>    
+ 
 
 	    
         <table class="table table-dark table-striped">
@@ -185,12 +200,28 @@
                 </tr>
             </tbody>
         </table>
-
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+
+        let gateBid = 0;
+	let gateAsk = 0;	
+
+        let zzz = 2.5; // Example value for variable 'zzz'
+
+        // Function to update the inferred value
+        function update_inferred_values() {
+		updateGateBasedOnSliderAndValues();
+        }
+
+        // Initialize the calculated value on page load
+        window.onload = function() {
+            update_inferred_values(document.getElementById('mySlider').value);
+        };
+ 
+
 	async function getWithCORS(url_to_get) {
 		const CORSurl = 'https://corsproxy.io/?' + encodeURIComponent(url_to_get);
 		const response = await fetch(CORSurl);
@@ -303,6 +334,9 @@
 		const DeepBid = weightedAveragePricesGate(BidsData['data']['list'],25000)*100;
 		const DeepTrades = weightedAveragePricesGate(TradesData['data']['list'],25000)*100;
 
+	        gateBid = DeepBid;
+		gateAsk = DeepAsk;
+
 		const FDV_range = `$${BestBid.toFixed(2)}b-$${BestAsk.toFixed(2)}b, T $${LastTrade.toFixed(2)}b`;
 		document.getElementById('gateT').textContent = FDV_range;
 
@@ -310,13 +344,33 @@
 		document.getElementById('gateD').textContent = DFDV_range;
 
                 document.getElementById('gateTStatus').textContent = 'Success';
-                document.getElementById('gateDStatus').textContent = 'Success';
+                document.getElementById('gateDStatus').textContent = 'Success';	
+
+		updateGateBasedOnSliderAndValues()
             } catch (error) {
                 document.getElementById('gateTStatus').textContent = 'Failed';
                 document.getElementById('gateDStatus').textContent = 'Failed';
             }
         }
-        async function fetchHookData() {
+	function updateGateBasedOnSliderAndValues(){       
+    	    let sliderValue = document.getElementById('mySlider').value;
+            document.getElementById('sliderValue').textContent = sliderValue + "%";
+
+	    if (gateBid == 0) { return;}
+	    if (gateAsk == 0) { return;}
+
+            try {
+
+ 
+		document.getElementById('gateIBid').textContent = `$${(gateBid*1000/51*sliderValue/100).toFixed(2)}`;
+		document.getElementById('gateIAsk').textContent = `$${(gateAsk*1000/51*sliderValue/100).toFixed(2)}`;
+
+                document.getElementById('gateIStatus').textContent = 'Success';	
+            } catch (error) {
+                document.getElementById('gateIStatus').textContent = 'Failed';
+            }
+	}
+        async function fetchCachedData() {
             try {
 		fetch('stale_prices.json?Math.random()').then(response => {
 		    if (!response.ok) {
@@ -341,7 +395,7 @@
 
         fetchBubblyData();
         fetchWhalesData();
-        fetchHookData();
+        fetchCachedData();
 	fetchGateData();
     </script>
 </body>
