@@ -112,25 +112,25 @@
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl</a></td>
                     <td>Prediction</td>
-                    <td class="price-cell" >$5.00-$10.00</td>
+                    <td class="price-cell" >$5.00-10.00</td>
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair</a></td>
                     <td>Moon Math</td>
-                    <td class="price-cell" >$799.00-$800.00</td>
+                    <td class="price-cell" >$799.00-800.00</td>
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://www.onchainbinance.com/points" target="_blank">onchainbinance</a></td>
                     <td>Moon Math</td>
-                    <td  class="price-cell">$0.00-$844.00</td> 
+                    <td  class="price-cell">$0.00-844.00</td> 
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL</a></td>
                     <td>Moon Math</td>
-                    <td  class="price-cell">$30.00-$86.00</td> 
+                    <td  class="price-cell">$30.00-86.00</td> 
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod</a></td>
@@ -256,7 +256,7 @@
 
                     const lowerPrice = parseFloat(balancedRange.lowerPrice) * 1e12;
                     const upperPrice = parseFloat(balancedRange.upperPrice) * 1e12;
-		    document.getElementById('bubbly').textContent = `$${lowerPrice.toFixed(2)}-$${upperPrice.toFixed(2)}`;
+		    document.getElementById('bubbly').textContent = `$${lowerPrice.toFixed(2)}-${upperPrice.toFixed(2)}`;
                 } else {
                     throw new Error('Balanced range not found');
                 }
@@ -275,7 +275,7 @@
 		    
                 const dataAsks = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=sell&take=2');
                 const bestAsk = dataAsks.data.list[0].offer_price_usd.toFixed(2);
-	        document.getElementById('whales').textContent = `$${bestBid}-$${bestAsk}`;
+	        document.getElementById('whales').textContent = `$${bestBid}-${bestAsk}`;
             } catch (error) {
                 document.getElementById('whales').textContent = 'Failed';
             }
@@ -298,10 +298,10 @@
 	        gateBid = DeepBid;
 		gateAsk = DeepAsk;
 
-		const FDV_range = `$${BestBid.toFixed(2)}b-$${BestAsk.toFixed(2)}b, T $${LastTrade.toFixed(2)}b`;
+		const FDV_range = `$${BestBid.toFixed(2)}-${BestAsk.toFixed(2)}b`;
 		document.getElementById('gateT').textContent = FDV_range;
 
-		const DFDV_range = `$${DeepBid.toFixed(2)}b-$${DeepAsk.toFixed(2)}b, T $${DeepTrades.toFixed(2)}b`;
+		const DFDV_range = `$${DeepBid.toFixed(2)}-${DeepAsk.toFixed(2)}b`;
 		document.getElementById('gateD').textContent = DFDV_range;
 
 
@@ -322,7 +322,7 @@
             try {
 
  
-		document.getElementById('gateI').textContent = `$${(gateBid*1000/51*sliderValue/100).toFixed(2)}-$${(gateAsk*1000/51*sliderValue/100).toFixed(2)}`;
+		document.getElementById('gateI').textContent = `$${(gateBid*1000/51*sliderValue/100).toFixed(2)}-${(gateAsk*1000/51*sliderValue/100).toFixed(2)}`;
             } catch (error) {
                 document.getElementById('gateI').textContent = 'Failed';
             }
