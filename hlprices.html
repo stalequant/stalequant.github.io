@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hyperliquid Point Value</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hyperliquid Point Value</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
         :root {
             --bs-primary: rgb(80, 210, 193);
         }
@@ -40,206 +39,214 @@
         h1 {
             font-family: 'OurFont', sans-serif;
             color: #000;
-        }
-        .disclaimer {
-            font-size: 0.9em;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
+        } 
         .container {
             max-width: 800px;
         }
-    </style>
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6 mx-auto  my-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6 mx-auto my-5">
         <table class="table table-dark table-striped" style="width:100%">
-	<thead>
-<tr><th><div class="text-center "><p class="fs-5">Hyperliquid Point Value</p></div >
-</th></tr>
-
-<tr><td>
-
-        <div class="disclaimer">
-            These prices are for reference only. 
-            Listing is not constitute endorsement or financial advice. 
-            This was put together by <a href="https://twitter.com/stalequant" target="_blank">stalequant</a> 
-            who is not affiliated with <a href="https://hyperliquid.xyz" target="_blank">hyperliquid.xyz</a>.
-        </div>
-
-
-</td></tr>
-
-</thead></table>
-        <table class="table table-dark table-striped" style="width:100%">
-            <thead>
-		    <tr>
-                    <th colspan="3">Value Per POINT</th>
-	                </tr>
-	                <tr>
-	                    <th style="width:30%;">Source</th>
-	                    <th style="width:20%;">Type</th>
-	                    <th style="width:50%;">Price</th>
-	                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a></td>
-                    <td>Market</td>
-                    <td id="hypurr" class="price-cell">Loading...</td>
-                </tr>
-                <tr>
-                    <td><span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a></td>
-                    <td>Market</td>
-                    <td id="bubbly" class="price-cell">Loading...</td>
-                </tr>
-                <tr>
-                    <td><span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred)</a></td>
-                    <td>Market</td>
-                    <td id="gateI">Loading...</td>
-                </tr>
-<tr>  <td colspan=3 style="padding-left: 20px;" class="form-range" > 
-         &#x2192; Assuming 
-    <input type="range" id="mySlider" min="0" max="100" value="30" oninput="update_inferred_values()">
-    <span id="sliderValue">30%</span> of TS given to points
-</td></tr>
-                <tr>
-                    <td><span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a></td>
-                    <td>Market</td>
-                    <td id="whales" class="price-cell">Loading...</td>
-                </tr>
-                <tr>
-                    <td><span class="emoji">🟢</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl</a></td>
-                    <td>Prediction</td>
-                    <td class="price-cell" >$5.00-10.00</td>
-                </tr>
-		    
-                <tr>
-                    <td><span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair</a></td>
-                    <td>Moon Math</td>
-                    <td class="price-cell" >$799.00-800.00</td>
-                </tr>
-		    
-                <tr>
-                    <td><span class="emoji">🌝</span><a href="https://www.onchainbinance.com/points" target="_blank">onchainbinance</a></td>
-                    <td>Moon Math</td>
-                    <td  class="price-cell">$0.00-844.00</td> 
-                </tr>
-		    
-                <tr>
-                    <td><span class="emoji">🌝</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL</a></td>
-                    <td>Moon Math</td>
-                    <td  class="price-cell">$30.00-86.00</td> 
-                </tr>
-                <tr>
-                    <td><span class="emoji">🟢</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod</a></td>
-                    <td>OTC</td>
-                    <td  class="price-neg">Negotiated</td>
-                </tr>
-                <tr>
-                    <td><span class="emoji">🟢</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick</a></td>
-                    <td>OTC</td>
-                    <td  class="price-neg">Negotiated</td>
-                </tr>
-            </tbody>
-        </table>    
- 
-        <table class="table table-dark table-striped" style="width:100%">
-            <thead>
-		    <tr>
-                    <th colspan="3">Value of TOTAL SUPPLY </th>
-	                </tr>
-	                <tr>
-	                    <th style="width:30%;">Source</th>
-	                    <th style="width:20%;">Type</th>
-	                    <th style="width:50%;">Price</th>
-	                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io Bid-Ask</a></td>
-                    <td>Market</td>
-                    <td id="gateT" class="price-cell">Loading...</td>
-                </tr>
-		    
-                <tr>
-                    <td><span class="emoji">🟢</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io @$25k depth</a></td>
-                    <td>Market</td>
-                    <td id="gateD" class="price-cell">Loading...</td>
-                </tr>
-            </tbody>
+          <thead>
+            <tr>
+              <th>
+                <div class="text-center">
+                  <p class="fs-5">Hyperliquid Point Value</p>
+                </div>
+              </th>
+            </tr>
+            <tr>
+              <td>
+                These prices are for reference only. Listing is not constitute endorsement or financial advice. This was put together by <a href="https://twitter.com/stalequant" target="_blank">stalequant</a> who is not affiliated with <a href="https://hyperliquid.xyz" target="_blank">hyperliquid.xyz</a>.
+              </td>
+            </tr>
+          </thead>
         </table>
+        <table class="table table-dark table-striped" style="width:100%">
+          <thead>
+            <tr>
+              <th colspan="3">Value Per POINT</th>
+            </tr>
+            <tr>
+              <th style="width:30%;">Source</th>
+              <th style="width:20%;">Type</th>
+              <th style="width:50%;">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a>
+              </td>
+              <td>Market</td>
+              <td id="hypurr" class="price-cell">Loading...</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a>
+              </td>
+              <td>Market</td>
+              <td id="bubbly" class="price-cell">Loading...</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred)</a>
+              </td>
+              <td>Market</td>
+              <td id="gateI">Loading...</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="padding-left: 20px;" class="form-range">→ Assuming <input type="range" id="mySlider" min="0" max="100" value="30" oninput="update_inferred_values()"> <span id="sliderValue">30%</span> of TS given to points</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a>
+              </td>
+              <td>Market</td>
+              <td id="whales" class="price-cell">Loading...</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🟢</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl</a>
+              </td>
+              <td>Prediction</td>
+              <td class="price-cell">$5.00-10.00</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair</a>
+              </td>
+              <td>Moon Math</td>
+              <td class="price-cell">$799.00-800.00</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🌝</span><a href="https://www.onchainbinance.com/points" target="_blank">onchainbinance</a>
+              </td>
+              <td>Moon Math</td>
+              <td class="price-cell">$0.00-844.00</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🌝</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL</a>
+              </td>
+              <td>Moon Math</td>
+              <td class="price-cell">$30.00-86.00</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🟢</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod</a>
+              </td>
+              <td>OTC</td>
+              <td class="price-neg">Negotiated</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🟢</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick</a>
+              </td>
+              <td>OTC</td>
+              <td class="price-neg">Negotiated</td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="table table-dark table-striped" style="width:100%">
+          <thead>
+            <tr>
+              <th colspan="3">Value of TOTAL SUPPLY</th>
+            </tr>
+            <tr>
+              <th style="width:30%;">Source</th>
+              <th style="width:20%;">Type</th>
+              <th style="width:50%;">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io Bid-Ask</a>
+              </td>
+              <td>Market</td>
+              <td id="gateT" class="price-cell">Loading...</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🟢</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io @$25k depth</a>
+              </td>
+              <td>Market</td>
+              <td id="gateD" class="price-cell">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-    </div>
-    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> 
+  <script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
 
         let gateBid = 0;
-	let gateAsk = 0;	 
+        let gateAsk = 0;         
 
         // Function to update the inferred value
         function update_inferred_values() {
-		updateGateBasedOnSliderAndValues();
+                updateGateBasedOnSliderAndValues();
         }
 
         // Initialize the calculated value on page load
         window.onload = function() {
             update_inferred_values(document.getElementById('mySlider').value);
         };
- 
 
-	async function getWithCORS(url_to_get) {
-		const CORSurl = 'https://corsproxy.io/?' + encodeURIComponent(url_to_get);
-		const response = await fetch(CORSurl);
-		const data = await response.json();
-		return data
-	}
-	function weightedAveragePricesGate(trades, targetOrderValue) {
-	    let totalOrderValue = 0;
-	    let weightedPriceSum = 0;
-	    
-	    for (let trade of trades) {
-	        let price = parseFloat(trade.price);           // Convert price to number
-	        let orderValue = parseFloat(trade.order_value); // Convert order_value to number
-	
-	        if (totalOrderValue + orderValue <= targetOrderValue) {
-	            // If adding this trade won't exceed the target, use the full order_value
-	            weightedPriceSum += price * orderValue;
-	            totalOrderValue += orderValue;
-	        } else {
-	            // If adding this trade exceeds the target, only take the necessary portion
-	            let remainingValue = targetOrderValue - totalOrderValue;
-	            weightedPriceSum += price * remainingValue;
-	            totalOrderValue += remainingValue;
-	            break; // Stop after reaching the target
-	        }
-	    }
+        async function getWithCORS(url_to_get) {
+                const CORSurl = 'https://corsproxy.io/?' + encodeURIComponent(url_to_get);
+                const response = await fetch(CORSurl);
+                const data = await response.json();
+                return data
+        }
+        function weightedAveragePricesGate(trades, targetOrderValue) {
+            let totalOrderValue = 0;
+            let weightedPriceSum = 0;
+            
+            for (let trade of trades) {
+                let price = parseFloat(trade.price);           // Convert price to number
+                let orderValue = parseFloat(trade.order_value); // Convert order_value to number
+        
+                if (totalOrderValue + orderValue <= targetOrderValue) {
+                    // If adding this trade won't exceed the target, use the full order_value
+                    weightedPriceSum += price * orderValue;
+                    totalOrderValue += orderValue;
+                } else {
+                    // If adding this trade exceeds the target, only take the necessary portion
+                    let remainingValue = targetOrderValue - totalOrderValue;
+                    weightedPriceSum += price * remainingValue;
+                    totalOrderValue += remainingValue;
+                    break; // Stop after reaching the target
+                }
+            }
 
-	    return  weightedPriceSum / totalOrderValue;
-	}
+            return  weightedPriceSum / totalOrderValue;
+        }
         async function fetchBubblyData() {
             try {
-		const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/price?address=0x807125cD6599d1f7CA5529dB78951A2828E2A948'
-		const url = 'https://corsproxy.io/?' + encodeURIComponent(bubblyURL);
-		    
+                const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/price?address=0x807125cD6599d1f7CA5529dB78951A2828E2A948'
+                const url = 'https://corsproxy.io/?' + encodeURIComponent(bubblyURL);
+                    
                 const response = await fetch(url);
                 const data = await response.json();
                 const price = parseFloat(data.data.usdPrice);
                 
                 if (price < 0.1) {
                     console.log('Bubbly price is less than $0.1, triggering fallback');
-		    throw new Error('Balanced range not found');
+                    throw new Error('Balanced range not found');
 
                 } else {
                     document.getElementById('bubbly').textContent = `$${price.toFixed(2)}`;
                 }
-		    
+                    
             } catch (error) {
                 console.error('Error fetching Bubbly price data:', error);
                 await fetchBubblyFallback();
@@ -249,9 +256,9 @@
         async function fetchBubblyFallback() {
             try {
     
-		const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/0x3b89D63Eaac5df9956A053f200aec2c4a309FcE6/liquidity'
-		const url = 'https://corsproxy.io/?' + encodeURIComponent(bubblyURL);
-		    
+                const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/0x3b89D63Eaac5df9956A053f200aec2c4a309FcE6/liquidity'
+                const url = 'https://corsproxy.io/?' + encodeURIComponent(bubblyURL);
+                    
                 const response = await fetch(url);
 
                 const data = await response.json();
@@ -260,11 +267,11 @@
 
                     const lowerPrice = parseFloat(balancedRange.lowerPrice) * 1e12;
                     const upperPrice = parseFloat(balancedRange.upperPrice) * 1e12;
-		    document.getElementById('bubbly').textContent = `$${lowerPrice.toFixed(2)}-${upperPrice.toFixed(2)}`;
+                    document.getElementById('bubbly').textContent = `$${lowerPrice.toFixed(2)}-${upperPrice.toFixed(2)}`;
                 } else {
                     throw new Error('Balanced range not found');
                 }
-		    
+                    
             } catch (error) {
                 console.error('Error fetching Bubbly fallback data:', error);
                 document.getElementById('bubbly').textContent = 'Failed';
@@ -273,13 +280,12 @@
 
         async function fetchWhalesData() {
             try {
-
                 const dataBids = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=buy&take=2');
                 const bestBid = dataBids.data.list[0].offer_price_usd.toFixed(2);
-		    
+                    
                 const dataAsks = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=sell&take=2');
                 const bestAsk = dataAsks.data.list[0].offer_price_usd.toFixed(2);
-	        document.getElementById('whales').textContent = `$${bestBid}-${bestAsk}`;
+                document.getElementById('whales').textContent = `$${bestBid}-${bestAsk}`;
             } catch (error) {
                 document.getElementById('whales').textContent = 'Failed';
             }
@@ -287,62 +293,62 @@
 
         async function fetchGateData() {
             try {
-		const AsksData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=sell&status=no_transaction');
-		const BidsData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=buy&status=no_transaction');
-		const TradesData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=&status=transaction_completed');
-		
-		const BestAsk = Number(AsksData['data']['list'][0]['price'])*100;
-		const BestBid = Number(BidsData['data']['list'][0]['price'])*100;
-		const LastTrade = Number(TradesData['data']['list'][0]['price'])*100;
-		
-		const DeepAsk = weightedAveragePricesGate(AsksData['data']['list'],25000)*100;
-		const DeepBid = weightedAveragePricesGate(BidsData['data']['list'],25000)*100;
-		const DeepTrades = weightedAveragePricesGate(TradesData['data']['list'],25000)*100;
+                const AsksData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=sell&status=no_transaction');
+                const BidsData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=buy&status=no_transaction');
+                const TradesData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=&status=transaction_completed');
+                
+                const BestAsk = Number(AsksData['data']['list'][0]['price'])*100;
+                const BestBid = Number(BidsData['data']['list'][0]['price'])*100;
+                const LastTrade = Number(TradesData['data']['list'][0]['price'])*100;
+                
+                const DeepAsk = weightedAveragePricesGate(AsksData['data']['list'],25000)*100;
+                const DeepBid = weightedAveragePricesGate(BidsData['data']['list'],25000)*100;
+                const DeepTrades = weightedAveragePricesGate(TradesData['data']['list'],25000)*100;
 
-	        gateBid = DeepBid;
-		gateAsk = DeepAsk;
+                gateBid = DeepBid;
+                gateAsk = DeepAsk;
 
-		const FDV_range = `$${BestBid.toFixed(2)}-${BestAsk.toFixed(2)}b`;
-		document.getElementById('gateT').textContent = FDV_range;
+                const FDV_range = `$${BestBid.toFixed(2)}-${BestAsk.toFixed(2)}b`;
+                document.getElementById('gateT').textContent = FDV_range;
 
-		const DFDV_range = `$${DeepBid.toFixed(2)}-${DeepAsk.toFixed(2)}b`;
-		document.getElementById('gateD').textContent = DFDV_range;
+                const DFDV_range = `$${DeepBid.toFixed(2)}-${DeepAsk.toFixed(2)}b`;
+                document.getElementById('gateD').textContent = DFDV_range;
 
 
-		updateGateBasedOnSliderAndValues()
+                updateGateBasedOnSliderAndValues()
             } catch (error) {
                 document.getElementById('gateI').textContent = 'Failed';
                 document.getElementById('gateT').textContent = 'Failed';
                 document.getElementById('gateD').textContent = 'Failed';
             }
         }
-	function updateGateBasedOnSliderAndValues(){       
-    	    let sliderValue = document.getElementById('mySlider').value;
+        function updateGateBasedOnSliderAndValues(){       
+            let sliderValue = document.getElementById('mySlider').value;
             document.getElementById('sliderValue').textContent = sliderValue + "%";
 
-	    if (gateBid == 0) { return;}
-	    if (gateAsk == 0) { return;}
+            if (gateBid == 0) { return;}
+            if (gateAsk == 0) { return;}
 
             try {
 
- 
-		document.getElementById('gateI').textContent = `$${(gateBid*1000/51*sliderValue/100).toFixed(2)}-${(gateAsk*1000/51*sliderValue/100).toFixed(2)}`;
+
+                document.getElementById('gateI').textContent = `$${(gateBid*1000/51*sliderValue/100).toFixed(2)}-${(gateAsk*1000/51*sliderValue/100).toFixed(2)}`;
             } catch (error) {
                 document.getElementById('gateI').textContent = 'Failed';
             }
-	}
+        }
         async function fetchCachedData() {
             try {
-		fetch('stale_prices.json?Math.random()').then(response => {
-		    if (!response.ok) {
-		      throw new Error('Network response was not ok ' + response.statusText);
-		    }
-		    return response.json(); 
-		  })
-		  .then(data => {
-              	 	 document.getElementById('hypurr').textContent = `$${data['hf'].toFixed(2)} ${data['date']}`; 
-		  });
-		
+                fetch('stale_prices.json?Math.random()').then(response => {
+                    if (!response.ok) {
+                      throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json(); 
+                  })
+                  .then(data => {
+                         document.getElementById('hypurr').textContent = `$${data['hf'].toFixed(2)} ${data['date']}`; 
+                  });
+                
             } catch (error) {
                 console.error('Error fetching data:', error); 
                 document.getElementById('hypurr').textContent = 'Failed';
@@ -352,8 +358,7 @@
         fetchBubblyData();
         fetchWhalesData();
         fetchCachedData();
-	fetchGateData();
-    </script>
+        fetchGateData();
+  </script>
 </body>
 </html>
-
