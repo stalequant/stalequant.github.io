@@ -78,36 +78,28 @@
                     <th colspan="6">Value Per POINT</th>
 	                </tr>
 	                <tr>
-	                    <th style="width:28%;">Source</th>
-	                    <th style="width:18%;">Type</th>
-	                    <th style="width:28%; text-align: center;" colspan="3">Price</th>
-	                    <th style="width:26%;">Status</th>
+	                    <th style="width:30%;">Source</th>
+	                    <th style="width:20%;">Type</th>
+	                    <th style="width:50%;>Price</th>
 	                </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a></td>
                     <td>Market</td>
-                    <td colspan="3" id="hypurr" class="price-cell">-</td>
-                    <td  id="hypurrStatus">Loading...</td>
+                    <td id="hypurr" class="price-cell">Loading...</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a></td>
                     <td>Market</td>
-                    <td id="bubblyBid" class="price-cell">-</td>
-                    <td>-</td>
-                    <td id="bubblyAsk" class="price-cell">-</td>
-                    <td id="bubblyStatus">Loading...</td>
+                    <td id="bubbly" class="price-cell">Loading...</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred)</a></td>
                     <td>Market</td>
-                    <td id="gateIBid" class="price-cell">-</td>
-                    <td>-</td>
-                    <td id="gateIAsk" class="price-cell">-</td>
-                    <td id="gateIStatus">Loading...</td>
+                    <td id="gateI">Loading...</td>
                 </tr>
-<tr>  <td colspan=6 style="padding-left: 20px;" class="form-range" > 
+<tr>  <td colspan=3 style="padding-left: 20px;" class="form-range" > 
          &#x2192; Assuming 
     <input type="range" id="mySlider" min="0" max="100" value="30" oninput="update_inferred_values()">
     <span id="sliderValue">30%</span> of TS given to points
@@ -115,57 +107,40 @@
                 <tr>
                     <td><span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a></td>
                     <td>Market</td>
-                    <td id="whalesBid" class="price-cell">-</td>
-                    <td>-</td>
-                    <td id="whalesAsk" class="price-cell">-</td>
-                    <td id="whalesStatus">Loading...</td>
+                    <td id="whales" class="price-cell">Loading...</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl</a></td>
                     <td>Prediction</td>
-                    <td class="price-cell" >$5.00</td>
-                    <td>-</td>
-                    <td class="price-cell" >$10.00</td>
-                    <td>N/A</td>
+                    <td class="price-cell" >$5.00-$10.00</td>
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair</a></td>
                     <td>Moon Math</td>
-                    <td class="price-cell" >$799.00</td>
-                    <td>-</td>
-                    <td class="price-cell" >$800.00</td>
-                    <td>N/A</td>
+                    <td class="price-cell" >$799.00-$800.00</td>
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://www.onchainbinance.com/points" target="_blank">onchainbinance.com</a></td>
                     <td>Moon Math</td>
-                    <td  class="price-cell">$0.00</td>
-                    <td>-</td>
-                    <td  class="price-cell">$844.00</td> 
-                    <td>N/A</td>
+                    <td  class="price-cell">$0.00-$844.00</td> 
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🌝</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL</a></td>
                     <td>Moon Math</td>
-                    <td  class="price-cell">$30.00</td>
-                    <td>-</td>
-                    <td  class="price-cell">$86.00</td> 
-                    <td>N/A</td>
+                    <td  class="price-cell">$30.00-$86.00</td> 
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod</a></td>
                     <td>OTC</td>
-                    <td colspan="3" class="price-neg">Negotiated</td>
-                    <td>N/A</td>
+                    <td  class="price-neg">Negotiated</td>
                 </tr>
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick</a></td>
                     <td>OTC</td>
-                    <td colspan="3" class="price-neg">Negotiated</td>
-                    <td>N/A</td>
+                    <td  class="price-neg">Negotiated</td>
                 </tr>
             </tbody>
         </table>    
@@ -175,28 +150,25 @@
         <table class="table table-dark table-striped">
             <thead>
 		    <tr>
-                    <th colspan="6">Value of TOTAL SUPPLY </th>
+                    <th colspan="3">Value of TOTAL SUPPLY </th>
 	                </tr>
 	                <tr>
-	                    <th style="width:28%;">Source</th>
-	                    <th style="width:18%;">Type</th>
-	                    <th style="width:28%; text-align: center;" colspan="3">Price</th>
-	                    <th style="width:26%;">Status</th>
+	                    <th style="width:30%;">Source</th>
+	                    <th style="width:20%;">Type</th>
+	                    <th style="width:50%;">Price</th>
 	                </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io Bid-Ask</a></td>
                     <td>Market</td>
-                    <td colspan="3" id="gateT" class="price-cell">-</td>
-                    <td  id="gateTStatus">Loading...</td>
+                    <td id="gateT" class="price-cell">Loading...</td>
                 </tr>
 		    
                 <tr>
                     <td><span class="emoji">🟢</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io @$25k depth</a></td>
                     <td>Market</td>
-                    <td colspan="3" id="gateD" class="price-cell">-</td>
-                    <td  id="gateDStatus">Loading...</td>
+                    <td id="gateD" class="price-cell">Loading...</td>
                 </tr>
             </tbody>
         </table>
@@ -207,9 +179,7 @@
     <script>
 
         let gateBid = 0;
-	let gateAsk = 0;	
-
-        let zzz = 2.5; // Example value for variable 'zzz'
+	let gateAsk = 0;	 
 
         // Function to update the inferred value
         function update_inferred_values() {
@@ -248,9 +218,8 @@
 	            break; // Stop after reaching the target
 	        }
 	    }
-	
-	    // Calculate the weighted average price
-	    return totalOrderValue > 0 ? weightedPriceSum / totalOrderValue : 0;
+
+	    return  weightedPriceSum / totalOrderValue;
 	}
         async function fetchBubblyData() {
             try {
@@ -266,9 +235,7 @@
 		    throw new Error('Balanced range not found');
 
                 } else {
-                    document.getElementById('bubblyBid').textContent = `$${price.toFixed(2)}`;
-                    document.getElementById('bubblyAsk').textContent = `$${price.toFixed(2)}`;
-                    document.getElementById('bubblyStatus').textContent = 'Success';
+                    document.getElementById('bubbly').textContent = `$${price.toFixed(2)}`;
                 }
 		    
             } catch (error) {
@@ -288,18 +255,17 @@
                 const data = await response.json();
                 const balancedRange = data.data.tickRangeList.find(range => range.range === "Balanced");
                 if (balancedRange) {
+
                     const lowerPrice = parseFloat(balancedRange.lowerPrice) * 1e12;
                     const upperPrice = parseFloat(balancedRange.upperPrice) * 1e12;
-                    document.getElementById('bubblyBid').textContent = `$${lowerPrice.toFixed(2)}`;
-                    document.getElementById('bubblyAsk').textContent = `$${upperPrice.toFixed(2)}`;
-                    document.getElementById('bubblyStatus').textContent = 'Success';
+		    document.getElementById('bubbly').textContent = `$${lowerPrice.toFixed(2)}-$${upperPrice.toFixed(2)}`;
                 } else {
                     throw new Error('Balanced range not found');
                 }
 		    
             } catch (error) {
                 console.error('Error fetching Bubbly fallback data:', error);
-                document.getElementById('bubblyStatus').textContent = 'Failed';
+                document.getElementById('bubbly').textContent = 'Failed';
             }
         }
 
@@ -308,15 +274,12 @@
 
                 const dataBids = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=buy&take=2');
                 const bestBid = dataBids.data.list[0].offer_price_usd.toFixed(2);
-                document.getElementById('whalesBid').textContent = `$${bestBid}`;
 		    
                 const dataAsks = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=sell&take=2');
                 const bestAsk = dataAsks.data.list[0].offer_price_usd.toFixed(2);
-                document.getElementById('whalesAsk').textContent = `$${bestAsk}`;
-
-                document.getElementById('whalesStatus').textContent = 'Success';
+	        document.getElementById('whales').textContent = `$${bestBid}-$${bestAsk}`;
             } catch (error) {
-                document.getElementById('whalesStatus').textContent = 'Failed';
+                document.getElementById('whales').textContent = 'Failed';
             }
         }
 
@@ -343,13 +306,12 @@
 		const DFDV_range = `$${DeepBid.toFixed(2)}b-$${DeepAsk.toFixed(2)}b, T $${DeepTrades.toFixed(2)}b`;
 		document.getElementById('gateD').textContent = DFDV_range;
 
-                document.getElementById('gateTStatus').textContent = 'Success';
-                document.getElementById('gateDStatus').textContent = 'Success';	
 
 		updateGateBasedOnSliderAndValues()
             } catch (error) {
-                document.getElementById('gateTStatus').textContent = 'Failed';
-                document.getElementById('gateDStatus').textContent = 'Failed';
+                document.getElementById('gateI').textContent = 'Failed';
+                document.getElementById('gateT').textContent = 'Failed';
+                document.getElementById('gateD').textContent = 'Failed';
             }
         }
 	function updateGateBasedOnSliderAndValues(){       
@@ -362,12 +324,9 @@
             try {
 
  
-		document.getElementById('gateIBid').textContent = `$${(gateBid*1000/51*sliderValue/100).toFixed(2)}`;
-		document.getElementById('gateIAsk').textContent = `$${(gateAsk*1000/51*sliderValue/100).toFixed(2)}`;
-
-                document.getElementById('gateIStatus').textContent = 'Success';	
+		document.getElementById('gateI').textContent = `$${(gateBid*1000/51*sliderValue/100).toFixed(2)}-$${(gateAsk*1000/51*sliderValue/100).toFixed(2)}`;
             } catch (error) {
-                document.getElementById('gateIStatus').textContent = 'Failed';
+                document.getElementById('gateI').textContent = 'Failed';
             }
 	}
         async function fetchCachedData() {
@@ -376,20 +335,15 @@
 		    if (!response.ok) {
 		      throw new Error('Network response was not ok ' + response.statusText);
 		    }
-		    return response.json(); // Parse the JSON from the response
+		    return response.json(); 
 		  })
 		  .then(data => {
-              	 	 document.getElementById('hypurr').textContent = `$${data['hf'].toFixed(2)}`; 
-			document.getElementById('hypurrStatus').textContent = `${data['date']}`; 
-
-		  })
-		  .catch(error => {
-		    console.error('There was a problem with the fetch operation:', error);
+              	 	 document.getElementById('hypurr').textContent = `$${data['hf'].toFixed(2)} ${data['date']}`; 
 		  });
 		
             } catch (error) {
                 console.error('Error fetching data:', error); 
-                document.getElementById('hookStatus').textContent = 'Failed';
+                document.getElementById('hypurr').textContent = 'Failed';
             }
         }
 
