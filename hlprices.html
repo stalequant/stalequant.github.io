@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +61,7 @@
               <td>
                 These prices are for reference only. Listing is not constitute endorsement or financial advice.
                  This was put together by <a href="https://twitter.com/stalequant" target="_blank">stalequant</a> who is not affiliated with <a href="https://hyperliquid.xyz" target="_blank">hyperliquid.xyz</a>.
-                  Comparables are the comparable exchanges FDV or market cap, scaled by the relative size of those venues. EG: If HL has twice as much volume as Drift, we assume that HL's FDV will be twice as big. Data for comparables from <a href="coingecko.com/">CoinGecko</a> and <a href="https://defillama.com/derivatives">Defillama</a>, all data fetched live.
+                  Comps are the FDV or market cap of other exchanges, scaled by their size relative to Hyperliqiud. EG: If HL has ten times as much volume as Drift, we assume that HL's FDV will be ten times as big. Data for comparables from <a href="coingecko.com/">CoinGecko</a> and <a href="https://defillama.com/derivatives">Defillama</a>, all data fetched live.
               </td>
             </tr>
           </thead>
@@ -68,46 +70,31 @@
         <table class="table table-dark " id="markets_fdv" style="width:100%">
           <thead>
             <tr>
-              <th colspan="2">Fully diluted valuation markets</th>
-            </tr>
-            <tr>
-              <th style="width:40%;">Source</th>
-              <th style="width:60%;" class="price-cell">Tradable FDV</th>
+              <th colspan="2" >Fully diluted valuation</th>
             </tr>
           </thead>
           <tbody>
+          <tr>
+            <th style="width:40%;">Source</th>
+            <th style="width:60%;" class="price-cell">FDV</th>
+          </tr>
             <!-- Rows will be added here by JavaScript -->
           </tbody>
         </table>
 
 
-    <table class="table table-dark "  id="comparables_fdv" style="width: 100%;">
-          <thead>
-            <tr>
-              <th colspan="3">Fully diluted valuation comparables</th>
-            </tr>
-            <tr>
-                <th>Comparable</th>
-                <th class="price-cell">TVL-implied FDV</th>
-                <th class="price-cell">ADV-implied FDV (7D)</th>
-            </tr>
-          </thead>
-        <tbody>
-            <!-- Rows will be added here by JavaScript -->
-        </tbody>
-    </table>
-
         <table class="table table-dark " id="point_markets" style="width:100%">
           <thead>
             <tr>
-              <th colspan="3">Point tradables</th>
-            </tr>
-            <tr>
-              <th style="width:40%;">Source</th>
-              <th style="width:60%;" class="price-cell">Tradable price</th>
+              <th colspan="3">Points</th>
             </tr>
           </thead>
           <tbody>
+              <tr>
+                <th >Source</th>
+                <th  class="price-cell">Price</th>
+              </tr>
+      </tbody>
             <tr>
               <td>
                 <span class="emoji">🟡</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred from FDV)</a>
@@ -130,78 +117,82 @@
               <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="100" value="25" oninput="update_inferred_values()"> <span id="sliderValue">25%</span> of FDV given to points</td>
             </tr>
 
-</table>
-        <table class="table table-dark " style="width:100%">
-          <thead>
-            <tr>
-              <th colspan="3">Point predictions / negotiated prices</th>
-            </tr>
-            <tr>
-              <th style="width:40%;">Source</th>
-              <th style="width:60%;" class="price-cell">Stated price</th>
-            </tr>
-</thead>
-
             <tr>
               <td>
-                <span class="emoji">🟢</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl</a>
+                <span class="emoji">🟢</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl (prediction)</a>
               </td> 
               <td class="price-cell">$10.00-15.00</td>
             </tr>
 
             <tr>
               <td>
-                <span class="emoji">🟢</span><a href="https://x.com/defi_monk/status/1854925228096287213/photo/1" target="_blank">Messari</a>
+                <span class="emoji">🟢</span><a href="https://x.com/defi_monk/status/1854925228096287213/photo/1" target="_blank">Messari (prediction)</a>
               </td> 
               <td class="price-cell">$9.78-27.40</td>
             </tr>
 
             <tr>
               <td>
-                <span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair</a>
+                <span class="emoji">🌝</span><a href="https://twitter.com/crypto_adair" target="_blank">adair (moon math)</a>
               </td> 
               <td class="price-cell">$799.00-800.00</td>
             </tr>
             <tr>
               <td>
-                <span class="emoji">🌝</span><a href="https://www.onchainbinance.com/points" target="_blank">onchainbinance</a>
+                <span class="emoji">🌝</span><a href="https://www.onchainbinance.com/points" target="_blank">onchainbinance (moon math)</a>
               </td> 
               <td class="price-cell">$0.00-844.00</td>
             </tr>
             <tr>
               <td>
-                <span class="emoji">🌝</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL</a>
+                <span class="emoji">🌝</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL (moon math)</a>
               </td> 
               <td class="price-cell">$30.00-86.00</td>
             </tr>
             <tr>
               <td>
-                <span class="emoji">💲</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod</a>
+                <span class="emoji">💲</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod (OTC buyer)</a>
               </td> 
-              <td class="price-cell">OTC Negotiated</td>
+              <td class="price-cell">Negotiated</td>
             </tr>
             <tr>
               <td>
-                <span class="emoji">💲</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick</a>
+                <span class="emoji">💲</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick (OTC buyer)</a>
               </td> 
-              <td class="price-cell">OTC Negotiated</td>
+              <td class="price-cell">Negotiated</td>
             </tr>
           </tbody>
         </table>
 
 
-    <table class="table table-dark "  id="comparables_mc" style="width: 100%;">
+    <table class="table table-dark "  id="comparables_fdv" style="width: 100%;">
           <thead>
             <tr>
-              <th colspan="5">Market cap comparables</th>
-            </tr>
-            <tr>
-                <th>Comparable</th>
-                <th class="price-cell">TVL-implied value</th>
-                <th class="price-cell">ADV-implied value (7D)</th>
+              <th colspan="3">Fully diluted valuation <a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">comps</a></th>
             </tr>
           </thead>
         <tbody>
+            <tr>
+                <th>Comparable</th>
+                <th class="price-cell">TVL-implied FDV</th>
+                <th class="price-cell">ADV-implied FDV (7D)</th>
+            </tr>
+            <!-- Rows will be added here by JavaScript -->
+        </tbody>
+    </table>
+
+    <table class="table table-dark "  id="comparables_mc" style="width: 100%;">
+          <thead>
+            <tr>
+              <th colspan="5">Market cap <a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">comps</a></th>
+            </tr>
+          </thead>
+        <tbody>
+            <tr>
+                <th>Comparable</th>
+                <th class="price-cell">TVL-implied MC</th>
+                <th class="price-cell">ADV-implied MC (7D)</th>
+            </tr>
             <!-- Rows will be added here by JavaScript -->
         </tbody>
     </table>
@@ -353,7 +344,7 @@
         }
             
         async function populateGate() {
-            const printName = '<span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io</a>';
+            const printName = '<span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (market)</a>';
             const target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
 
             try {      
@@ -380,7 +371,7 @@
         }
         
         async function populateAevo() {
-            const printName = '<span class="emoji">🟢</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO</a>';
+            const printName = '<span class="emoji">🟢</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (market)</a>';
             const target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
 
             try {      
@@ -503,13 +494,13 @@
 
                 metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].fully_diluted_valuation / 1e9)
                 target = document.getElementById('comparables_fdv').getElementsByTagName('tbody')[0];
-                addRow( target, `<span class="emoji">🧮</span> ${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
+                addRow( target, `<span class="emoji">🧮</span>${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
                 allComps.push(Number(metrics['tvl']))
                 allComps.push(Number(metrics['v7d']))
                 
                 metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].market_cap / 1e9)
                 target = document.getElementById('comparables_mc').getElementsByTagName('tbody')[0];
-                addRow( target, `<span class="emoji">🧮</span> ${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
+                addRow( target, `<span class="emoji">🧮</span>${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
 
             }
                     
@@ -518,6 +509,16 @@
             // Calculate the index for the 25th percentile
             compsBid = allComps[Math.floor(0.25 * (allComps.length - 1))]
             compsAsk = allComps[Math.ceil(0.75 * (allComps.length - 1))]
+        
+            target = document.getElementById('comparables_fdv').getElementsByTagName('tbody')[0];
+            addRow( target, `<span class="emoji">🧮</span>Overall 25th percentile`, ['',compsBid], 15) ;
+            addRow( target, `<span class="emoji">🧮</span>Overall 75th percentile`, ['',compsAsk], 15) ;
+
+
+            target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
+            value =  `$${compsBid.toFixed(2)}-${compsAsk.toFixed(2)}b`;
+            addRow( target, `<span class="emoji">🧮</span><a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">Comps (calculated below)</a>`, [value], 15) ;
+            
             updatePointFDVBasedOnSliderAndValues()
 
         }
