@@ -343,8 +343,8 @@
 
         async function fetchAevoData() {
             try {
-                const aevoURL = "https://api.aevo.xyz/orderbook?instrument_name=HYPE-PERP";
-                const url = 'https://api.allorigins.win/get?url=' + encodeURIComponent(aevoURL);
+
+                const url = 'https://api.codetabs.com/v1/proxy/?quest=https://api.aevo.xyz/orderbook?instrument_name=HYPE-PERP';
             
                 const response = await fetch(url);
                 const data = await response.json();
