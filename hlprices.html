@@ -347,8 +347,7 @@
                 const url = 'https://api.codetabs.com/v1/proxy/?quest=https://api.aevo.xyz/orderbook?instrument_name=HYPE-PERP';
             
                 const response = await fetch(url);
-                const data = await response.json();
-                const parsedData = JSON.parse(data.contents);
+                const parsedData = await response.json();
                 
                 const BestBid = Number(parsedData['bids'][0][0]);
                 const BestAsk = Number(parsedData['asks'][0][0]);
