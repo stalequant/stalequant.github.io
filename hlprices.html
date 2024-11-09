@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -102,7 +100,7 @@
         <table class="table table-dark " id="point_markets" style="width:100%">
           <thead>
             <tr>
-              <th colspan="3">Point markets</th>
+              <th colspan="3">Point tradables</th>
             </tr>
             <tr>
               <th style="width:40%;">Source</th>
@@ -121,6 +119,12 @@
                 <span class="emoji">🔴</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred from FDV)</a>
               </td> 
               <td id="gateI" class="price-cell">Loading...</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="emoji">🧮</span><a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">Comps (inferred from FDV)</a>
+              </td> 
+              <td id="compsI" class="price-cell">Loading...</td>
             </tr>
             <tr>
               <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="100" value="25" oninput="update_inferred_values()"> <span id="sliderValue">25%</span> of FDV given to points</td>
@@ -258,7 +262,7 @@
         }
         
         async function populateBubbly() {
-            const printName = '<span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a>'
+            const printName = '<span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance (market)</a>'
             const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
             try {               
                 const value = [await fetchBubblyPrice()];
@@ -280,7 +284,7 @@
         }
         
         async function populateWhales() {
-            const printName = '<span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a>'
+            const printName = '<span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market (market)</a>'
             const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
             try {               
                 const value = [await fetchWhalesPrice()];
@@ -301,7 +305,7 @@
         }
         
         async function populateHfun() {
-            const printName = '<span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a>';
+            const printName = '<span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun (market)</a>';
             const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
 
             try {      
@@ -321,7 +325,10 @@
         let gateAsk = 0;         
 
         let aevoBid = 0;
-        let aevoAsk = 0;         
+        let aevoAsk = 0;     
+          
+        let compsBid = 0;
+        let compsAsk = 0;         
  
 
         // Function to update the inferred value
@@ -398,7 +405,14 @@
                 } catch (error) {
                     document.getElementById('gateI').textContent = 'Failed';
                 }        
+            }
                     
+            if ((compsBid > 0) &  (compsAsk > 0)) { 
+                try {
+                    document.getElementById('compsI').textContent = `$${(compsBid*1000/51*sliderValue/100).toFixed(2)}-${(compsAsk*1000/51*sliderValue/100).toFixed(2)}`;
+                } catch (error) {
+                    document.getElementById('compsI').textContent = 'Failed';
+                }        
             }
                     
             if ((aevoBid > 0) &  (aevoAsk > 0)) { 
@@ -481,18 +495,31 @@
             }
 
             const hlMetrics = getExchMetrics(baseName);
+            
+            let allComps = []
 
             for (const [printName, llamaNames, geckoName] of nameMap) {
                 const compMetrics = getExchMetrics(llamaNames);
 
+                metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].fully_diluted_valuation / 1e9)
+                target = document.getElementById('comparables_fdv').getElementsByTagName('tbody')[0];
+                addRow( target, `<span class="emoji">🧮</span> ${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
+                allComps.push(Number(metrics['tvl']))
+                allComps.push(Number(metrics['v7d']))
+                
                 metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].market_cap / 1e9)
                 target = document.getElementById('comparables_mc').getElementsByTagName('tbody')[0];
                 addRow( target, `<span class="emoji">🧮</span> ${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
 
-                metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].fully_diluted_valuation / 1e9)
-                target = document.getElementById('comparables_fdv').getElementsByTagName('tbody')[0];
-                addRow( target, `<span class="emoji">🧮</span> ${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
             }
+                    
+            allComps.sort((a, b) => a - b);
+            
+            // Calculate the index for the 25th percentile
+            compsBid = allComps[Math.floor(0.25 * (allComps.length - 1))]
+            compsAsk = allComps[Math.ceil(0.75 * (allComps.length - 1))]
+            updatePointFDVBasedOnSliderAndValues()
+
         }
         
         function addRow(table, name, prices, cutoff=null){
