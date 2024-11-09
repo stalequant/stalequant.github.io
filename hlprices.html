@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,13 +59,15 @@
             </tr>
             <tr>
               <td>
-                These prices are for reference only. Listing is not constitute endorsement or financial advice. This was put together by <a href="https://twitter.com/stalequant" target="_blank">stalequant</a> who is not affiliated with <a href="https://hyperliquid.xyz" target="_blank">hyperliquid.xyz</a>. Comparables are the comparable exchanges FDV or market cap, scaled by the relative size of those venues. EG: If HL is twice as big, we assume that HL's FDV will be twice as big. Data for comparables from <a href="coingecko.com/">CoinGecko</a> and <a href="https://defillama.com/derivatives">Defillama</a>, all data fetched live.
+                These prices are for reference only. Listing is not constitute endorsement or financial advice.
+                 This was put together by <a href="https://twitter.com/stalequant" target="_blank">stalequant</a> who is not affiliated with <a href="https://hyperliquid.xyz" target="_blank">hyperliquid.xyz</a>.
+                  Comparables are the comparable exchanges FDV or market cap, scaled by the relative size of those venues. EG: If HL has twice as much volume as Drift, we assume that HL's FDV will be twice as big. Data for comparables from <a href="coingecko.com/">CoinGecko</a> and <a href="https://defillama.com/derivatives">Defillama</a>, all data fetched live.
               </td>
             </tr>
           </thead>
         </table>
 
-        <table class="table table-dark " id="valuePerPoint" style="width:100%">
+        <table class="table table-dark " id="markets_fdv" style="width:100%">
           <thead>
             <tr>
               <th colspan="2">Fully diluted valuation markets</th>
@@ -75,23 +78,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <span class="emoji">🟢</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO</a>
-              </td>
-              <td id="aevoT" class="price-cell">Loading...</td>
-            </tr>
-            <tr>
-              <td >
-                <span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io</a>
-              </td>
-              <td id="gateT" class="price-cell">Loading...</td>
-            </tr>
+            <!-- Rows will be added here by JavaScript -->
           </tbody>
         </table>
 
 
-    <table class="table table-dark "  id="metricsTableFDV" style="width: 100%;">
+    <table class="table table-dark "  id="comparables_fdv" style="width: 100%;">
           <thead>
             <tr>
               <th colspan="3">Fully diluted valuation comparables</th>
@@ -107,7 +99,7 @@
         </tbody>
     </table>
 
-        <table class="table table-dark " style="width:100%">
+        <table class="table table-dark " id="point_markets" style="width:100%">
           <thead>
             <tr>
               <th colspan="3">Point markets</th>
@@ -120,36 +112,18 @@
           <tbody>
             <tr>
               <td>
-                <span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a>
-              </td> 
-              <td id="hypurr" class="price-cell">Loading...</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a>
-              </td> 
-              <td id="bubbly" class="price-cell">Loading...</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🟡</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred)</a>
+                <span class="emoji">🟡</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred from FDV)</a>
               </td> 
               <td id="aevoI" class="price-cell">Loading...</td>
             </tr>
             <tr>
               <td>
-                <span class="emoji">🔴</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred)</a>
+                <span class="emoji">🔴</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred from FDV)</a>
               </td> 
               <td id="gateI" class="price-cell">Loading...</td>
             </tr>
             <tr>
               <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="100" value="25" oninput="update_inferred_values()"> <span id="sliderValue">25%</span> of FDV given to points</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a>
-              </td> 
-              <td id="whales" class="price-cell">Loading...</td>
             </tr>
 
 </table>
@@ -212,7 +186,7 @@
         </table>
 
 
-    <table class="table table-dark "  id="metricsTableMC" style="width: 100%;">
+    <table class="table table-dark "  id="comparables_mc" style="width: 100%;">
           <thead>
             <tr>
               <th colspan="5">Market cap comparables</th>
@@ -233,6 +207,114 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> 
   <script>
 
+        async function getWithCORS(url_to_get) {
+                const CORSurl = 'https://corsproxy.io/?' + encodeURIComponent(url_to_get);
+                const response = await fetch(CORSurl);
+                const data = await response.json();
+                return data
+        }
+         
+
+        async function fetchBubblyPriceFallback() {
+            try {
+                const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/0x3b89D63Eaac5df9956A053f200aec2c4a309FcE6/liquidity'
+                const data = await getWithCORS(bubblyURL);
+                const balancedRange = data.data.tickRangeList.find(range => range.range === "Balanced");
+                if (balancedRange) {
+
+                    const lowerPrice = parseFloat(balancedRange.lowerPrice) * 1e12;
+                    const upperPrice = parseFloat(balancedRange.upperPrice) * 1e12;
+                    return `$${lowerPrice.toFixed(2)}-${upperPrice.toFixed(2)}`;
+                } else {
+                    throw new Error('Balanced range not found');
+                }
+                    
+            } catch (error) {
+                console.error('Error fetching Bubbly fallback data:', error);
+                document.getElementById('bubbly').textContent = 'Failed';
+            }
+        }
+        
+        
+        async function fetchBubblyPrice() { 
+            try {
+                const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/price?address=0x807125cD6599d1f7CA5529dB78951A2828E2A948'
+                const data = await getWithCORS(bubblyURL);
+                const price = parseFloat(data.data.usdPrice);
+                
+                if (price < 0.1) {
+                    console.log('Bubbly price is less than $0.1, triggering fallback');
+                    throw new Error('Balanced range not found');
+
+                } else {
+                    return `$${price.toFixed(2)}`;
+                }
+                    
+            } catch (error) {
+                console.error('Error fetching Bubbly price data:', error);
+                return await fetchBubblyPriceFallback();
+            }
+        
+        }
+        
+        async function populateBubbly() {
+            const printName = '<span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance</a>'
+            const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
+            try {               
+                const value = [await fetchBubblyPrice()];
+                addRow( target, printName, value , 15);
+            } catch (error) {
+                console.error('Error fetching data:', error); 
+                addRow( target, printName, ['Error'], 15);
+            }
+        }
+        
+        async function fetchWhalesPrice() { 
+            const dataBids = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=buy&take=2');
+            const bestBid = dataBids.data.list[0].offer_price_usd.toFixed(2);
+                
+            const dataAsks = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=sell&take=2');
+            const bestAsk = dataAsks.data.list[0].offer_price_usd.toFixed(2);
+    
+            return `$${bestBid}-${bestAsk}`;
+        }
+        
+        async function populateWhales() {
+            const printName = '<span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market</a>'
+            const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
+            try {               
+                const value = [await fetchWhalesPrice()];
+                addRow( target, printName, value , 15);
+            } catch (error) {
+                console.error('Error fetching data:', error); 
+                addRow( target, printName, ['Error'], 15);
+            }
+        }
+        async function fetchCachedHfunPrice() { 
+                const url = 'https://stalequant.github.io/stale_prices.json?Math.random()';
+
+                const response = await fetch(url);
+                const data = await response.json();
+        
+                value = `${data['date']} ->  $${data['hf'].toFixed(2)}`;
+                return value;
+        }
+        
+        async function populateHfun() {
+            const printName = '<span class="emoji">🟢</span><a href="https://hypurr.fun/" target="_blank">Hypurrfun</a>';
+            const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
+
+            try {      
+                const value = [await fetchCachedHfunPrice()];
+      
+                addRow( target, printName, [value], 15) ;
+                
+            } catch (error) {
+                console.error('Error fetching data:', error); 
+                addRow( target, printName, ['Error'], 15); 
+            }
+        }
+        
 
 
         let gateBid = 0;
@@ -252,116 +334,56 @@
             update_inferred_values(document.getElementById('mySlider').value);
         };
 
-        async function getWithCORS(url_to_get) {
-                const CORSurl = 'https://corsproxy.io/?' + encodeURIComponent(url_to_get);
-                const response = await fetch(CORSurl);
-                const data = await response.json();
-                return data
+
+        async function fetchGatePrice() { 
+            const AsksData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=sell&status=no_transaction');
+            gateAsk = Number(AsksData['data']['list'][0]['price'])*100;
+
+            const BidsData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=buy&status=no_transaction');
+            gateBid = Number(BidsData['data']['list'][0]['price'])*100;
+
+            return `$${gateBid.toFixed(2)}-${gateAsk.toFixed(2)}b`;
+        }
+            
+        async function populateGate() {
+            const printName = '<span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io</a>';
+            const target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
+
+            try {      
+                const value =  await fetchGatePrice();
+                addRow( target, printName, [value], 15) ;
+
+                updatePointFDVBasedOnSliderAndValues()
+            } catch (error) {
+                addRow( target, printName, ['Error'], 15); 
+                document.getElementById('gateI').textContent = 'Failed';
+            }
+        }
+
+        async function fetchAevoPrice() { 
+            const url = 'https://api.codetabs.com/v1/proxy/?quest=https://api.aevo.xyz/orderbook?instrument_name=HYPE-PERP';
+        
+            const response = await fetch(url);
+            const parsedData = await response.json();
+            
+            aevoBid = Number(parsedData['bids'][0][0]);
+            aevoAsk = Number(parsedData['asks'][0][0]);
+
+            return `$${aevoBid.toFixed(2)}-${aevoAsk.toFixed(2)}b`;
         }
         
-        async function fetchBubblyData() {
-            try {
-                const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/price?address=0x807125cD6599d1f7CA5529dB78951A2828E2A948'
-                const url = 'https://corsproxy.io/?' + encodeURIComponent(bubblyURL);
-                    
-                const response = await fetch(url);
-                const data = await response.json();
-                const price = parseFloat(data.data.usdPrice);
-                
-                if (price < 0.1) {
-                    console.log('Bubbly price is less than $0.1, triggering fallback');
-                    throw new Error('Balanced range not found');
+        async function populateAevo() {
+            const printName = '<span class="emoji">🟢</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO</a>';
+            const target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
 
-                } else {
-                    document.getElementById('bubbly').textContent = `$${price.toFixed(2)}`;
-                }
-                    
-            } catch (error) {
-                console.error('Error fetching Bubbly price data:', error);
-                await fetchBubblyFallback();
-            }
-        }
-
-        async function fetchBubblyFallback() {
-            try {
-    
-                const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/0x3b89D63Eaac5df9956A053f200aec2c4a309FcE6/liquidity'
-                const url = 'https://corsproxy.io/?' + encodeURIComponent(bubblyURL);
-                    
-                const response = await fetch(url);
-
-                const data = await response.json();
-                const balancedRange = data.data.tickRangeList.find(range => range.range === "Balanced");
-                if (balancedRange) {
-
-                    const lowerPrice = parseFloat(balancedRange.lowerPrice) * 1e12;
-                    const upperPrice = parseFloat(balancedRange.upperPrice) * 1e12;
-                    document.getElementById('bubbly').textContent = `$${lowerPrice.toFixed(2)}-${upperPrice.toFixed(2)}`;
-                } else {
-                    throw new Error('Balanced range not found');
-                }
-                    
-            } catch (error) {
-                console.error('Error fetching Bubbly fallback data:', error);
-                document.getElementById('bubbly').textContent = 'Failed';
-            }
-        }
-
-        async function fetchWhalesData() {
-            try {
-                const dataBids = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=buy&take=2');
-                const bestBid = dataBids.data.list[0].offer_price_usd.toFixed(2);
-                    
-                const dataAsks = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=sell&take=2');
-                const bestAsk = dataAsks.data.list[0].offer_price_usd.toFixed(2);
-                document.getElementById('whales').textContent = `$${bestBid}-${bestAsk}`;
-            } catch (error) {
-                document.getElementById('whales').textContent = 'Failed';
-            }
-        }
-
-        async function fetchGateData() {
-            try {
-                const AsksData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=sell&status=no_transaction');
-                const BidsData = await getWithCORS('https://www.gate.io/apiw/v2/pre_market/market_orders?page=1&limit=50&currency=HYPE&side=buy&status=no_transaction');
-                
-                const BestAsk = Number(AsksData['data']['list'][0]['price'])*100;
-                const BestBid = Number(BidsData['data']['list'][0]['price'])*100;
-                
-                gateBid = BestBid;
-                gateAsk = BestAsk;
-
-                const FDV_range = `$${BestBid.toFixed(2)}-${BestAsk.toFixed(2)}b`;
-                document.getElementById('gateT').textContent = FDV_range;
+            try {      
+                const value =  await fetchAevoPrice();
+                addRow( target, printName, [value], 15) ;
 
                 updatePointFDVBasedOnSliderAndValues()
             } catch (error) {
-                document.getElementById('gateI').textContent = 'Failed';
-                document.getElementById('gateT').textContent = 'Failed';
-            }
-        }
-
-        async function fetchAevoData() {
-            try {
-
-                const url = 'https://api.codetabs.com/v1/proxy/?quest=https://api.aevo.xyz/orderbook?instrument_name=HYPE-PERP';
-            
-                const response = await fetch(url);
-                const parsedData = await response.json();
-                
-                const BestBid = Number(parsedData['bids'][0][0]);
-                const BestAsk = Number(parsedData['asks'][0][0]);
-                
-                aevoBid = BestBid;
-                aevoAsk = BestAsk;
-
-                const FDV_range = `$${BestBid.toFixed(2)}-${BestAsk.toFixed(2)}b`;
-                document.getElementById('aevoT').textContent = FDV_range;
-
-                updatePointFDVBasedOnSliderAndValues()
-            } catch (error) {
+                addRow( target, printName, ['Error'], 15); 
                 document.getElementById('aevoI').textContent = 'Failed';
-                document.getElementById('aevoT').textContent = 'Failed';
             }
         }
                 
@@ -387,182 +409,123 @@
                 }        
             }
         }
-        async function fetchCachedData() {
-            try {
-                fetch('stale_prices.json?Math.random()').then(response => {
-                    if (!response.ok) {
-                      throw new Error('Network response was not ok ' + response.statusText);
-                    }
-                    return response.json(); 
-                  })
-                  .then(data => {
-                         document.getElementById('hypurr').textContent = `$${data['hf'].toFixed(2)} ${data['date']}`; 
-                  });
-                
-            } catch (error) {
-                console.error('Error fetching data:', error); 
-                document.getElementById('hypurr').textContent = 'Failed';
-            }
-        }
 
-        fetchBubblyData();
-        fetchWhalesData();
-        fetchCachedData();
-        fetchAevoData();
-        fetchGateData();
+        populateBubbly();
+        populateWhales();
+        populateHfun();
+        populateAevo();
+        populateGate();
 
 
-        async function fetchData() {
+        async function populateComps() {
             const urlGecko = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=dydx-chain%2Caevo-exchange%2Cdrift-protocol%2Cgmx%2Craydium%2Cuniswap';
             const urlLlama = 'https://api.llama.fi/protocols';
             const urlLlama2 = 'https://api.llama.fi/overview/derivatives?excludeTotalDataChartBreakdown=true&excludeTotalDataChart=true';
             const urlLlama3 = 'https://api.llama.fi/overview/dexs/All?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=false';
 
-            try {
-                // Fetch data from each API
-                const [geckoData, llamaData, llamaData2, llamaData3] = await Promise.all([
-                    fetch(urlGecko).then(response => response.json()),
-                    fetch(urlLlama).then(response => response.json()),
-                    fetch(urlLlama2).then(response => response.json()),
-                    fetch(urlLlama3).then(response => response.json())
-                ]);
+            const [geckoData, llamaData, llamaData2, llamaData3] = await Promise.all([
+                fetch(urlGecko).then(response => response.json()),
+                fetch(urlLlama).then(response => response.json()),
+                fetch(urlLlama2).then(response => response.json()),
+                fetch(urlLlama3).then(response => response.json())
+            ]);
 
-                // Convert data to dictionaries for easy lookup
-                const llamaDict = Object.fromEntries(llamaData.map(a => [a.name, a]));
-                const llama2Dict = Object.fromEntries(llamaData2.protocols.map(a => [a.name, a]));
-                const llama3Dict = Object.fromEntries(llamaData3.protocols.map(a => [a.name, a]));
-                const geckoDict = Object.fromEntries(geckoData.map(a => [a.id, a]));
+            const llamaDict = Object.fromEntries(llamaData.map(a => [a.name, a]));
+            const llama2Dict = Object.fromEntries(llamaData2.protocols.map(a => [a.name, a]));
+            const llama3Dict = Object.fromEntries(llamaData3.protocols.map(a => [a.name, a]));
+            const geckoDict = Object.fromEntries(geckoData.map(a => [a.id, a]));
 
-                const baseName = ['Hyperliquid Perp'];
-                const nameMap = [
-                    ['Aevo', ['Aevo Perps', 'Aevo Options'], 'aevo-exchange'],
-                    ['Drift', ['Drift Trade', 'Drift AMM'], 'drift-protocol'],
-                    ['dYdX', ['dYdX V4'], 'dydx-chain'],
-                    ['GMX', ['GMX V2 Perps'], 'gmx'],
-                    ['Raydium', ['Raydium'], 'raydium'],
-                    ['Uniswap', ['Uniswap V3', 'Uniswap V2', 'Uniswap V1', 'Uniswap Labs'], 'uniswap']
-                ];
+            const baseName = ['Hyperliquid Perp'];
+            const nameMap = [
+                ['Aevo', ['Aevo Perps', 'Aevo Options'], 'aevo-exchange'],
+                ['Drift', ['Drift Trade', 'Drift AMM'], 'drift-protocol'],
+                ['dYdX', ['dYdX V4'], 'dydx-chain'],
+                ['GMX', ['GMX V2 Perps'], 'gmx'],
+                ['Raydium', ['Raydium'], 'raydium'],
+                ['Uniswap', ['Uniswap V3', 'Uniswap V2', 'Uniswap V1', 'Uniswap Labs'], 'uniswap']
+            ];
 
-                // Function to get exchange metrics, combining llamaDict, llama2Dict, and llama3Dict
-                function getExchMetrics(llamaNames) {
-                    const output = { tvl: 0, v1d: 0, v7d: 0, v30d: 0 };
-                    for (const llamaName of llamaNames) {
-                        const llama = llamaDict[llamaName];
-                        const llama2 = llama2Dict[llamaName];
-                        const llama3 = llama3Dict[llamaName];
-                        
-                        // Accumulate TVL from llamaDict
-                        if (llama && llama.tvl) {
-                            output.tvl += parseFloat(llama.tvl) || 0;
-                        }
-
-                        // Accumulate volume metrics from llama2Dict and llama3Dict
-                        if (llama2) {
-                            output.v1d += parseFloat(llama2.total24h) || 0;
-                            output.v7d += (parseFloat(llama2.total7d) || 0) / 7;
-                            output.v30d += (parseFloat(llama2.total30d) || 0) / 30;
-                        }
-                        if (llama3) {
-                            output.v1d += parseFloat(llama3.total24h) || 0;
-                            output.v7d += (parseFloat(llama3.total7d) || 0) / 7;
-                            output.v30d += (parseFloat(llama3.total30d) || 0) / 30;
-                        }
+            function getExchMetrics(llamaNames) {
+                const output = { tvl: 0, v1d: 0, v7d: 0, v30d: 0 };
+                for (const llamaName of llamaNames) {
+                    const llama = llamaDict[llamaName];
+                    const llama2 = llama2Dict[llamaName];
+                    const llama3 = llama3Dict[llamaName];
+                    
+                    // Accumulate TVL from llamaDict
+                    if (llama && llama.tvl) {
+                        output.tvl += parseFloat(llama.tvl) || 0;
                     }
-                    return output;
-                }
 
-                // Function to normalize metrics
-                function normMetrics(base, comp, mult) {
-                    const allMetrics = {};
-                    for (const metric in base) {
-                        allMetrics[metric] = (base[metric] / comp[metric]) * mult;
+                    // Accumulate volume metrics from llama2Dict and llama3Dict
+                    if (llama2) {
+                        output.v1d += parseFloat(llama2.total24h) || 0;
+                        output.v7d += (parseFloat(llama2.total7d) || 0) / 7;
+                        output.v30d += (parseFloat(llama2.total30d) || 0) / 30;
                     }
-                    return allMetrics;
-                }
-
-                // Compute metrics and organize outputs by display name and type
-                const hlMetrics = getExchMetrics(baseName);
-                const outputs = [];
-
-                for (const [printName, llamaNames, geckoName] of nameMap) {
-                    const geckoEntry = geckoDict[geckoName];
-                    const compMetrics = getExchMetrics(llamaNames);
-
-                    // Add MC metric for every exchange
-                    outputs.push({
-                        name: printName,
-                        type: 'MC',
-                        metrics: normMetrics(hlMetrics, compMetrics, geckoEntry.market_cap / 1e9)
-                    });
-
-                    // Add FDV metric for every exchange (if available)
-                    if (geckoEntry.fully_diluted_valuation) {
-                        outputs.push({
-                            name: printName,
-                            type: 'FDV',
-                            metrics: normMetrics(hlMetrics, compMetrics, geckoEntry.fully_diluted_valuation / 1e9)
-                        });
+                    if (llama3) {
+                        output.v1d += parseFloat(llama3.total24h) || 0;
+                        output.v7d += (parseFloat(llama3.total7d) || 0) / 7;
+                        output.v30d += (parseFloat(llama3.total30d) || 0) / 30;
                     }
                 }
-
-                // Populate the table with data
-                populateTable(outputs);
-
-            } catch (error) {
-                console.error('Error fetching data or building table:', error);
-            }
-        }
-	
-	const median = arr => {
-	  const mid = Math.floor(arr.length / 2),
-	  nums = [...arr].sort((a, b) => a - b);
-	  return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
-	};
-
-        // Function to populate the HTML table with data
-        function populateTable(data) {
-	    
-            for (const item of data) {
-                const row = document.createElement('tr');
-
-                // Exchange name cell
-                const nameCell = document.createElement('td');
-                nameCell.textContent = item.name;
-                row.appendChild(nameCell);
-
-
-                // Metric cells for TVL, V1D, V7D, V30D
-                const metrics = ['tvl', 'v7d', ];
-                for (const metric of metrics) {
-                    const cell = document.createElement('td');
-                    const value = item.metrics[metric];
-		    cell.classList.add("price-cell");
-                    if (value != null) {
-
-                        cell.textContent = `$${value.toFixed(2)}b`;
- 
-		        if (value > 5) {
-              			  cell.style.backgroundColor =  '#003e00';
-           		 } 
-
-                    } else {
-                        cell.textContent = 'N/A';
-                        cell.style.backgroundColor = '#f0f0f0'; // Light gray for missing values
-                    }
-                    row.appendChild(cell);
-                }
-
-                if ( item.type == "MC") {
-			document.getElementById('metricsTableMC').getElementsByTagName('tbody')[0].appendChild(row);
-		} else {
-			document.getElementById('metricsTableFDV').getElementsByTagName('tbody')[0].appendChild(row);
-		}
+                return output;
             }
 
+            function normMetrics(base, comp, mult) {
+                const allMetrics = {};
+                for (const metric in base) {
+                    allMetrics[metric] = (base[metric] / comp[metric]) * mult;
+                }
+                return allMetrics;
+            }
+
+            const hlMetrics = getExchMetrics(baseName);
+
+            for (const [printName, llamaNames, geckoName] of nameMap) {
+                const compMetrics = getExchMetrics(llamaNames);
+
+                metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].market_cap / 1e9)
+                target = document.getElementById('comparables_mc').getElementsByTagName('tbody')[0];
+                addRow( target, `<span class="emoji">🧮</span> ${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
+
+                metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].fully_diluted_valuation / 1e9)
+                target = document.getElementById('comparables_fdv').getElementsByTagName('tbody')[0];
+                addRow( target, `<span class="emoji">🧮</span> ${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
+            }
+        }
+        
+        function addRow(table, name, prices, cutoff=null){
+            const row = document.createElement('tr');
+
+            const nameCell = document.createElement('td');
+            nameCell.innerHTML  = name;
+            row.appendChild(nameCell);
+            
+            for (const price of prices) {         
+                const cell = document.createElement('td');
+                cell.classList.add("price-cell");
+                if (price == null){
+                      cell.textContent = 'N/A';
+                      cell.style.backgroundColor = '#f0f0f0'; 
+
+                } else if (typeof price === 'number' ) {
+                      cell.textContent = `$${price.toFixed(2)}b`;
+                      if (cutoff != null && price > cutoff) {
+                         cell.style.backgroundColor =  '#003e00';
+                       } 
+                       
+                } else {
+                    cell.textContent = price;  
+                                    
+                }      
+                row.appendChild(cell);
+        
+            }
+            table.appendChild(row);
         }
 
-        // Call the function to fetch data and populate the table
-        fetchData();
+        populateComps();
     </script>
 </body>
 </html>
