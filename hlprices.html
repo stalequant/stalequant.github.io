@@ -39,6 +39,9 @@
             font-family: 'OurFont', sans-serif;
             color: #000;
         } 
+        .full-width-table{
+          width: 100%;
+        }
         .container {
             max-width: 600px;
         }
@@ -48,7 +51,7 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="mx-auto my-5">
-        <table class="table table-dark " style="width:100%">
+        <table class="table table-dark full-width-table">
           <thead>
             <tr>
               <th>
@@ -67,7 +70,7 @@
           </thead>
         </table>
 
-        <table class="table table-dark " id="markets_fdv" style="width:100%">
+        <table class="table table-dark full-width-table " id="markets_fdv">
           <thead>
             <tr>
               <th colspan="2" >Fully diluted valuation</th>
@@ -75,8 +78,8 @@
           </thead>
           <tbody>
           <tr>
-            <th style="width:40%;">Source</th>
-            <th style="width:60%;" class="price-cell">FDV</th>
+            <th >Source</th>
+            <th class="price-cell">FDV</th>
           </tr>
             <!-- Rows will be added here by JavaScript -->
           </tbody>
@@ -93,7 +96,7 @@
         </table>
 
 
-        <table class="table table-dark " id="point_markets" style="width:100%">
+        <table class="table table-dark full-width-table " id="point_markets">
           <thead>
             <tr>
               <th colspan="3">Points</th>
@@ -181,7 +184,7 @@
         </table>
 
 
-    <table class="table table-dark "  id="comparables_fdv" style="width: 100%;">
+    <table class="table table-dark full-width-table "  id="comparables_fdv" >
           <thead>
             <tr>
               <th colspan="3">Fully diluted valuation <a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">comps</a></th>
@@ -197,7 +200,7 @@
         </tbody>
     </table>
 
-    <table class="table table-dark "  id="comparables_mc" style="width: 100%;">
+    <table class="table table-dark full-width-table"  id="comparables_mc" >
           <thead>
             <tr>
               <th colspan="5">Market cap <a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">comps</a></th>
