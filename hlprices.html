@@ -285,10 +285,10 @@
         
         async function fetchWhalesPrice() { 
             const dataBids = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=buy&take=2');
-            const bestBid = dataBids.data.list[0].offer_price_usd.toFixed(2);
+            const bestBid = Math.max(...dataBids.data.list.map(item => item.offer_price_usd)).toFixed(2);
                 
             const dataAsks = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=sell&take=2');
-            const bestAsk = dataAsks.data.list[0].offer_price_usd.toFixed(2);
+            const bestAsk = Math.min(...dataAsks.data.list.map(item => item.offer_price_usd)).toFixed(2);
     
             return `$${bestBid}-${bestAsk}`;
         }
