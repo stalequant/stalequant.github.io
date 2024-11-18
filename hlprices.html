@@ -294,7 +294,7 @@
         }
         
         async function populateWhales() {
-            const printName = '<span class="emoji">🔴</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market (market)</a>'
+            const printName = '<span class="emoji">🟡</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market (market)</a>'
             const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
             try {               
                 const value = [await fetchWhalesPrice()];
