@@ -70,6 +70,22 @@
           </thead>
         </table>
 
+        <table class="table table-dark full-width-table " id="markets_tgedate">
+          <thead>
+            <tr>
+              <th colspan="2" >Date of TGE</th></th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th >Source</th>
+            <th class="price-cell">FDV</th>
+          </tr>
+            <!-- Rows will be added here by JavaScript -->
+          </tbody> 
+        </table>
+
+        
         <table class="table table-dark full-width-table " id="markets_fdv">
           <thead>
             <tr>
@@ -428,7 +444,41 @@
                 document.getElementById('aevoI').textContent = 'Failed';
             }
         }
-                
+        async function getWithCORS(url_to_get) {
+                const CORSurl = 'https://corsproxy.io/?' + encodeURIComponent(url_to_get);
+                const response = await fetch(CORSurl);
+                const data = await response.json();
+                return data;
+        }
+      	async function getcontractprice(contract){
+          const urlA = `https://clob.polymarket.com/prices-history?interval=all&market=${contract}&fidelity=1440`;
+          const responseA = await getWithCORS(urlA);
+          return responseA.history[responseA.history.length - 1].p;
+      }
+        async function populatePolymarket() {
+            const target = document.getElementById('markets_tgedate').getElementsByTagName('tbody')[0];
+            try {    
+                const  priceDec = await getcontractprice('26267050159315439486982580768550885697032925848336364008331950815706337554671');
+                const  priceNov = await getcontractprice('110636950979938146031820507807868392824912117333231960735063304350353705231383');
+                const  priceLater = await getcontractprice('95247952138809682511168942957507572432766807567801093061883529031657734111365');
+
+                const scaledNov = priceNov / (priceDec+ priceNov + priceLater)
+                const scaledDec = priceDec / (priceDec+ priceNov + priceLater) 
+                const scaledLater = priceLater / (priceDec+ priceNov + priceLater) 
+              
+                const printName = '<span class="emoji">🟢</span><a href="https://polymarket.com/event/hyperliquid-token-launch-wen?tid=1732733387137" target="_blank">Polymarket (market)</a>';
+                const value = `November: ${(scaledNov*100).toFixed(0)}%<br> December: ${(scaledDec*100).toFixed(0)}%<br> Later: ${(scaledLater*100).toFixed(0)}%`;
+
+                addRow( target, printName, [value], 15) ; 
+            } catch (error) {
+                addRow( target, printName, ['Error'], 15); 
+            }
+        }
+
+
+
+
+    
                 
         function updatePointFDVBasedOnSliderAndValues(){       
             let sliderValue = document.getElementById('mySlider').value;
@@ -464,7 +514,7 @@
         populateHfun();
         populateAevo();
         populateGate();
-
+        populatePolyMarket();
 
         async function populateComps() {
             const urlGecko = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=dydx-chain%2Caevo-exchange%2Cdrift-protocol%2Cgmx%2Craydium%2Cuniswap';
