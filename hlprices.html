@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,7 +80,7 @@
           <tbody>
           <tr>
             <th >Source</th>
-            <th class="price-cell">FDV</th>
+            <th class="price-cell">Month</th>
           </tr>
             <!-- Rows will be added here by JavaScript -->
           </tbody> 
@@ -443,7 +444,7 @@
                 addRow( target, printName, ['Error'], 15); 
                 document.getElementById('aevoI').textContent = 'Failed';
             }
-
+}
           
       	async function getcontractprice(contract){
           const urlA = `https://clob.polymarket.com/prices-history?interval=all&market=${contract}&fidelity=1440`;
@@ -468,7 +469,9 @@
             } catch (error) {
                 addRow( target, printName, ['Error'], 15); 
             }
-        }
+        }   
+     populatePolyMarket();
+
   
         function updatePointFDVBasedOnSliderAndValues(){       
             let sliderValue = document.getElementById('mySlider').value;
@@ -504,7 +507,7 @@
         populateHfun();
         populateAevo();
         populateGate();
-        populatePolyMarket();
+
 
         async function populateComps() {
             const urlGecko = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=dydx-chain%2Caevo-exchange%2Cdrift-protocol%2Cgmx%2Craydium%2Cuniswap';
@@ -628,7 +631,7 @@
                        } 
                        
                 } else {
-                    cell.textContent = price;  
+                    cell.innerHTML = price;  
                                     
                 }      
                 row.appendChild(cell);
