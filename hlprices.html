@@ -139,13 +139,13 @@
       </tbody>
             <tr>
               <td>
-                <span class="emoji">🟡</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred from FDV)</a>
+                <span class="emoji">💩</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred from FDV)</a>
               </td> 
               <td id="aevoI" class="price-cell">Loading...</td>
             </tr>
             <tr>
               <td>
-                <span class="emoji">🔴</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred from FDV)</a>
+                <span class="emoji">⛩️</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred from FDV)</a>
               </td> 
               <td id="gateI" class="price-cell">Loading...</td>
             </tr>
@@ -160,7 +160,7 @@
             </tr
             <tr>
               <td>
-                <span class="emoji">🎯</span><a href="https://x.com/tempst0/status/1861697359853347098" target="_blank">tempst0 (prediction)</a>
+                <span class="emoji">⛈️</span><a href="https://x.com/tempst0/status/1861697359853347098" target="_blank">tempst0 (prediction)</a>
               </td> 
               <td class="price-cell">$18.13-34.54</td>
             </tr>
@@ -327,7 +327,7 @@
         }
         
         async function populateBubbly() {
-            const printName = '<span class="emoji">🟡</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance (market)</a>'
+            const printName = '<span class="emoji">🫧</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance (market)</a>'
             const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
             try {               
                 const value = [await fetchBubblyPrice()];
@@ -349,7 +349,7 @@
         }
         
         async function populateWhales() {
-            const printName = '<span class="emoji">🟡</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market (market)</a>'
+            const printName = '<span class="emoji">🐋</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market (market)</a>'
             const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
             try {               
                 const value = [await fetchWhalesPrice()];
@@ -370,7 +370,7 @@
         }
         
         async function populateHfun() {
-            const printName = '<span class="emoji">🟢</span><a href="https://app.hypurr.fun/launch/262" target="_blank">Hypurrfun (market)</a>';
+            const printName = '<span class="emoji">🤖</span><a href="https://app.hypurr.fun/launch/262" target="_blank">Hypurrfun (market)</a>';
             const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
 
             try {      
@@ -418,7 +418,7 @@
         }
             
         async function populateGate() {
-            const printName = '<span class="emoji">🟡</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (market)</a>';
+            const printName = '<span class="emoji">⛩️</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (market)</a>';
             const target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
 
             try {      
@@ -445,7 +445,7 @@
         }
         
         async function populateAevo() {
-            const printName = '<span class="emoji">🟢</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (market)</a>';
+            const printName = '<span class="emoji">💩</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (market)</a>';
             const target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
 
             try {      
@@ -542,12 +542,12 @@
 
             const baseName = ['Hyperliquid Perp'];
             const nameMap = [
-                ['Aevo', ['Aevo Perps', 'Aevo Options'], 'aevo-exchange'],
-                ['Drift', ['Drift Trade', 'Drift AMM'], 'drift-protocol'],
-                ['dYdX', ['dYdX V4'], 'dydx-chain'],
-                ['GMX', ['GMX V2 Perps'], 'gmx'],
-                ['Raydium', ['Raydium'], 'raydium'],
-                ['Uniswap', ['Uniswap V3', 'Uniswap V2', 'Uniswap V1', 'Uniswap Labs'], 'uniswap']
+                ['<span class="emoji">💩</span>Aevo', ['Aevo Perps', 'Aevo Options'], 'aevo-exchange'],
+                ['<span class="emoji">🌊</span>Drift', ['Drift Trade', 'Drift AMM'], 'drift-protocol'],
+                ['<span class="emoji">✖️</span>dYdX', ['dYdX V4'], 'dydx-chain'],
+                ['<span class="emoji">⏏️</span>GMX', ['GMX V2 Perps'], 'gmx'],
+                ['<span class="emoji">🔫</span>Raydium', ['Raydium'], 'raydium'],
+                ['<span class="emoji">🦄</span>Uniswap', ['Uniswap V3', 'Uniswap V2', 'Uniswap V1', 'Uniswap Labs'], 'uniswap']
             ];
 
             function getExchMetrics(llamaNames) {
@@ -594,13 +594,13 @@
 
                 metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].fully_diluted_valuation / 1e9)
                 target = document.getElementById('comparables_fdv').getElementsByTagName('tbody')[0];
-                addRow( target, `<span class="emoji">🧮</span>${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
+                addRow( target, `${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
                 allComps.push(Number(metrics['tvl']))
                 allComps.push(Number(metrics['v7d']))
                 
                 metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].market_cap / 1e9)
                 target = document.getElementById('comparables_mc').getElementsByTagName('tbody')[0];
-                addRow( target, `<span class="emoji">🧮</span>${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
+                addRow( target, `${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
 
             }
                     
