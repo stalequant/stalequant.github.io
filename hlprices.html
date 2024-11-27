@@ -133,7 +133,7 @@
               <td id="compsI" class="price-cell">Loading...</td>
             </tr>
             <tr>
-              <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="51" value="20" oninput="update_inferred_values()"> <span id="sliderValue">20%</span> of FDV given to points</td>
+              <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="58" value="25" oninput="update_inferred_values()"> <span id="sliderValue">25%</span> of FDV given to points</td>
             </tr
             <tr>
               <td>
@@ -433,10 +433,10 @@
         function updatePointFDVBasedOnSliderAndValues(){       
             let sliderValue = document.getElementById('mySlider').value;
             document.getElementById('sliderValue').textContent = sliderValue + "%";
-
+            let fdvCoeff = 1000/58*sliderValue/100;
             if ((gateBid > 0) &  (gateAsk > 0)) { 
                 try {
-                    document.getElementById('gateI').textContent = `$${(gateBid*1000/51*sliderValue/100).toFixed(2)}-${(gateAsk*1000/51*sliderValue/100).toFixed(2)}`;
+                    document.getElementById('gateI').textContent = `$${(gateBid*fdvCoeff).toFixed(2)}-${(gateAsk*fdvCoeff).toFixed(2)}`;
                 } catch (error) {
                     document.getElementById('gateI').textContent = 'Failed';
                 }        
@@ -444,7 +444,7 @@
                     
             if ((compsBid > 0) &  (compsAsk > 0)) { 
                 try {
-                    document.getElementById('compsI').textContent = `$${(compsBid*1000/51*sliderValue/100).toFixed(2)}-${(compsAsk*1000/51*sliderValue/100).toFixed(2)}`;
+                    document.getElementById('compsI').textContent = `$${(compsBid*fdvCoeff).toFixed(2)}-${(compsAsk*fdvCoeff).toFixed(2)}`;
                 } catch (error) {
                     document.getElementById('compsI').textContent = 'Failed';
                 }        
@@ -452,7 +452,7 @@
                     
             if ((aevoBid > 0) &  (aevoAsk > 0)) { 
                 try {
-                    document.getElementById('aevoI').textContent = `$${(aevoBid*1000/51*sliderValue/100).toFixed(2)}-${(aevoAsk*1000/51*sliderValue/100).toFixed(2)}`;
+                    document.getElementById('aevoI').textContent = `$${(aevoBid*fdvCoeff).toFixed(2)}-${(aevoAsk*fdvCoeff).toFixed(2)}`;
                 } catch (error) {
                     document.getElementById('aevoI').textContent = 'Failed';
                 }        
