@@ -97,9 +97,11 @@
             <th >Source</th>
             <th class="price-cell">FDV</th>
           </tr>
+          <tr style="height:10px;"></tr>
           <tbody id="markets_fdv">
             <!-- Rows will be added here by JavaScript -->
-          </tbody> 
+          </tbody>
+          <tr style="height:10px;"></tr>
           <tbody id="predictions_fdv">
             <!-- Rows will be added here by JavaScript -->
           </tbody> 
@@ -117,10 +119,12 @@
                 <th  class="price-cell">Price</th>
               </tr>
           
+            <tr style="height:10px;"></tr>
             <tbody id="markets_points">
               <!-- Rows will be added here by JavaScript -->
             </tbody>
            
+            <tr style="height:10px;"></tr>
             <tr>
               <td>
                 <span class="emoji">💩</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred from FDV)</a>
@@ -142,6 +146,8 @@
             <tr>
               <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="58" value="25" oninput="updatePointFDVBasedOnSliderAndValues()"> <span id="sliderValue">25%</span> of FDV given to points</td>
             </tr>
+          
+            <tr style="height:10px;"></tr>
             <tbody id="predictions_points">
               <!-- Rows will be added here by JavaScript -->
             </tbody>
@@ -159,6 +165,8 @@
                 <th class="price-cell">TVL-implied FDV</th>
                 <th class="price-cell">ADV-implied FDV (7D)</th>
             </tr>
+      
+          <tr style="height:10px;"></tr>
           <tbody id="comparables_fdv" >
             <!-- Rows will be added here by JavaScript -->
         </tbody>
@@ -174,7 +182,9 @@
                 <th>Comparable</th>
                 <th class="price-cell">TVL-implied MC</th>
                 <th class="price-cell">ADV-implied MC (7D)</th>
-            </tr>
+            </tr
+              
+          <tr style="height:10px;"></tr>
           <tbody id="comparables_mc" >
             <!-- Rows will be added here by JavaScript -->
         </tbody>
