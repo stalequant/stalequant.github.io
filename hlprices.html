@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -71,76 +68,49 @@
           </thead>
         </table>
 
-        <table class="table table-dark full-width-table " id="markets_tgedate">
+        <table class="table table-dark full-width-table " >
           <thead>
             <tr>
               <th colspan="2" >Date of TGE</th></th>
             </tr>
           </thead>
-          <tbody>
           <tr>
             <th >Source</th>
             <th class="price-cell">Month</th>
           </tr>
+          <tbody id="markets_tgedate">
             <!-- Rows will be added here by JavaScript -->
           </tbody> 
         </table>
 
         
-        <table class="table table-dark full-width-table " id="markets_fdv">
+        <table class="table table-dark full-width-table ">
           <thead>
             <tr>
               <th colspan="2" >Fully diluted valuation</th>
             </tr>
           </thead>
-          <tbody>
           <tr>
             <th >Source</th>
             <th class="price-cell">FDV</th>
           </tr>
+          <tbody id="markets_fdv">
             <!-- Rows will be added here by JavaScript -->
           </tbody>
  
-            <tr>
-              <td>
-                <span class="emoji">🐵</span><a href="https://x.com/blocmatesdotcom/status/1861855649778249999/photo/1" target="_blank">blocmates</a>
-              </td> 
-              <td class="price-cell">$3.05-4.85b</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🎯</span><a href="https://x.com/defi_monk/status/1856019835316002998" target="_blank">MONK @ Messari (2027 prediction)</a>
-              </td> 
-              <td class="price-cell">$3.00-34.00b</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🎯</span><a href="https://x.com/tempst0/status/1861697359853347098" target="_blank">tempst0 (prediction)</a>
-              </td> 
-              <td class="price-cell">$3.50-5.00b</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🎯</span><a href="https://x.com/asxn_r/status/1838299623670112749/photo/1" target="_blank">asxn (prediction)</a>
-              </td> 
-              <td class="price-cell">$2.00-4.25b</td>
-            </tr>
-          
         </table>
 
 
-        <table class="table table-dark full-width-table " id="point_markets">
+        <table class="table table-dark full-width-table ">
           <thead>
             <tr>
               <th colspan="3">Points</th>
             </tr>
           </thead>
-          <tbody>
               <tr>
                 <th >Source</th>
                 <th  class="price-cell">Price</th>
               </tr>
-      </tbody>
             <tr>
               <td>
                 <span class="emoji">💩</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred from FDV)</a>
@@ -160,123 +130,41 @@
               <td id="compsI" class="price-cell">Loading...</td>
             </tr>
             <tr>
-              <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="58" value="25" oninput="update_inferred_values()"> <span id="sliderValue">25%</span> of FDV given to points</td>
+              <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="58" value="25" oninput="updatePointFDVBasedOnSliderAndValues()"> <span id="sliderValue">25%</span> of FDV given to points</td>
             </tr>
-            <tr>
-              <td>
-                <span class="emoji">🐵</span><a href="https://x.com/blocmatesdotcom/status/1861855649778249999/photo/1" target="_blank">blocmates</a>
-              </td> 
-              <td class="price-cell">$17.50-43.80b</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">⛈️</span><a href="https://x.com/tempst0/status/1861697359853347098" target="_blank">tempst0 (prediction)</a>
-              </td> 
-              <td class="price-cell">$18.13-34.54</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🎯</span><a href="https://x.com/Shuri2060" target="_blank">shuri (prediction, bozo)</a>
-              </td> 
-              <td class="price-cell">$20.00-40.00</td>
-            </tr>
- 
-            <tr>
-              <td>
-                <span class="emoji">🎯</span> vtx (prediction, possibly bozo)
-              </td> 
-              <td class="price-cell">$24.96-24.96</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🎯</span><a href="https://x.com/asxn_r/status/1838299623670112749/photo/1" target="_blank">asxn (prediction)</a>
-              </td> 
-              <td class="price-cell">$5.84-28.96</td>
-            </tr>
-          
- 
-            <tr>
-              <td>
-                <span class="emoji">🎯</span><a href="https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA" target="_blank">steven.hl (prediction)</a>
-              </td> 
-              <td class="price-cell">$10.00-15.00</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🎯</span><a href="https://x.com/defi_monk/status/1854925228096287213/photo/1" target="_blank">Messari (prediction)</a>
-              </td> 
-              <td class="price-cell">$9.78-27.40</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🎯</span><a href="https://x.com/0xPasteke/status/1855727449444692117" target="_blank">Pasteke.hl (prediction)</a>
-              </td> 
-              <td class="price-cell">$9.00-46.00</td>
-            </tr>
-
-
-            <tr>
-              <td>
-                <span class="emoji">🌚</span><a href="https://twitter.com/crypto_adair" target="_blank">adair (moon math)</a>
-              </td> 
-              <td class="price-cell">$799.00-800.00</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🌚</span><a href="https://www.onchainbinance.com/points" target="_blank">onchainbinance (moon math)</a>
-              </td> 
-              <td class="price-cell">$0.00-844.00</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🌚</span><a href="https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1" target="_blank">GreenGeorgeHL (moon math)</a>
-              </td> 
-              <td class="price-cell">$30.00-86.00</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">💲</span><a href="https://twitter.com/wsbmod" target="_blank">wsbmod (OTC buyer)</a>
-              </td> 
-              <td class="price-cell">Negotiated</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">💲</span><a href="https://twitter.com/ExitLiqCapital" target="_blank">otcnick (OTC buyer)</a>
-              </td> 
-              <td class="price-cell">Negotiated</td>
-            </tr>
+            <tbody id="point_markets">
           </tbody>
         </table>
 
 
-    <table class="table table-dark full-width-table "  id="comparables_fdv" >
+    <table class="table table-dark full-width-table " >
           <thead>
             <tr>
               <th colspan="3">Fully diluted valuation <a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">comps</a></th>
             </tr>
           </thead>
-        <tbody>
             <tr>
                 <th>Comparable</th>
                 <th class="price-cell">TVL-implied FDV</th>
                 <th class="price-cell">ADV-implied FDV (7D)</th>
             </tr>
+          <tbody id="comparables_fdv" >
             <!-- Rows will be added here by JavaScript -->
         </tbody>
     </table>
 
-    <table class="table table-dark full-width-table"  id="comparables_mc" >
+    <table class="table table-dark full-width-table" >
           <thead>
             <tr>
               <th colspan="5">Market cap <a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">comps</a></th>
             </tr>
           </thead>
-        <tbody>
             <tr>
                 <th>Comparable</th>
                 <th class="price-cell">TVL-implied MC</th>
                 <th class="price-cell">ADV-implied MC (7D)</th>
             </tr>
+          <tbody id="comparables_mc" >
             <!-- Rows will be added here by JavaScript -->
         </tbody>
     </table>
@@ -286,6 +174,144 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> 
   <script>
 
+        
+        function predictions() {
+            const allPredictions = [
+                {
+                    emoji: '🐵',
+                    link: 'https://x.com/blocmatesdotcom/status/1861855649778249999/photo/1',
+                    text: 'blocmates',
+                    value: '$3.05-4.85b',
+                    where: 'markets_fdv'
+                },
+                {
+                    emoji: '🎯',
+                    link: 'https://x.com/defi_monk/status/1856019835316002998',
+                    text: 'MONK @ Messari (2027 prediction)',
+                    value: '$3.00-34.00b',
+                    where: 'markets_fdv'
+                },
+                {
+                    emoji: '🎯',
+                    link: 'https://x.com/tempst0/status/1861697359853347098',
+                    text: 'tempst0 (prediction)',
+                    value: '$3.50-5.00b',
+                    where: 'markets_fdv'
+                },
+                {
+                    emoji: '🎯',
+                    link: 'https://x.com/asxn_r/status/1838299623670112749/photo/1',
+                    text: 'asxn (prediction)',
+                    value: '$2.00-4.25b',
+                    where: 'markets_fdv'
+                },
+                {
+                    emoji: '💲',
+                    link: 'https://twitter.com/wsbmod',
+                    text: 'wsbmod (OTC buyer)',
+                    value: 'Negotiated',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '💲',
+                    link: 'https://twitter.com/ExitLiqCapital',
+                    text: 'otcnick (OTC buyer)',
+                    value: 'Negotiated',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🐵',
+                    link: 'https://x.com/blocmatesdotcom/status/1861855649778249999/photo/1',
+                    text: 'blocmates',
+                    value: '$17.50-43.80b',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '⛈️',
+                    link: 'https://x.com/tempst0/status/1861697359853347098',
+                    text: 'tempst0 (prediction)',
+                    value: '$18.13-34.54',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🎯',
+                    link: 'https://x.com/Shuri2060',
+                    text: 'shuri (prediction, bozo)',
+                    value: '$20.00-40.00',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🎯',
+                    link: null, // No link provided
+                    text: 'vtx (prediction, possibly bozo)',
+                    value: '$24.96-24.96',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🎯',
+                    link: 'https://x.com/asxn_r/status/1838299623670112749/photo/1',
+                    text: 'asxn (prediction)',
+                    value: '$5.84-28.96',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🎯',
+                    link: 'https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA',
+                    text: 'steven.hl (prediction)',
+                    value: '$10.00-15.00',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🎯',
+                    link: 'https://x.com/defi_monk/status/1854925228096287213/photo/1',
+                    text: 'Messari (prediction)',
+                    value: '$9.78-27.40',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🎯',
+                    link: 'https://x.com/0xPasteke/status/1855727449444692117',
+                    text: 'Pasteke.hl (prediction)',
+                    value: '$9.00-46.00',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🌚',
+                    link: 'https://twitter.com/crypto_adair',
+                    text: 'adair (moon math)',
+                    value: '$799.00-800.00',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🌚',
+                    link: 'https://www.onchainbinance.com/points',
+                    text: 'onchainbinance (moon math)',
+                    value: '$0.00-844.00',
+                    where: 'point_markets'
+                },
+                {
+                    emoji: '🌚',
+                    link: 'https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1',
+                    text: 'GreenGeorgeHL (moon math)',
+                    value: '$30.00-86.00',
+                    where: 'point_markets'
+                },
+            ];  
+            
+        
+            const shuffledList = allPredictions.sort(() => Math.random() - 0.5);
+            shuffledList.forEach(row => {
+                addRow( 
+                document.getElementById(row.where) ,
+                `<span class="emoji">${row.emoji}</span><a href="${row.link}" target="_blank">${row.text}</a>`,
+                 [row.value],
+                  15)
+            });
+        };
+        
+        predictions()
+        
+
         async function getWithCORS(url_to_get) {
                 const CORSurl = 'https://corsproxy.io/?' + encodeURIComponent(url_to_get);
                 const response = await fetch(CORSurl);
@@ -293,60 +319,43 @@
                 return data
         }
          
-
-        async function fetchBubblyPriceFallback() {
-            try {
-                const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/0x3b89D63Eaac5df9956A053f200aec2c4a309FcE6/liquidity'
-                const data = await getWithCORS(bubblyURL);
-                const balancedRange = data.data.tickRangeList.find(range => range.range === "Balanced");
-                if (balancedRange) {
-
-                    const lowerPrice = parseFloat(balancedRange.lowerPrice) * 1e12;
-                    const upperPrice = parseFloat(balancedRange.upperPrice) * 1e12;
-                    return `$${lowerPrice.toFixed(2)}-${upperPrice.toFixed(2)}`;
-                } else {
-                    throw new Error('Balanced range not found');
-                }
-                    
+        
+        async function tryToPopulate(
+            emoji, 
+            text, 
+            link,
+            where,
+            content_fn, 
+            cutoff        
+        ) {
+            try {        
+                value = await content_fn();   
             } catch (error) {
-                console.error('Error fetching Bubbly fallback data:', error);
-                document.getElementById('bubbly').textContent = 'Failed';
+                value = 'Error';
+                console.error('Error fetching data:', error);  
             }
+            addRow( 
+            document.getElementById(where) ,
+            `<span class="emoji">${emoji}</span><a href="${link}" target="_blank">${text}</a>`,
+             [value],
+              cutoff);    
+            updatePointFDVBasedOnSliderAndValues()
         }
         
         
         async function fetchBubblyPrice() { 
-            try {
-                const bubblyURL = 'https://api.bubbly.finance/data/v1/42161/price?address=0x807125cD6599d1f7CA5529dB78951A2828E2A948'
-                const data = await getWithCORS(bubblyURL);
-                const price = parseFloat(data.data.usdPrice);
-                
-                if (price < 0.1) {
-                    console.log('Bubbly price is less than $0.1, triggering fallback');
-                    throw new Error('Balanced range not found');
-
-                } else {
-                    return `$${price.toFixed(2)}`;
-                }
-                    
-            } catch (error) {
-                console.error('Error fetching Bubbly price data:', error);
-                return await fetchBubblyPriceFallback();
-            }
+            const data = await getWithCORS('https://api.bubbly.finance/data/v1/42161/price?address=0x807125cD6599d1f7CA5529dB78951A2828E2A948');
+            return `$${parseFloat(data.data.usdPrice).toFixed(2)}`;
+        } 
+        tryToPopulate(
+            "🫧",
+            "bubbly.finance (market)",
+            "https://app.bubbly.finance/swap",
+            "point_markets",
+            fetchBubblyPrice,
+            15
+         ) 
         
-        }
-        
-        async function populateBubbly() {
-            const printName = '<span class="emoji">🫧</span><a href="https://app.bubbly.finance/swap" target="_blank">bubbly.finance (market)</a>'
-            const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
-            try {               
-                const value = [await fetchBubblyPrice()];
-                addRow( target, printName, value , 15);
-            } catch (error) {
-                console.error('Error fetching data:', error); 
-                addRow( target, printName, ['Error'], 15);
-            }
-        }
         
         async function fetchWhalesPrice() { 
             const dataBids = await getWithCORS('https://api.whales.market/v2/offers?symbol=Hyperliquid&status=open&type=buy&take=2');
@@ -357,44 +366,31 @@
     
             return `$${bestBid}-${bestAsk}`;
         }
-        
-        async function populateWhales() {
-            const printName = '<span class="emoji">🐋</span><a href="https://pro.whales.market/points/Arbitrum/Hyperliquid" target="_blank">whales.market (market)</a>'
-            const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
-            try {               
-                const value = [await fetchWhalesPrice()];
-                addRow( target, printName, value , 15);
-            } catch (error) {
-                console.error('Error fetching data:', error); 
-                addRow( target, printName, ['Error'], 15);
-            }
-        }
+        tryToPopulate(
+            "🐋",
+            "whales.market (market)",
+            "https://pro.whales.market/points/Arbitrum/Hyperliquid",
+            "point_markets",
+            fetchWhalesPrice,
+            15
+         ) 
+         
+         
         async function fetchCachedHfunPrice() { 
-                const url = 'https://stalequant.github.io/stale_prices.json?Math.random()';
-
-                const response = await fetch(url);
+                const response = await fetch('https://stalequant.github.io/stale_prices.json?Math.random()');
                 const data = await response.json();
-        
-                value = `${data['date']} ->  $${data['hf'].toFixed(2)}`;
-                return value;
+                return  `${data['date']} ->  $${data['hf'].toFixed(2)}`;
         }
         
-        async function populateHfun() {
-            const printName = '<span class="emoji">🤖</span><a href="https://app.hypurr.fun/launch/262" target="_blank">Hypurrfun (market)</a>';
-            const target = document.getElementById('point_markets').getElementsByTagName('tbody')[0];
-
-            try {      
-                const value = [await fetchCachedHfunPrice()];
-      
-                addRow( target, printName, [value], 15) ;
-                
-            } catch (error) {
-                console.error('Error fetching data:', error); 
-                addRow( target, printName, ['Error'], 15); 
-            }
-        }
-        
-
+        tryToPopulate(
+            "🤖",
+            "Hypurrfun  (market)",
+            "https://app.hypurr.fun/launch/262",
+            "point_markets",
+            fetchCachedHfunPrice,
+            15
+         ) 
+         
 
         let gateBid = 0;
         let gateAsk = 0;         
@@ -406,14 +402,8 @@
         let compsAsk = 0;         
  
 
-        // Function to update the inferred value
-        function update_inferred_values() {
-                updatePointFDVBasedOnSliderAndValues();
-        }
-
-        // Initialize the calculated value on page load
         window.onload = function() {
-            update_inferred_values(document.getElementById('mySlider').value);
+            updatePointFDVBasedOnSliderAndValues(document.getElementById('mySlider').value);
         };
 
 
@@ -425,24 +415,18 @@
             gateBid = Number(BidsData['data']['list'][0]['price'])*100;
 
             return `$${gateBid.toFixed(2)}-${gateAsk.toFixed(2)}b`;
-        }
+        };
             
-        async function populateGate() {
-            const printName = '<span class="emoji">⛩️</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (market)</a>';
-            const target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
+        tryToPopulate(
+            "⛩️",
+            "Gate.io (market)",
+            "https://www.gate.io/pre-market/HYPE",
+            "markets_fdv",
+            fetchGatePrice,
+            15
+         )  ;
 
-            try {      
-                const value =  await fetchGatePrice();
-                addRow( target, printName, [value], 15) ;
-
-                updatePointFDVBasedOnSliderAndValues()
-            } catch (error) {
-                addRow( target, printName, ['Error'], 15); 
-                document.getElementById('gateI').textContent = 'Failed';
-            }
-        }
-
-        async function fetchAevoPrice() { 
+        async function fetchAevoPrice () { 
             const url = 'https://api.codetabs.com/v1/proxy/?quest=https://api.aevo.xyz/orderbook?instrument_name=HYPE-PERP';
         
             const response = await fetch(url);
@@ -452,84 +436,61 @@
             aevoAsk = Number(parsedData['asks'][0][0]);
 
             return `$${aevoBid.toFixed(2)}-${aevoAsk.toFixed(2)}b`;
-        }
-        
-        async function populateAevo() {
-            const printName = '<span class="emoji">💩</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (market)</a>';
-            const target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
-
-            try {      
-                const value =  await fetchAevoPrice();
-                addRow( target, printName, [value], 15) ;
-
-                updatePointFDVBasedOnSliderAndValues()
-            } catch (error) {
-                addRow( target, printName, ['Error'], 15); 
-                document.getElementById('aevoI').textContent = 'Failed';
-            }
-}
+        };
+        tryToPopulate(
+            "💩",
+            "AEVO (market)",
+            "https://app.aevo.xyz/perpetual/hype",
+            "markets_fdv",
+            fetchAevoPrice,
+            15
+         )  ;
           
-      	async function getcontractprice(contract){
+      	async function getPolyMarketMarket(contract){
           const urlA = `https://clob.polymarket.com/prices-history?interval=all&market=${contract}&fidelity=1440`;
           const responseA = await getWithCORS(urlA);
           return responseA.history[responseA.history.length - 1].p;
-      }
-        async function populatePolyMarket() {
-            const target = document.getElementById('markets_tgedate').getElementsByTagName('tbody')[0];
-            try {    
-                const  priceDec = await getcontractprice('26267050159315439486982580768550885697032925848336364008331950815706337554671');
-                const  priceNov = await getcontractprice('110636950979938146031820507807868392824912117333231960735063304350353705231383');
-                const  priceLater = await getcontractprice('95247952138809682511168942957507572432766807567801093061883529031657734111365');
+        };
+        
+        async function fetchPolyMarketRange() {
+            const  priceDec = await getPolyMarketMarket('26267050159315439486982580768550885697032925848336364008331950815706337554671');
+            const  priceNov = await getPolyMarketMarket('110636950979938146031820507807868392824912117333231960735063304350353705231383');
+            const  priceLater = await getPolyMarketMarket('95247952138809682511168942957507572432766807567801093061883529031657734111365');
 
-                const scaledNov = priceNov / (priceDec+ priceNov + priceLater)
-                const scaledDec = priceDec / (priceDec+ priceNov + priceLater) 
-                const scaledLater = priceLater / (priceDec+ priceNov + priceLater) 
-              
-                const printName = '<span class="emoji">🔮</span><a href="https://polymarket.com/event/hyperliquid-token-launch-wen?tid=1732733387137" target="_blank">Polymarket (market)</a>';
-                const value = `November: ${(scaledNov*100).toFixed(0)}%<br> December: ${(scaledDec*100).toFixed(0)}%<br> Later: ${(scaledLater*100).toFixed(0)}%`;
+            const scaledNov = priceNov / (priceDec+ priceNov + priceLater)
+            const scaledDec = priceDec / (priceDec+ priceNov + priceLater) 
+            const scaledLater = priceLater / (priceDec+ priceNov + priceLater) 
+          
+            return `November: ${(scaledNov*100).toFixed(0)}%<br> December: ${(scaledDec*100).toFixed(0)}%<br> Later: ${(scaledLater*100).toFixed(0)}%`;
+        };   
 
-                addRow( target, printName, [value], 15) ; 
-            } catch (error) {
-                addRow( target, printName, ['Error'], 15); 
+        tryToPopulate(
+            "🔮",
+            "Polymarket (market)",
+            "https://polymarket.com/event/hyperliquid-token-launch-wen?tid=1732733387137",
+            "markets_tgedate",
+            fetchPolyMarketRange,
+            15
+         )  ;
+          
+        function updateFromSlider(name, low, high){
+            if ((low > 0) &  (high > 0)) { 
+                try {
+                    document.getElementById(name).textContent = `$${(low).toFixed(2)}-${(high).toFixed(2)}`;
+                } catch (error) {
+                    document.getElementById(name).textContent = 'Failed';
+                }        
             }
-        }   
-     populatePolyMarket();
-
-  
+        };
+        
         function updatePointFDVBasedOnSliderAndValues(){       
             let sliderValue = document.getElementById('mySlider').value;
             document.getElementById('sliderValue').textContent = sliderValue + "%";
             let fdvCoeff = 1000/58*sliderValue/100;
-            if ((gateBid > 0) &  (gateAsk > 0)) { 
-                try {
-                    document.getElementById('gateI').textContent = `$${(gateBid*fdvCoeff).toFixed(2)}-${(gateAsk*fdvCoeff).toFixed(2)}`;
-                } catch (error) {
-                    document.getElementById('gateI').textContent = 'Failed';
-                }        
-            }
-                    
-            if ((compsBid > 0) &  (compsAsk > 0)) { 
-                try {
-                    document.getElementById('compsI').textContent = `$${(compsBid*fdvCoeff).toFixed(2)}-${(compsAsk*fdvCoeff).toFixed(2)}`;
-                } catch (error) {
-                    document.getElementById('compsI').textContent = 'Failed';
-                }        
-            }
-                    
-            if ((aevoBid > 0) &  (aevoAsk > 0)) { 
-                try {
-                    document.getElementById('aevoI').textContent = `$${(aevoBid*fdvCoeff).toFixed(2)}-${(aevoAsk*fdvCoeff).toFixed(2)}`;
-                } catch (error) {
-                    document.getElementById('aevoI').textContent = 'Failed';
-                }        
-            }
+            updateFromSlider( 'gateI', gateBid*fdvCoeff, gateAsk*fdvCoeff)
+            updateFromSlider( 'compsI', compsBid*fdvCoeff, compsAsk*fdvCoeff)
+            updateFromSlider( 'aevoI', aevoBid*fdvCoeff, aevoAsk*fdvCoeff)
         }
-
-        populateBubbly();
-        populateWhales();
-        populateHfun();
-        populateAevo();
-        populateGate();
 
 
         async function populateComps() {
@@ -603,13 +564,13 @@
                 const compMetrics = getExchMetrics(llamaNames);
 
                 metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].fully_diluted_valuation / 1e9)
-                target = document.getElementById('comparables_fdv').getElementsByTagName('tbody')[0];
+                target = document.getElementById('comparables_fdv');
                 addRow( target, `${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
                 allComps.push(Number(metrics['tvl']))
                 allComps.push(Number(metrics['v7d']))
                 
                 metrics = normMetrics(hlMetrics, compMetrics, geckoDict[geckoName].market_cap / 1e9)
-                target = document.getElementById('comparables_mc').getElementsByTagName('tbody')[0];
+                target = document.getElementById('comparables_mc');
                 addRow( target, `${printName}`, [Number(metrics['tvl']), Number(metrics['v7d'])], 5)
 
             }
@@ -620,12 +581,12 @@
             compsBid = allComps[Math.floor(0.25 * (allComps.length - 1))]
             compsAsk = allComps[Math.ceil(0.75 * (allComps.length - 1))]
         
-            target = document.getElementById('comparables_fdv').getElementsByTagName('tbody')[0];
+            target = document.getElementById('comparables_fdv');
             addRow( target, `<span class="emoji">🧮</span>Overall 25th percentile`, ['',compsBid], 15) ;
             addRow( target, `<span class="emoji">🧮</span>Overall 75th percentile`, ['',compsAsk], 15) ;
 
 
-            target = document.getElementById('markets_fdv').getElementsByTagName('tbody')[0];
+            target = document.getElementById('markets_fdv');
             value =  `$${compsBid.toFixed(2)}-${compsAsk.toFixed(2)}b`;
             addRow( target, `<span class="emoji">🧮</span><a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">Comps (calculated below)</a>`, [value], 15) ;
             
@@ -634,8 +595,7 @@
         }
         
         function addRow(table, name, prices, cutoff=null){
-            const row = document.createElement('tr');
-
+            const row = table.insertRow(0);
             const nameCell = document.createElement('td');
             nameCell.innerHTML  = name;
             row.appendChild(nameCell);
@@ -646,22 +606,19 @@
                 if (price == null){
                       cell.textContent = 'N/A';
                       cell.style.backgroundColor = '#f0f0f0'; 
-
                 } else if (typeof price === 'number' ) {
                       cell.textContent = `$${price.toFixed(2)}b`;
                       if (cutoff != null && price > cutoff) {
                          cell.style.backgroundColor =  '#003e00';
                        } 
-                       
                 } else {
                     cell.innerHTML = price;  
                                     
                 }      
                 row.appendChild(cell);
-        
             }
-            table.appendChild(row);
         }
+
 
         populateComps();
     </script>
