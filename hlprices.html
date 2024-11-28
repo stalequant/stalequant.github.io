@@ -81,6 +81,9 @@
           <tbody id="markets_tgedate">
             <!-- Rows will be added here by JavaScript -->
           </tbody> 
+          <tbody id="predictions_tgedate">
+            <!-- Rows will be added here by JavaScript -->
+          </tbody> 
         </table>
 
         
@@ -96,8 +99,10 @@
           </tr>
           <tbody id="markets_fdv">
             <!-- Rows will be added here by JavaScript -->
-          </tbody>
- 
+          </tbody> 
+          <tbody id="predictions_fdv">
+            <!-- Rows will be added here by JavaScript -->
+          </tbody> 
         </table>
 
 
@@ -112,9 +117,10 @@
                 <th  class="price-cell">Price</th>
               </tr>
           
-            <tbody id="point_markets">
-          </tbody>
-          
+            <tbody id="markets_points">
+              <!-- Rows will be added here by JavaScript -->
+            </tbody>
+           
             <tr>
               <td>
                 <span class="emoji">💩</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred from FDV)</a>
@@ -136,8 +142,9 @@
             <tr>
               <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="58" value="25" oninput="updatePointFDVBasedOnSliderAndValues()"> <span id="sliderValue">25%</span> of FDV given to points</td>
             </tr>
-            <tbody id="point_predictions">
-          </tbody>
+            <tbody id="predictions_points">
+              <!-- Rows will be added here by JavaScript -->
+            </tbody>
         </table>
 
 
@@ -186,119 +193,119 @@
                     link: 'https://x.com/blocmatesdotcom/status/1861855649778249999/photo/1',
                     text: 'blocmates',
                     value: '$3.05-4.85b',
-                    where: 'markets_fdv'
+                    where: 'predictions_fdv'
                 },
                 {
                     emoji: '🎯',
                     link: 'https://x.com/defi_monk/status/1856019835316002998',
                     text: 'MONK @ Messari (2027 prediction)',
                     value: '$3.00-34.00b',
-                    where: 'markets_fdv'
+                    where: 'predictions_fdv'
                 },
                 {
                     emoji: '🎯',
                     link: 'https://x.com/tempst0/status/1861697359853347098',
                     text: 'tempst0 (prediction)',
                     value: '$3.50-5.00b',
-                    where: 'markets_fdv'
+                    where: 'predictions_fdv'
                 },
                 {
                     emoji: '🎯',
                     link: 'https://x.com/asxn_r/status/1838299623670112749/photo/1',
                     text: 'asxn (prediction)',
                     value: '$2.00-4.25b',
-                    where: 'markets_fdv'
+                    where: 'predictions_fdv'
                 },
                 {
                     emoji: '💲',
                     link: 'https://twitter.com/wsbmod',
                     text: 'wsbmod (OTC buyer)',
                     value: 'Negotiated',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '💲',
                     link: 'https://twitter.com/ExitLiqCapital',
                     text: 'otcnick (OTC buyer)',
                     value: 'Negotiated',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🐵',
                     link: 'https://x.com/blocmatesdotcom/status/1861855649778249999/photo/1',
                     text: 'blocmates',
                     value: '$17.50-43.80b',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '⛈️',
                     link: 'https://x.com/tempst0/status/1861697359853347098',
                     text: 'tempst0 (prediction)',
                     value: '$18.13-34.54',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🎯',
                     link: 'https://x.com/Shuri2060',
                     text: 'shuri (prediction, bozo)',
                     value: '$20.00-40.00',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🎯',
                     link: null, // No link provided
                     text: 'vtx (prediction, possibly bozo)',
                     value: '$24.96-24.96',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🎯',
                     link: 'https://x.com/asxn_r/status/1838299623670112749/photo/1',
                     text: 'asxn (prediction)',
                     value: '$5.84-28.96',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🎯',
                     link: 'https://x.com/stevenyuntcap/status/1825928172065665310?t=4pWlevNQPZzZ50PO4ciYfA',
                     text: 'steven.hl (prediction)',
                     value: '$10.00-15.00',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🎯',
                     link: 'https://x.com/defi_monk/status/1854925228096287213/photo/1',
                     text: 'Messari (prediction)',
                     value: '$9.78-27.40',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🎯',
                     link: 'https://x.com/0xPasteke/status/1855727449444692117',
                     text: 'Pasteke.hl (prediction)',
                     value: '$9.00-46.00',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🌚',
                     link: 'https://twitter.com/crypto_adair',
                     text: 'adair (moon math)',
                     value: '$799.00-800.00',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🌚',
                     link: 'https://www.onchainbinance.com/points',
                     text: 'onchainbinance (moon math)',
                     value: '$0.00-844.00',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
                 {
                     emoji: '🌚',
                     link: 'https://twitter.com/GreenGeorgeHL/status/1823398193373032866/photo/1',
                     text: 'GreenGeorgeHL (moon math)',
                     value: '$30.00-86.00',
-                    where: 'point_predictions'
+                    where: 'predictions_points'
                 },
             ];  
             
@@ -355,7 +362,7 @@
             "🫧",
             "bubbly.finance (market)",
             "https://app.bubbly.finance/swap",
-            "point_markets",
+            "markets_points",
             fetchBubblyPrice,
             15
          ) 
@@ -374,7 +381,7 @@
             "🐋",
             "whales.market (market)",
             "https://pro.whales.market/points/Arbitrum/Hyperliquid",
-            "point_markets",
+            "markets_points",
             fetchWhalesPrice,
             15
          ) 
@@ -390,7 +397,7 @@
             "🤖",
             "Hypurrfun  (market)",
             "https://app.hypurr.fun/launch/262",
-            "point_markets",
+            "markets_points",
             fetchCachedHfunPrice,
             15
          ) 
