@@ -68,23 +68,6 @@
           </thead>
         </table>
 
-        <table class="table table-dark full-width-table " >
-          <thead>
-            <tr>
-              <th colspan="2" >Date of TGE</th></th>
-            </tr>
-          </thead>
-          <tr>
-            <th >Source</th>
-            <th class="price-cell">Month</th>
-          </tr>
-          <tbody id="markets_tgedate">
-            <!-- Rows will be added here by JavaScript -->
-          </tbody> 
-          <tbody id="predictions_tgedate">
-            <!-- Rows will be added here by JavaScript -->
-          </tbody> 
-        </table>
 
         
         <table class="table table-dark full-width-table ">
@@ -97,10 +80,6 @@
             <th >Source</th>
             <th class="price-cell">FDV</th>
           </tr>
-          <tbody id="markets_fdv">
-            <!-- Rows will be added here by JavaScript -->
-          </tbody>
-          <tr style="height:5px;"></tr>
           <tbody id="predictions_fdv">
             <!-- Rows will be added here by JavaScript -->
           </tbody> 
@@ -118,32 +97,8 @@
                 <th  class="price-cell">Price</th>
               </tr>
           
-            <tbody id="markets_points">
-              <!-- Rows will be added here by JavaScript -->
-            </tbody>
-           
-            <tr style="height:5px;"></tr>
-            <tr>
-              <td>
-                <span class="emoji">💩</span><a href="https://app.aevo.xyz/perpetual/hype" target="_blank">AEVO (inferred from FDV)</a>
-              </td> 
-              <td id="aevoI" class="price-cell">Loading...</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">⛩️</span><a href="https://www.gate.io/pre-market/HYPE" target="_blank">Gate.io (inferred from FDV)</a>
-              </td> 
-              <td id="gateI" class="price-cell">Loading...</td>
-            </tr>
-            <tr>
-              <td>
-                <span class="emoji">🧮</span><a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">Comps (inferred from FDV)</a>
-              </td> 
-              <td id="compsI" class="price-cell">Loading...</td>
-            </tr>
-            <tr>
-              <td colspan="3" style="padding-left: 20px;" class="form-range">→ assuming <input type="range" id="mySlider" min="0" max="58" value="25" oninput="updatePointFDVBasedOnSliderAndValues()"> <span id="sliderValue">25%</span> of FDV given to points</td>
-            </tr>
+            
+      
           
             <tr style="height:5px;"></tr>
             <tbody id="predictions_points">
@@ -151,40 +106,6 @@
             </tbody>
         </table>
 
-
-    <table class="table table-dark full-width-table " >
-          <thead>
-            <tr>
-              <th colspan="3">Fully diluted valuation <a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">comps</a></th>
-            </tr>
-          </thead>
-            <tr>
-                <th>Comparable</th>
-                <th class="price-cell">TVL-implied FDV</th>
-                <th class="price-cell">ADV-implied FDV (7D)</th>
-            </tr>
-      >
-          <tbody id="comparables_fdv" >
-            <!-- Rows will be added here by JavaScript -->
-        </tbody>
-    </table>
-
-    <table class="table table-dark full-width-table" >
-          <thead>
-            <tr>
-              <th colspan="5">Market cap <a href="https://www.investopedia.com/articles/investing/080913/equity-valuation-comparables-approach.asp" target="_blank">comps</a></th>
-            </tr>
-          </thead>
-            <tr>
-                <th>Comparable</th>
-                <th class="price-cell">TVL-implied MC</th>
-                <th class="price-cell">ADV-implied MC (7D)</th>
-            </tr
-              
-          <tbody id="comparables_mc" >
-            <!-- Rows will be added here by JavaScript -->
-        </tbody>
-    </table>
       </div>
     </div>
   </div>
