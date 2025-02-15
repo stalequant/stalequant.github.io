@@ -72,3 +72,5 @@ The returns to integration increase as the platform grows. If your growth is sta
 The liquidity provider's profitability is of course the most important thing. I'm not saying much here because I don't want to leak too much alpha to other MM. 
 
 My suggestion here is just to provide information easily. Don't tell people to enquire about the MM program on Discord and then reply three days later. Put it in the docs.
+
+EG: If you want better funding rates... make sure you have a funding rate history end point to make life easy for funding arbers. Even better, put together a funding rate comparison page (e.g., https://app.hyperliquid.xyz/fundingComparison).
