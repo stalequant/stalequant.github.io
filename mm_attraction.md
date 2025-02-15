@@ -33,7 +33,7 @@ If I'm quoting on your platform, I'm going to be taking existing stuff (e.g., HL
 
 ### Consider a Taker Speedbump
 
-Slowing down taker orders by 100ms (e.g., Hyperliquid) makes it a lot easier to set up because you do not need to worry about being picked off by sniping bots.
+Slowing down taker orders by 100ms (e.g., Hyperliquid) makes it a lot easier to set up a market making bot because you do not need to worry about being picked off by sniping bots.
 
 ### Completely Describe of Cash Flows
 
