@@ -49,17 +49,15 @@ If you want me to provide reasonable price quotes, you need to provide an exact 
 
 Everyone needs confidence that their funds are safe. Personally, I look for backers I know (VCs and ideally community members), a doxxed team, and a track record.
 
-### Telegraph changes as much as possible
-
-If I have a position in a contract and you change the contract, I lose money. Even worse, if I don't realize there is a change I might be quoting wrong and someone might take me to the cleaners.
-
 ### Specific asks
 
 In order of priority:
 - API keys. I don't want to have to store keys with withdraw access remotely.
+- Telegraphed changes. If I have a position in a contract and you change the contract, I lose money. Even worse, if I don't realize there is a change I might be quoting wrong and someone might take me to the cleaners.
+- Informative error messages. Probably obvious.
 - Clear information on rate limits. It's incredibly common for an MM to hit rate limits and then be a sitting duck and have all their orders picked off.
 - Deadman switches or order expirations. If my system crashs (e.g., because of your system sending me garbage) or hits a hidden rate limit (above), I don't want to lose a bunch of money.
-- Multisig (this only matters at later stages)
+- Multisig (this only matters at later stages).
 
 ## Show me I'm going to make money
 
