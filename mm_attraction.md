@@ -31,6 +31,10 @@ If I'm quoting on your platform, I'm going to be taking existing stuff (e.g., HL
 
 **Role Model:** Hyperliquid did a good job here - USDT indexes, a similar funding formula to Binacne, and an AWS tokyo location made it easy to port Binance quotes over. Something like Kraken Futures is an anti-role model: 24-hour factor futures with unclear indices quoted in Europe is a nightmare for no good reason.
 
+### Consider a Taker Speedbump
+
+Slowing down taker orders by 100ms (e.g., Hyperliquid) makes it a lot easier to set up because you do not need to worry about being picked off by sniping bots.
+
 ### Completely Describe of Cash Flows
 
 If you want me to provide reasonable price quotes, you need to provide an exact and detailed description of the cash flows of the assets being traded.
@@ -49,6 +53,14 @@ Everyone needs confidence that their funds are safe. Personally, I look for back
 
 If I have a position in a contract and you change the contract, I lose money. Even worse, if I don't realize there is a change I might be quoting wrong and someone might take me to the cleaners.
 
+### Specific asks
+
+In order of priority:
+- API keys. I don't want to have to store keys with withdraw access remotely.
+- Clear information on rate limits. It's incredibly common for an MM to hit rate limits and then be a sitting duck and have all their orders picked off.
+- Deadman switches or order expirations. If my system crashs (e.g., because of your system sending me garbage) or hits a hidden rate limit (above), I don't want to lose a bunch of money.
+- Multisig (this only matters at later stages)
+
 ## Show me I'm going to make money
 
 ### Show Growth
@@ -59,6 +71,6 @@ The returns to integration increase as the platform grows. If your growth is sta
 
 ### Provide the information needed to assess profitability
 
-The liquidity provider's profitability is of course the most important thing. I'm not saying much here because I don't want to leak too much alpha.
+The liquidity provider's profitability is of course the most important thing. I'm not saying much here because I don't want to leak too much alpha to other MM. 
 
 My suggestion here is just to provide information easily. Don't tell people to enquire about the MM program on Discord and then reply three days later. Put it in the docs.
