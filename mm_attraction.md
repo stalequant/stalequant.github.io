@@ -41,7 +41,7 @@ If you want me to provide reasonable price quotes, you need to provide an exact 
 
 **Actionable Suggestion:** Take two similar products, review their documentation, and ensure yours covers everything they do. Information buried in Discord chats is not sufficient.
 
-**Role Model:**  Skimming through platforms, I like Paradigm's documentation. Hyperliquid's is okay. Kraken Futures is poor. Whales Market is horrible.
+**Role Model:**  Skimming through platforms, Hyperliquid's docs are okay. Kraken Futures is poor. Whales Market is horrible.
 
 ## Make me comfortable I'm not going to lose my money
 
