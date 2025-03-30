@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hyperliquid Listing Policy Recommendations</title>
+  <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/quasar@2.14.2/dist/quasar.prod.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+  <style>
+    .vertical-header {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .correlation-table .q-td,
+    .correlation-table .q-th {
+      width: 50px;
+      height: 50px;
+      padding: 0;
+      text-align: center;
+    }
+
+    .scrollable-table .q-table__middle {
+      overflow-x: auto;
+    }
+
+    .fixed-width {
+      width: 200px;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div id="q-app">
+    <q-layout view="lHh Lpr lFf">
+      <q-header elevated>
+        <q-toolbar class="justify-center" style="color: hsl(172, 47%, 61%); background: black">
+          <q-toolbar-title class="text-center">Hyperliquid Listing Policy Recommendations</q-toolbar-title>
+        </q-toolbar>
+      </q-header>
+
+      <q-page-container>
+		<q-page class="q-pa-md">
+		  <div class="q-mx-auto q-gutter-md column" style="max-width: 1000px; width: 90%;">
+			
+            <!-- Intro -->
+            <div class="text q-pa-md">
+              This page offers recommendations on listing and delisting policies for the hyperliquid exchange. - stalequant
+            </div>
+			
+            <!-- Chart Title -->
+            <div class="text-h6 q-pa-md">
+              Visualization of Recommendations
+            </div>
+			<!-- Chart Card -->
+			<q-card class="q-pa-md">
+			  <q-card-section>
+				<canvas id="myChart" height="70"></canvas>
+			  </q-card-section>
+			</q-card>
+
+			
+			<!-- Filter Buttons -->
+            <div class="q-pa-md">
+			<q-btn-toggle
+			  v-model="selectedFilter"
+			  toggle-color="teal"
+			  unelevated
+			  class="full-width"
+			  spread
+			  :options="[
+				{ label: 'Recommend Downgrade', value: 'downgrade' },
+				{ label: 'Recommend Upgrade', value: 'upgrade' },
+				{ label: 'All', value: 'all' },
+				{ label: 'Listed', value: 'listed' },
+				{ label: 'Not listed', value: 'unlisted' }
+			  ]"
+			/>
+            </div>
+			
+			<!-- Table -->
+            <div class="text-h6 q-pa-md">
+			  <q-table
+				title="Scoring"
+				:rows="filteredRows"
+				:columns="columnsScoring"
+				:pagination="{ page: 1, rowsPerPage: 25 }"
+				row-key="Symbol"
+				wrap-cells
+				dense
+				virtual-scroll
+				flat
+			  >
+				<template v-slot:body-cell="props">
+				  <q-td :props="props" :style="getCellStyle(props)">
+					{{ props.value }}
+				  </q-td>
+				</template>
+			  </q-table>   
+		    </div>
+
+
+			
+            <div class="q-py-md">
+            <q-btn-toggle
+              v-model="selectedFilter"
+              toggle-color="teal"
+              unelevated
+              class="full-width"
+              spread
+              :options="[
+                { label: 'Recommend Downgrade', value: 'downgrade' },
+                { label: 'Recommend Upgrade', value: 'upgrade' },
+                { label: 'All', value: 'all' },
+                { label: 'Listed', value: 'listed' },
+                { label: 'Not listed', value: 'unlisted' }
+              ]"
+            />
+			</div>
+			
+
+            <!-- Details Table -->
+            <div class="text-h6 q-pa-md">
+              <q-table
+				title="Raw data"
+                :rows="filteredRows"
+                :columns="columns"
+                :pagination="{ page: 1, rowsPerPage: 25 }"
+                row-key="Symbol"
+                wrap-cells
+                dense
+                virtual-scroll
+                flat
+              >
+                <template v-slot:body-cell="props">
+                  <q-td :props="props" :style="getCellStyle(props)">
+                    {{ props.value }}
+                  </q-td>
+                </template>
+              </q-table>
+            </div>
+
+            <!-- Methodology -->
+            <div class="q-mt-lg">
+              <div class="text-subtitle1 q-mb-sm">Methodology</div>
+              <div class="text q-mb-sm">
+                Scoring is based on a total of 100 points, equally divided across five measures.
+              </div>
+
+              <div class="text-subtitle1 q-mb-sm">Market Cap (20 points)</div>
+              <div class="text q-mb-sm">
+				Low market cap coins are typically less significant, less profitable, and more susceptible to manipulation. We use CoinGecko-reported market caps, assigning 0 points for caps below $1M and 20 points for caps above $5B.
+              </div>
+
+              <div class="text-subtitle1 q-mb-sm">Spot Volumes (20 points)</div>
+              <div class="text q-mb-sm">
+				Illiquid spot markets suggest less important, less profitable, and more easily manipulated coins. They also impact oracle stability. We use two metrics: total volume and a geometric mean that favors coins with liquidity across multiple venues. Specifically, we compute the geometric mean of volumes on the three most liquid exchanges per coin per day (with $1 added for regularization), then average over the past 30 days. To penalize large price drops, daily volume is dollarized using the lower of that day’s low and the current price. We consider USD and USD-stablecoin pairs on Binance, Bybit, Coinbase, Crypto.com, Gate, Kraken, Kucoin, MEXC, and OKX. Each measure is scored from 0 (below $10K/day) to 10 points (above $1B/day).
+              </div>
+
+              <div class="text-subtitle1 q-mb-sm">Futures Volumes (20 points)</div>
+              <div class="text q-mb-sm">
+                Illiquid futures markets are undesirable for similar reasons as illiquid spot markets. We apply a similar methodology, focusing only on USD and USD-stablecoin-denominated linear futures. Exchanges considered include Binance, BitMEX, Bybit, Crypto.com, Gate, HTX, Kraken Futures, Kucoin, MEXC, and OKX.
+
+              </div>
+
+              <div class="text-subtitle1 q-mb-sm">Hyperliquid Activity (20 points)</div>
+              <div class="text q-mb-sm">
+                Coins with low trading activity on Hyperliquid are less relevant and less desirable. We use 30-day averages for both daily volume and daily open interest, assigning 0 points for values under $1K and 10 points for values above $100M (per metric).
+              </div>
+
+              <div class="text-subtitle1 q-mb-sm">Hyperliquid Liquidity (20 points)</div>
+              <div class="text q-mb-sm">
+                Poor market maker support on Hyperliquid increases susceptibility to manipulation. We score four metrics (5 points each):
+				<ul>
+				  <li>HLP share of volume (30-day average): 0 points if &gt; 50%, 5 points if 0%.</li>
+				  <li>HLP share of open interest: 0 points if &gt; 10%, 5 points if 0%.</li>
+				  <li>Average slippage on $3K orders: 0 points if &gt; 5bps, 5 points if 0bps.</li>
+				  <li>Slippage on $30K orders: 0 points if &gt; 50bps, 5 points if 0bps.</li>
+				</ul>
+              </div>
+            </div>
+
+            <!-- Correlation Matrix -->
+            <q-table
+              class="q-mt-md correlation-table"
+              title="Correlation between scores"
+              :rows="correlationMatrix"
+              :columns="[
+                { name: 'row', label: '', field: 'row', align: 'left' },
+                ...correlationColumns.map(col => ({
+                  name: col,
+                  label: col,
+                  field: col,
+                  align: 'center',
+                  sortable: false
+                }))
+              ]"
+              row-key="row"
+              dense
+              flat
+              hide-pagination
+            >
+              <template v-slot:header="props">
+                <q-tr :props="props">
+                  <q-th></q-th>
+                  <q-th v-for="col in correlationColumns" :key="col">
+                    <div class="vertical-header">{{ col }}</div>
+                  </q-th>
+                </q-tr>
+              </template>
+
+              <template v-slot:body-cell="props">
+                <q-td :props="props" :style="getCorrelationStyle(props)">
+                  {{ props.value }}
+                </q-td>
+              </template>
+            </q-table>
+          </div>
+        </q-page>
+      </q-page-container>
+    </q-layout>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/quasar@2.14.2/dist/quasar.umd.prod.js"></script>
+  <script>
+    const { createApp } = Vue
+    const { Quasar } = window
+	import rows from 'sq_reco_row_content.json' 
+ 
+    const columnsScoring = ['Symbol', 'Max Lev. on HL', 'Recommendation', 'Score', 'Market Cap Score', 'Spot Vol Score', 'Futures Vol Score', 'HL Activity Score', 'HL Liquidity Score'].map(f => ({ name: f, label: f, field: f, sortable: true,  }));
+    const columns = ['Symbol', 'Max Lev. on HL', 'Recommendation', 'Score', 'MC $m', 'Spot Volume $m', 'Fut Volume $m', 'OI on HL $m', 'Volume on HL $m', 'HLP Vol Share %', 'HLP OI Share %', 'HL Slip. $3k'].map(f => ({ field: f, name: f, label: f, sortable: true }));
+
+
+	const NUMERIC_FIELDS = [
+	  'Score', 'Max Lev. on HL', 'MC $m', 'Spot Volume $m', 'Spot Vol Geomean $m',
+	  'Fut Volume $m', 'Fut Vol Geomean $m', 'OI on HL $m', 'Volume on HL $m',
+	  'HLP Vol Share %', 'HLP OI Share %', 'HL Slip. $3k', 'HL Slip. $30k',
+	  'Market Cap Score', 'Spot Vol Score', 'Futures Vol Score',
+	  'HL Activity Score', 'HL Liquidity Score'
+	]
+
+	const app = createApp({
+	  data: () => ({
+		rows,
+		columns,
+		columnsScoring,
+		selectedFilter: 'downgrade',
+		correlationColumns: ['Asset A', 'Asset B', 'Asset C'],
+		correlationMatrix: [
+		  { row: 'Asset A', 'Asset A': 100, 'Asset B': 60, 'Asset C': 30 },
+		  { row: 'Asset B', 'Asset A': 60, 'Asset B': 100, 'Asset C': 75 },
+		  { row: 'Asset C', 'Asset A': 30, 'Asset B': 75, 'Asset C': 100 }
+		]
+	  }),
+
+	  computed: {
+		valueRanges() {
+		  const result = {}
+		  for (const col of this.columns) {
+			if (NUMERIC_FIELDS.includes(col.name)) {
+			  const values = this.rows.map(r => r[col.name])
+			  const min = Math.min(...values)
+			  const max = Math.max(...values)
+			  result[col.name] = { min, max }
+			}
+		  }
+		  return result
+		},
+
+		filteredRows() {
+		  const r = this.rows
+		  switch (this.selectedFilter) {
+			case 'upgrade': return r.filter(r => r.Recommendation === "List" || r.Recommendation === "Inc. Lev.")
+			case 'downgrade': return r.filter(r => r.Recommendation === "Delist" || r.Recommendation === "Dec. Lev.")
+			case 'unlisted': return r.filter(r => r['Max Lev. on HL'] === 0)
+			case 'listed': return r.filter(r => r['Max Lev. on HL'] > 0)
+			default: return r
+		  }
+		}
+	  },
+
+	  methods: {
+		getCorrelationStyle({ col, value }) {
+		  if (col.name === 'row') return { fontWeight: 'bold' }
+
+		  const hue = 220 - (value / 100) * (220 - 30)
+		  return {
+			backgroundColor: `hsl(${hue}, 100%, 85%)`
+		  }
+		},
+
+		getCellStyle({ col, value }) {
+		  return NUMERIC_FIELDS.includes(col.name) ? this.getStyle(col.name, value) : {}
+		},
+
+		getStyle(field, value) {
+		  const range = this.valueRanges[field]
+		  if (!range) return {}
+
+		  const { min, max } = range
+		  const ratio = (Math.log(value + 10) - Math.log(min + 10)) / (Math.log(max + 10.00001) - Math.log(min + 10))
+		  const hue = ratio * 50
+		  return {
+			backgroundColor: `hsl(${hue}, 80%, 10%)`
+		  }
+		},
+
+		drawChart() {
+		  const ctx = document.getElementById('myChart').getContext('2d')
+		  new Chart(ctx, {
+			type: 'scatter',
+			data: {
+			  datasets: [{
+				label: 'Score vs Max Leverage',
+				data: this.rows.map(r => ({
+				  x: Math.sqrt(r['Max Lev. on HL']),
+				  y: r.Score,
+				  symbol: r.Symbol,
+				  symbolL: r.Recommendation ? r.Symbol : '',
+				  originalX: r['Max Lev. on HL'],
+				  backgroundColor: this.getPointColor(r.Recommendation)
+				})),
+				backgroundColor: ctx => ctx.raw.backgroundColor,
+				pointRadius: 5
+			  }]
+			},
+			options: {
+			  responsive: true,
+			  plugins: {
+				legend: { display: false },
+				tooltip: {
+				  backgroundColor: '#2c2c2c',
+				  titleColor: 'white',
+				  bodyColor: 'white',
+				  borderColor: 'white',
+				  borderWidth: 1,
+				  callbacks: {
+					label: ({ raw }) => {
+					  const label = raw.x === 0 ? 'Not Listed' : `Max Lev. on HL  ${raw.originalX}`
+					  return `${raw.symbol}: ${label}, Score ${raw.y}`
+					}
+				  }
+				}
+			  },
+			  scales: {
+				x: {
+				  type: 'linear',
+				  title: {
+					display: true,
+					text: 'Current Hyperliquid Max Leverage (0 = Not Listed)',
+					color: 'white'
+				  },
+				  ticks: {
+					color: 'white',
+					callback: val => Math.round(val * val)
+				  },
+				  grid: { color: 'rgba(255,255,255,0.1)' },
+				  afterBuildTicks: axis => {
+					axis.ticks = [0, 3, 5, 10, 20, 25, 40].map(v => ({ value: Math.sqrt(v) }))
+				  }
+				},
+				y: {
+				  title: { display: true, text: 'Score', color: 'white' },
+				  ticks: { color: 'white' },
+				  grid: { color: 'rgba(255,255,255,0.1)' }
+				}
+			  }
+			}
+		  })
+		},
+
+		getPointColor(recommendation) {
+		  switch (recommendation) {
+			case 'List':
+			case 'Inc. Lev.': return 'green'
+			case 'Delist':
+			case 'Dec. Lev.': return 'red'
+			default: return 'grey'
+		  }
+		}
+	  },
+
+	  mounted() {
+		this.drawChart()
+	  }
+	})
+
+	app.use(Quasar)
+	Quasar.Dark.set(true)
+	app.mount('#q-app')
+  </script>
+</body>
+</html>
