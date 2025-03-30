@@ -231,9 +231,22 @@
   </div>
 
   <script type="module">
+	let rows = []
+
+	fetch('./row_content.json')
+	  .then(res => res.json())
+	  .then(data => {
+		rows = data
+		initApp()
+	  })
+	  .catch(err => {
+		console.error('Failed to load rows:', err)
+	  })
+  
+	function initApp() {
+
     const { createApp } = Vue
-    const { Quasar } = window
-	import rows from '/sq_reco_row_content.json' 
+    const { Quasar } = window 
  
     const columnsScoring = ['Symbol', 'Max Lev. on HL', 'Recommendation', 'Score', 'Market Cap Score', 'Spot Vol Score', 'Futures Vol Score', 'HL Activity Score', 'HL Liquidity Score'].map(f => ({ name: f, label: f, field: f, sortable: true,  }));
     const columns = ['Symbol', 'Max Lev. on HL', 'Recommendation', 'Score', 'MC $m', 'Spot Volume $m', 'Fut Volume $m', 'OI on HL $m', 'Volume on HL $m', 'HLP Vol Share %', 'HLP OI Share %', 'HL Slip. $3k'].map(f => ({ field: f, name: f, label: f, sortable: true }));
@@ -247,7 +260,7 @@
 	  'HL Activity Score', 'HL Liquidity Score'
 	]
 
-	const app = createApp({
+	const app = Vue.createApp({
 	  data: () => ({
 		rows,
 		columns,
@@ -396,6 +409,7 @@
 	app.use(Quasar)
 	Quasar.Dark.set(true)
 	app.mount('#q-app')
+}
   </script>
 </body>
 </html>
