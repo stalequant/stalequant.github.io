@@ -137,24 +137,44 @@
 			</q-table>
 		  </div>
 		  <div class="column q-mb-md" style="overflow-x: auto; max-width: 1000px; width: 90%; ">
-		  <div class="text-subtitle1 q-mb-sm">Methodology</div>
-		  <div class="text q-mb-sm">Scoring is based on 100 total points split equally between five  measures.</div>
-			
-		  <div class="text-subtitle1 q-mb-sm">Market cap (20 points) </div> 
-		  <div class="text q-mb-sm">Low market cap coins are less important, less profitable, and prone to manipulation. This uses the reported CoinGecko market cap and assigns points from 0 for below $1m to 20 for above $5b.</div>
-		  <div class="text-subtitle1 q-mb-sm">Spot volumes (20 points) </div> 
-		  <div class="text q-mb-sm">Coins with illiquid spot markets are prone to manipulation,  less important, and less profitable. Further, they create issues with oracle stability. We consider both total volume and a geometric mean designed to favor coins with liquid markets on multiple venues. Specifically, the geometric mean is taken over the three most liquid exchanges for each coin on each day (adding $1 for regularity) and averaged to the coin level over the most recent 30 days. To penalize coins with large value drops, volume is dollarized on each day using the lower of that day's low price and the current price. We consider spot pairs with USD or USD-stablecoin quote currencies  on Binance, Bybit, Coinbase, Crypto.com, Gate, Kraken, Kucoin, MEXC, and OKX. For each of the two measures, we assign 0 points for below $10k/day and 10 points for above $1b/day.
-</div> 
-		  <div class="text-subtitle1 q-mb-sm">Futures volumes (20 points) </div> 
-		  <div class="text q-mb-sm">Coins with illiquid futures markets are less desirable for the same reason coins with illiquid spot markets are undesirable. Calculations are similar to spot volumes, with analysis consisdering only USD and USD-stablecoin based linear futures. We consider futures volumes on Binance, BitMEX, Bybit, Crypto.com, Gate, HTX, Kraken Futures, Kucoin, MEXC, and OKX.
+<div class="column q-mb-md" style="overflow-x: auto; max-width: 1000px; width: 90%;">
+  <div class="text-subtitle1 q-mb-sm">Methodology</div>
+  <div class="text q-mb-sm">
+    Scoring is based on a total of 100 points, equally divided across five measures.
+  </div>
+
+  <div class="text-subtitle1 q-mb-sm">Market Cap (20 points)</div>
+  <div class="text q-mb-sm">
+    Low market cap coins are typically less significant, less profitable, and more susceptible to manipulation. We use CoinGecko-reported market caps, assigning 0 points for caps below $1M and 20 points for caps above $5B.
+  </div>
+
+  <div class="text-subtitle1 q-mb-sm">Spot Volumes (20 points)</div>
+  <div class="text q-mb-sm">
+    Illiquid spot markets suggest less important, less profitable, and more easily manipulated coins. They also impact oracle stability. We use two metrics: total volume and a geometric mean that favors coins with liquidity across multiple venues. Specifically, we compute the geometric mean of volumes on the three most liquid exchanges per coin per day (with $1 added for regularization), then average over the past 30 days. To penalize large price drops, daily volume is dollarized using the lower of that day’s low and the current price. We consider USD and USD-stablecoin pairs on Binance, Bybit, Coinbase, Crypto.com, Gate, Kraken, Kucoin, MEXC, and OKX. Each measure is scored from 0 (for &lt; $10K/day) to 10 points (for &gt; $1B/day).
+  </div>
+
+  <div class="text-subtitle1 q-mb-sm">Futures Volumes (20 points)</div>
+  <div class="text q-mb-sm">
+    Illiquid futures markets are undesirable for similar reasons as illiquid spot markets. We apply a similar methodology, focusing only on USD and USD-stablecoin-denominated linear futures. Exchanges considered include Binance, BitMEX, Bybit, Crypto.com, Gate, HTX, Kraken Futures, Kucoin, MEXC, and OKX.
+  </div>
+
+  <div class="text-subtitle1 q-mb-sm">Hyperliquid Activity (20 points)</div>
+  <div class="text q-mb-sm">
+    Coins with low trading activity on Hyperliquid are less relevant and less desirable. We use 30-day averages for both daily volume and daily open interest, assigning 0 points for values under $1K and 10 points for values above $100M (per metric).
+  </div>
+
+  <div class="text-subtitle1 q-mb-sm">Hyperliquid Liquidity (20 points)</div>
+  <div class="text q-mb-sm">
+    Poor market maker support on Hyperliquid increases susceptibility to manipulation. We score four metrics (5 points each):
+    <ul>
+      <li>HLP share of volume (30-day average): 0 points if &gt; 50%, 5 points if 0%.</li>
+      <li>HLP share of open interest: 0 points if &gt; 10%, 5 points if 0%.</li>
+      <li>Average slippage on $3K orders: 0 points if &gt; 5bps, 5 points if 0bps.</li>
+      <li>Slippage on $30K orders: 0 points if &gt; 50bps, 5 points if 0bps.</li>
+    </ul>
+  </div>
 </div>
-		  <div class="text-subtitle1 q-mb-sm">Hyperliquid activity (20 points) </div> 
-		  <div class="text q-mb-sm">Coins that are not heavily traded on Hyperliquid are of less interest and less desirable. We use average daily volume and average daily open interest over the previous 30 days, assigning 0 points for less than $1k and 10 points for above $100m for each.
-</div>
-		  <div class="text-subtitle1 q-mb-sm">Hyperliquid liquidity (20 points) </div> 
-		  <div class="text q-mb-sm">Coins that have poor market maker support on  Hyperliquid are more vulnerable to manipulation.  We consider four measures, each scored out of 5. First, we consider the percentage of volume accounted for by the HLP over the past 30 days, assigning 0 points for above 50% and 5 points for 0. Second, we consider the percentage of open interest accounted for by the HLP, assigning 0 points for above 10 percent and 5 points for 0. Third, we consider the average slippage of $3k orders, assigning 0 for more than 5bp and 5 for 0bp. Fourth, we consider the slippage of $30k, assigning 0 for above 50bp and 5 for 0bp. 
-</div>
-		</div>
+
 		</q-page>
 
       </q-page-container>
