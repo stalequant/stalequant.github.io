@@ -10,6 +10,14 @@
 
 
   <style>
+      html, body {
+        background-color: black;
+        color: white; /* Optional: if you want white text too */
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+      }
     .vertical-header {
       writing-mode: vertical-rl;
       transform: rotate(180deg);
@@ -159,15 +167,26 @@
 				</q-table> 
 		   </q-card-section>
 		   <q-card-section>
-				  <q-btn
-		  label="Download CSV"
-		  icon="download"
-		  
-		  style="color: white !important; background: teal !important;"
-		  color="primary"
-		  class="q-mb-md"
-		  @click="downloadCSV"
-		/>
+			<div class="row q-gutter-x-sm q-mb-md">
+			<div>
+			  <q-btn
+				label="Download CSV"
+				icon="download"
+				style="color: white !important; background: teal !important;"
+				@click="downloadCSV"
+			  />
+			  </div>
+			  <div>
+
+			  <q-btn 
+				label="Code" 
+				icon="code"
+				style="color: white !important; background: teal !important;"
+				href="https://github.com/stalequant/stalequant.github.io/blob/main/build_delisting_recos.py" 
+				target="_blank"
+			  />
+			  </div>
+			</div>
 		  </q-card-section>
 			  </q-card>
 			  <q-card class="q-pa-md">
