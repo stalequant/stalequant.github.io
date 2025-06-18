@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Hyperliquid – HLP Volume & OI Shares (7‑day MA)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <style>
+    :root { --accent:#50D2C1; }
+
+    /* ---------- Layout ---------- */
+    body{margin:0;padding:2rem;background:#111;color:var(--accent);font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;text-align:center;}
+    h1{font-size:1.6rem;margin:0 0 1rem;}
+    #controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;margin-bottom:1rem;}
+    #plot{width:100%;max-width:960px;height:540px;}
+
+    /* ---------- Inputs ---------- */
+    select,.coin-btn{background:#222;color:#eee;border:1px solid #555;padding:.4rem .75rem;border-radius:4px;cursor:pointer;font-size:.95rem;}
+    .coin-btn.active,select:focus,select:hover{background:var(--accent);color:#111;border-color:var(--accent);} 
+    .coin-btn:hover{background:#333;}
+    a,a:visited{color:var(--accent);}  
+  </style>
+</head>
+<body>
+  <h1>Hyperliquid HLP Volume &amp; OI Shares</h1>
+  <p style="margin-top:-.6rem;font-size:.9rem;">7‑day moving averages • Data via <a href="https://github.com/thunderhead-labs/hyperliquid-stats" target="_blank">Thunderhead‑labs</a></p>
+
+  <div id="controls">
+    <select id="coin-select"></select>
+    <div id="coin-buttons"></div>
+  </div>
+  <div id="plot"></div>
+  
+
+<script>
+
+/** ------------------------------------------------------------------
+ * Single‑file dashboard for Hyperliquid HLP metrics
+ * – default “TOTAL” (aggregate) series
+ * – quick buttons (TOTAL / BTC / ETH / HYPE) + dropdown for all coins
+ * – 7‑day MA of HLP OI Share % (white) and HLP Vol Share % (accent dashed)
+ * – Teal theme (#50D2C1), centred legend, larger fonts
+ * ------------------------------------------------------------------*/
+const THUNDERHEAD_URL = 'https://d2v1fiwobg9w6.cloudfront.net';
+const ENDPOINTS = [
+  'daily_usd_volume_by_coin',
+  'total_volume',
+  'asset_ctxs',
+  'hlp_positions',
+];
+const WINDOW = 7;
+const ACCENT = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+
+/* ---------------- Utility helpers ---------------- */
+function getOrInit(obj,k1,k2){ if(!obj[k1]) obj[k1] = {}; if(!obj[k1][k2]) obj[k1][k2] = {}; return obj[k1][k2]; }
+const mean = arr => { const v = arr.filter(n=>n!=null && !isNaN(n)); return v.length ? v.reduce((a,b)=>a+b,0)/v.length : null; };
+
+/* ---------------- Data fetch ---------------- */
+async function fetchThunderhead(){
+  const raw = Object.fromEntries(
+    await Promise.all(ENDPOINTS.map(async ep => {
+      const res = await fetch(`${THUNDERHEAD_URL}/${ep}`, { headers:{accept:'*/*'} });
+      if(!res.ok){ throw new Error(`${ep}: HTTP ${res.status}`); }
+      const { chart_data = [] } = await res.json();
+      return [ep, chart_data];
+    }))
+  );
+
+  const nested = {};// coin→time→metrics
+  for(const [key,rows] of Object.entries(raw)){
+    for(const row of rows){
+      const { coin, time, ...rest } = row;
+      if(!coin || !time) continue;
+      getOrInit(nested, coin, time)[key] = rest;
+    }
+  }
+  return nested;
+}
+
+/* ---------------- Metric builder ---------------- */
+function computeMetrics(nested){
+  const perCoin = {}, agg = {};
+
+  for(const [coin, times] of Object.entries(nested)){
+    if(coin.includes('@')) continue; // skip dated contracts
+    const sorted = Object.entries(times).sort((a,b)=>a[0].localeCompare(b[0]));
+
+    // rolling buffers
+    const buf = { tot:[], usd:[], oi:[], px:[], ntl:[] };
+    const rows = [];
+
+    for(const [t, m] of sorted){
+      const tot = m.total_volume?.total_volume ?? m.total_volume?.value ?? m.total_volume ?? 0;
+      const usd = m.daily_usd_volume_by_coin?.daily_usd_volume ?? m.daily_usd_volume_by_coin?.value ?? m.daily_usd_volume ?? 0;
+      const oi  = m.asset_ctxs?.avg_open_interest ?? m.avg_open_interest ?? 0;
+      const px  = m.asset_ctxs?.avg_oracle_px     ?? m.avg_oracle_px     ?? 0;
+      const ntl = m.hlp_positions?.daily_ntl_abs   ?? m.daily_ntl_abs     ?? 0;
+
+      // aggregate for TOTAL series later
+      const A = agg[t] ?? (agg[t] = { tot:0, usd:0, notional:0, ntl:0 });
+      A.tot += tot; A.usd += usd; A.notional += oi*px; A.ntl += ntl;
+
+      // update rolling buffers
+      buf.tot.push(tot); if(buf.tot.length>WINDOW) buf.tot.shift();
+      buf.usd.push(usd); if(buf.usd.length>WINDOW) buf.usd.shift();
+      buf.oi .push(oi ); if(buf.oi .length>WINDOW) buf.oi .shift();
+      buf.px .push(px ); if(buf.px .length>WINDOW) buf.px .shift();
+      buf.ntl.push(ntl); if(buf.ntl.length>WINDOW) buf.ntl.shift();
+
+      const maTot = mean(buf.tot), maUsd = mean(buf.usd), maOi = mean(buf.oi), maPx = mean(buf.px), maNtl = mean(buf.ntl);
+      const maNotional = (maOi??0)*(maPx??0);
+
+      rows.push({
+        time: new Date(t),
+        hlpVolShare: maTot ? (maTot - (maUsd??0)/2)/maTot : null,
+        hlpOiShare:  maNotional ? (maNtl??0)/maNotional : null,
+      });
+    }
+    perCoin[coin] = rows;
+  }
+
+  // build TOTAL
+  const totBuf = { tot:[], usd:[], not:[], ntl:[] };
+  const totRows = [];
+  for(const t of Object.keys(agg).sort()){
+    const { tot, usd, notional, ntl } = agg[t];
+    totBuf.tot.push(tot); if(totBuf.tot.length>WINDOW) totBuf.tot.shift();
+    totBuf.usd.push(usd); if(totBuf.usd.length>WINDOW) totBuf.usd.shift();
+    totBuf.not.push(notional); if(totBuf.not.length>WINDOW) totBuf.not.shift();
+    totBuf.ntl.push(ntl); if(totBuf.ntl.length>WINDOW) totBuf.ntl.shift();
+
+    const maTot = mean(totBuf.tot), maUsd = mean(totBuf.usd), maNot = mean(totBuf.not), maNtl = mean(totBuf.ntl);
+    totRows.push({
+      time: new Date(t),
+      hlpVolShare: maTot ? (maTot - (maUsd??0)/2)/maTot : null,
+      hlpOiShare:  maNot ? (maNtl??0)/maNot : null,
+    });
+  }
+  perCoin.TOTAL = totRows;
+  return perCoin;
+}
+
+/* ---------------- Plot ---------------- */
+function plotCoin(data, coin){
+  const rows = data[coin] || [];
+  if(!rows.length){ return; }
+
+  const x = rows.map(r=>r.time);
+  const yOI  = rows.map(r=>(r.hlpOiShare ?? 0)*100);
+  const yVol = rows.map(r=>(r.hlpVolShare?? 0)*100);
+
+  Plotly.newPlot('plot',[
+    { x, y:yOI , mode:'lines', name:'HLP OI Share %' , line:{width:3,color:'#ffffff'} },
+    { x, y:yVol, mode:'lines', name:'HLP Vol Share %', line:{width:3,color:ACCENT,dash:'dash'} }
+  ],{
+    paper_bgcolor:'#111', plot_bgcolor:'#111',
+    font:{ color:ACCENT, size:16 },
+    title:{ text:`${coin} – HLP Shares (7‑day MA)`, font:{ size:22 } },
+    xaxis:{ title:{ text:'Date', font:{ size:16 } } },
+    yaxis:{ title:{ text:'Share %', font:{ size:16 } }, ticksuffix:'%', rangemode:'tozero' },
+    margin:{ l:50, r:20, t:70, b:55 },
+    legend:{ orientation:'h', y:-0.3, x:0.5, xanchor:'center', font:{ size:15, color:ACCENT } },
+  }, { responsive:true });
+}
+
+/* ---------------- UI ---------------- */
+(async function init(){
+  try{
+    const nested = await fetchThunderhead();
+    const metrics = computeMetrics(nested);
+
+    const coins = Object.keys(metrics).sort((a,b)=>a==='TOTAL'?-1:b==='TOTAL'?1:a.localeCompare(b));
+    const quick = ['TOTAL','BTC','ETH','HYPE'];
+
+    const select = document.getElementById('coin-select');
+    const btnBox = document.getElementById('coin-buttons');
+
+    // build controls
+    coins.forEach(c=>{
+      const opt=document.createElement('option'); opt.value=opt.textContent=c; select.appendChild(opt);
+      if(quick.includes(c)){
+        const btn=document.createElement('button'); btn.textContent=c; btn.className='coin-btn'; btn.dataset.coin=c; btnBox.appendChild(btn); }
+    });
+
+    function activate(coin){
+      select.value = coin;
+      document.querySelectorAll('.coin-btn').forEach(b=>b.classList.toggle('active', b.dataset.coin===coin));
+      location.hash = coin;
+      plotCoin(metrics, coin);
+    }
+
+    btnBox.addEventListener('click',e=>{ if(e.target.classList.contains('coin-btn')) activate(e.target.dataset.coin); });
+    select.addEventListener('change', ()=> activate(select.value));
+
+    const initial = (location.hash.replace('#','') || 'TOTAL').toUpperCase();
+    activate(coins.includes(initial)?initial:'TOTAL');
+
+  }catch(err){
+    console.error(err);
+    document.getElementById('plot').textContent = err.message;
+  }
+})();
+
+</script>
+</body>
+</html>
