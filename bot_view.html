@@ -443,6 +443,24 @@
             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
         }
 
+        /* Popover card styling - same as carousel but with appropriate sizing */
+        .popover-card {
+            width: 280px;
+            height: 400px;
+            position: relative;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .popover-card:hover {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+        }
+
         .card-frame {
             width: 100%;
             height: auto;
@@ -487,31 +505,10 @@
             z-index: 1;
         }
 
-        .card-image-u {
-            position: absolute;
-            top: 7%;
-            left: 5%;
-            width: 90%;
-            height: 52%;
-            object-fit: contain;
-            z-index: 1;
-        }
 
         .card-stats {
             position: absolute;
             top: 57%;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            padding: 0 10px;
-            box-sizing: border-box;
-            z-index: 4;
-        }
-
-        .card-stats-u {
-            position: absolute;
-            top: 56%;
             left: 0;
             width: 100%;
             display: flex;
@@ -1209,50 +1206,37 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
             const exchangeKey = exchangeName.toLowerCase();
             const exchangeImage = exchangeImages[exchangeKey] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg==';
             
-            // Determine frame based on danger and kind
+            // Determine frame based on danger and kind (matching carousel logic)
             let frameImagePath = 'gold_frame.png';
             
             // First check for danger indicators
-            if (data.Danger === 'X' || data.Danger === 'XX') {
+            if (data.Danger === 'X' || data.Danger === 'XX' || data.Kind === 'Risky CEX') {
                 frameImagePath = 'black_frame.png';
             } else {
                 // If no danger, determine frame by kind
                 if (data.Kind === 'DEX' || data.Kind === 'AMM DEX') {
                     frameImagePath = 'blue_frame.png';
-                } else if (data.Kind === 'OFFSHORE') {
+                } else if (data.Kind === 'CEX') {
                     frameImagePath = 'red_frame.png';
-                } else if (data.Kind === 'ONSHORE') {
+                } else if (data.Kind === 'Safe CEX') {
                     frameImagePath = 'gold_frame.png';
-                } else {
-                    // Default fallback based on tier
-                    if (data.Tier === 1 || data.Tier === '1') {
-                        frameImagePath = 'gold_frame.png';
-                    } else if (data.Tier === 2 || data.Tier === '2') {
-                        frameImagePath = 'silver_frame.png';
-                    } else if (data.Tier === 3 || data.Tier === '3') {
-                        frameImagePath = 'bronze_frame.png';
-                    } else if (data.Tier === 4 || data.Tier === '4') {
-                        frameImagePath = 'copper_frame.png';
-                    } else if (data.Tier === 5 || data.Tier === '5') {
-                        frameImagePath = 'iron_frame.png';
-                    }
-                }
+                } 
             }
             
             tradingCardContent.innerHTML = `
-                <div class="trading-card">
+                <div class="popover-card">
+                    <img src="${exchangeImage}" alt="${exchangeName}" class="card-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg=='">
                     <img src="${frameImagePath}" alt="Card Frame" class="card-frame" onerror="this.style.display='none'">
                     <div class="card-content">
-                        <img src="${exchangeImage}" alt="${exchangeName}" class="card-image-u" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg=='">
                         <div class="card-title">${exchangeName} ${data.Fun || ''}</div>
-                        <div class="card-stats-u">
-                        <div class="card-stat">
-                            <span class="card-stat-value">${data.Kind || 'Exchange'}</span>
-                        </div>
-                        <div class="card-stat-u">
-                            <span class="card-stat-value">$${formatValue(data['24h Volume']/1000)}b</span>
-                            <span class="card-stat-label">daily volume</span>
-                        </div>
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <span class="card-stat-value">${data.Kind || 'Exchange'}</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="card-stat-value">$${formatValue(data['24h Volume']/1000)}b</span>
+                                <span class="card-stat-label">daily volume</span>
+                            </div>
                         </div>
                         <div class="card-flavor-text">
                             <p>${data['Flavor text'] || ''}</p>
