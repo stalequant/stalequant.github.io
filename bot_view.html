@@ -412,7 +412,7 @@
 
         .swiper {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1600px; /* Increased to accommodate more cards */
             padding: 20px 0;
         }
 
@@ -624,15 +624,28 @@
     </div>
 
     <script>
+        // Single dictionary with ordered exchanges and their images
+        const featuredExchanges = {
+            'Binance': 'binance.png',
+            'MEXC': 'mexc.png',
+            'Hyperliquid': 'hyperliquid.png',
+            'Drift': 'drift.png',
+            'Coinbase': 'coinbase.png',
+            'Lighter': 'lighter.png',
+            'OKX': 'okx.png',
+            'Bybit': 'bybit.png',
+            'Bitget': 'bitget.png'
+        };
+
          const rawTradingData = `Exchange 	Kind	Fun	New	KYC	Data	Danger	24h Volume	OI	OI / Asset	Vol / Asset	Clean assets ($m, Defillama)	# Markets	Main base	Flavor text	Commentary	CM Lauched	Tier
 Hyperliquid	DEX	⭐⭐⭐⭐⭐		👻			8522	14516	2.5	1.4	5900	178	USDC	A new faith rises promising hope in a war torn land. Its prophet is generous, its rites are rich, and its followers devoted. To the uninitiated, though, it looks less like citadel and more like cult.	DEX, so no KYC but ip and wallet-based restrictions. Extremely generous airdrop and community commitment	--	1
 Bybit	CEX	⭐⭐⭐⭐⭐					24346	29177	1.1	0.9	26471	759	USDT	The golden stripe crowns a warhound champion, stalwart before the siege engines. His strength inspires those who rally behind him. Still, in the storm of battle, he is known to retreat into a savage bloodlust, deaf to all else.	Good Binance alternative. Key differentiators: laxer KYC, more listings, UTA which allows shared margin, more generous bonuses, API goes to shit at peaks	1-Mar-18	1
 Binance	CEX	⭐⭐⭐⭐⭐		👮			66742	43452	0.3	0.4	167884	601	USDT	To step onto its field is to be bound by the rhythm of power. But behind the proud sigils of its house lies a harsher law: all who kneel must pay, must serve, and must never stray.	Market leader. Deepest liquidity, good fees, support for the many chains	1-Jul-17	1
 Deribit	CEX	 ⭐⭐⭐⭐		👮			1168	3556	0.7	0.2	5256	64	BTC		Preeminent source for crypto options. Very long running exchange. EU based servers good for trading by hand in EU, but create latency challenges for small algo traders. Relatively illiquid spot and futures offerings. Potential CB acquisition.	1-Jun-16	2
 OKX	CEX	 ⭐⭐⭐⭐		👮			29714	12325	0.4	1.0	28760	386	USDT	Like its sentinel, the branded wolf, the fortress bears the weight of old trials. Rumors of dark accounts still linger, but its halls now offer shelter to the countless who seek strength within.	Credible Binance alternative, one of the longest running exchanges. Significant fake volume in the past, now much less significant	1-Jan-17	1
-lighter	DEX	 ⭐⭐⭐⭐	🆕	👻	⚠️		900	3500	7.8	2.0	450				#N/A	#N/A	
+Lighter	DEX	 ⭐⭐⭐⭐	🆕	👻	⚠️		900	3500	7.8	2.0	450			The Muticus legion’s legend was forged at Highwatch Pass, where bribed spies and Potemkin war camps convinced the much stronger tiger host to retreat. Fowl praise the stratagem; enemies curse the ruse.	#N/A	#N/A	
 extended	DEX	 ⭐⭐⭐⭐	🆕	👻			159	46	0.9	3.1	52				#N/A	#N/A	
-Coinbase International	Safe CEX	 ⭐⭐⭐⭐		👮			7983	816	0.0	0.0	425000	187	USD		Credible CEX futures. Bad liquidity and few pairs, but good fees (for now). Coinbase is very much not cypherpunk. Good promos for futures, bad UX and not great liquidity	0-Jan-00	2
+Coinbase	Safe CEX	 ⭐⭐⭐⭐		👮			7983	816	0.0	0.0	425000	187	USD	The rabbit house had noble bearing, yet disorder reigned behind its gilded banners. Priests sat in judgment where generals should have ruled, and so, though their vows were noble, their deeds fell to confusion and delay.	Credible CEX futures. Bad liquidity and few pairs, but good fees (for now). Coinbase is very much not cypherpunk. Good promos for futures, bad UX and not great liquidity	0-Jan-00	2
 edgeX	DEX	 ⭐⭐⭐		👻			1487	449	2.7	8.8	169	144			#N/A	#N/A	
 Paradex	DEX	 ⭐⭐⭐		👻			333	235	2.5	3.6	93	550			#N/A	#N/A	
 Ostium	AMM DEX	  ⭐⭐⭐	🆕	👻			36	152	3.4	0.8	45	31			#N/A	#N/A	
@@ -642,7 +655,7 @@ MEXC	Risky CEX	  ⭐⭐⭐		👻	⚠️	☠️	21886	9879	2.3	5.0	4342	1024		The
 Bitget	Risky CEX	  ⭐⭐⭐			⚠️	⚠️	20432	27886	4.8	3.5	5797	713	USDT	The assassin deals in coin and death with equal ease. For the right price, he’ll grant you fortune or silence your foe - but either way, the bargain rarely ends in your favor.	Low KYC, but many red flags: unfair API that suggests internal MM is B-booking traders; occasional accusations of theft; fake volume	1-Nov-19	2
 Bitfinex	CEX	  ⭐⭐		👮			72	2103	0.1	0.0	21355	82	USDC		Another very long running venue. Associated with USDT in shady ways. Hacked long ago, but handled it fairly well	1-Apr-14	3
 Crypto.com	CEX	  ⭐⭐		👮			3795	1609	0.4	1.0	3663	247	USDT		An okay exchange that has fiat rails to many countries but gives off a bad smell - internal MM trading against users, high fee app, etc. Matt Damon. Significant bad actions against CRO holders	--	3
-Drift	AMM DEX	   ⭐⭐		👻			378	645	0.4	0.3	1440	63	USDC	The testudine were slow and clumsy fighters, yet their fighting spirit was renowned. Victory eluded them, but surrender never crossed their minds	The top female founded open source DEX built on a crime-chain	1-Dec-21	
+Drift	AMM DEX	   ⭐⭐		👻			378	645	0.4	0.3	1440	63	USDC	The testudine were slow and clumsy fighters, yet their fighting spirit was renowned. Victory eluded them, but surrender never crossed their minds.	The top female founded open source DEX built on a crime-chain	1-Dec-21	
 Gate.io	Risky CEX	   ⭐⭐			⚠️	⚠️	21259	23128	3.3	3.0	6980	698	USDT		Broad listing, known for spot. Reports of theft from users and unfair API	1-Jan-13	3
 KuCoin	Risky CEX	   ⭐⭐				⚠️	1823	4179	1.0	0.4	4313	499	USDT		Low KYC, but red flag (reports of theft from users). A historic leader in spot. 	1-Aug-17	3
 Phemex	Risky CEX	   ⭐⭐			⚠️	⚠️	1419	2218	3.8	2.5	576.57	561	USDT		Low KYC, fake volume, likely avoid	1-Nov-19	
@@ -775,11 +788,8 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
              
              carousel.innerHTML = '';
              
-             // Define the specific exchanges to show in order
-             const featuredExchanges = ['MEXC', 'Hyperliquid', 'Bybit', 'Binance', 'OKX', 'Bitget', 'Drift'];
-             
-             // Create cards for the featured exchanges
-             featuredExchanges.forEach((exchangeName, index) => {
+             // Create cards for the featured exchanges (using global dictionary)
+             Object.keys(featuredExchanges).forEach((exchangeName, index) => {
                  const exchangeData = tradingData.find(exchange => exchange.Exchange === exchangeName);
                  if (exchangeData) {
                      const slide = document.createElement('div');
@@ -799,31 +809,17 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
                  centeredSlides: true,
                  slidesPerView: 'auto',
                  loop: true,
-                 initialSlide: 1, // Start with Hyperliquid (index 1 in our array)
-                 spaceBetween: 100,
+                 initialSlide: 2, // Start with Hyperliquid (index 1 in our array)
+                 spaceBetween: 150, // Increased horizontal spacing
                  speed: 300,
                  touchRatio: 2,
                  touchAngle: 45,
                  threshold: 10,
                  cardsEffect: {
-                     perSlideOffset: 25,
+                     perSlideOffset: 50, // Increased offset for better spacing
                      perSlideRotate: 2,
-                     rotate: true,
+                     rotate: false,
                      slideShadows: true,
-                 },
-                 breakpoints: {
-                     640: {
-                         slidesPerView: 1,
-                         spaceBetween: 80,
-                     },
-                     768: {
-                         slidesPerView: 2,
-                         spaceBetween: 120,
-                     },
-                     1024: {
-                         slidesPerView: 3,
-                         spaceBetween: 150,
-                     },
                  },
              });
          }
@@ -867,19 +863,8 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
             }
 
             const exchangeName = data.Exchange || 'Exchange';
-            // Use actual exchange images if they exist, otherwise use placeholder
-            const exchangeImages = {
-                'binance': 'binance.png',
-                'bybit': 'bybit.png', 
-                'okx': 'okx.png',
-                'hyperliquid': 'hyperliquid.png',
-                'mexc': 'mexc.png',
-                'bitget': 'bitget.png',
-                'drift': 'drift.png'
-            };
-            
-            const exchangeKey = exchangeName.toLowerCase();
-            const exchangeImage = exchangeImages[exchangeKey] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg==';
+            // Use actual exchange images if they exist, otherwise use placeholder 
+            const exchangeImage = featuredExchanges[exchangeName] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg==';
 
             card.innerHTML = `
                 <img src="${exchangeImage}" alt="${exchangeName}" class="card-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg=='">
@@ -901,8 +886,19 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
                 </div>
             `;
             
-            // Add click event to show popover
-            card.addEventListener('click', () => showPopover(data));
+            // Add click event to show popover and center the card
+            card.addEventListener('click', () => {
+                // First scroll to center this card
+                const cardIndex = Object.keys(featuredExchanges).indexOf(data.Exchange);
+                console.log(`Clicked on ${data.Exchange}, calculated index: ${cardIndex}`);
+                console.log('Featured exchanges order:', Object.keys(featuredExchanges));
+                if (cardIndex !== -1 && carouselSwiper) {
+                    console.log(`Scrolling to slide ${cardIndex}`);
+                    carouselSwiper.slideTo(cardIndex);
+                }
+                // Then show popover
+                showPopoverFromCard(data);
+            });
             
             return card;
         }
@@ -1053,17 +1049,16 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
             });
         }
 
-         // Show popover with exchange details
-         function showPopover(data) {
+         // Show popover from carousel card (no scrolling needed)
+         function showPopoverFromCard(data) {
              const overlay = document.getElementById('popoverOverlay');
              const hardStatsContent = document.getElementById('hardStatsContent');
              const tradingCardContent = document.getElementById('tradingCardContent');
              const tradingCardPane = document.getElementById('tradingCardPane');
              const hardStatsPane = document.getElementById('hardStatsPane');
              
-             // Define featured exchanges
-             const featuredExchanges = ['Hyperliquid', 'Binance', 'Bybit', 'OKX', 'Bitget', 'MEXC', 'Drift'];
-             const isFeatured = featuredExchanges.includes(data.Exchange);
+             // Use global featuredExchanges dictionary
+             const isFeatured = data.Exchange in featuredExchanges;
              
              // Show/hide trading card pane and adjust layout
              if (isFeatured) {
@@ -1075,6 +1070,15 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
                  hardStatsPane.style.flex = '1';
                  hardStatsPane.style.maxWidth = '100%';
              }
+             
+             // Populate popover content (same as showPopover but without scrolling)
+             populatePopoverContent(data, hardStatsContent, tradingCardContent, isFeatured);
+             
+             overlay.style.display = 'flex';
+         }
+
+         // Populate popover content (shared function)
+         function populatePopoverContent(data, hardStatsContent, tradingCardContent, isFeatured) {
             
              // Format values safely
              const formatValue = (value) => {
@@ -1192,19 +1196,8 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
             // Trading Card (only for featured exchanges)
             if (isFeatured) {
                 const exchangeName = data.Exchange || 'Exchange';
-            // Use actual exchange images if they exist, otherwise use placeholder
-            const exchangeImages = {
-                'binance': 'binance.png',
-                'bybit': 'bybit.png', 
-                'okx': 'okx.png',
-                'hyperliquid': 'hyperliquid.png',
-                'mexc': 'mexc.png',
-                'bitget': 'bitget.png',
-                'drift': 'drift.png'
-            };
             
-            const exchangeKey = exchangeName.toLowerCase();
-            const exchangeImage = exchangeImages[exchangeKey] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg==';
+            const exchangeImage = featuredExchanges[exchangeName] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg==';
             
             // Determine frame based on danger and kind (matching carousel logic)
             let frameImagePath = 'gold_frame.png';
@@ -1245,7 +1238,42 @@ KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
                 </div>
             `;
             }
+        }
+
+        // Show popover with exchange details (from table click)
+        function showPopover(data) {
+            const overlay = document.getElementById('popoverOverlay');
+            const hardStatsContent = document.getElementById('hardStatsContent');
+            const tradingCardContent = document.getElementById('tradingCardContent');
+            const tradingCardPane = document.getElementById('tradingCardPane');
+            const hardStatsPane = document.getElementById('hardStatsPane');
             
+            // Use global featuredExchanges dictionary
+            const isFeatured = data.Exchange in featuredExchanges;
+            
+            // If this is a featured exchange, scroll to it in the carousel
+            if (isFeatured && carouselSwiper) {
+                const cardIndex = Object.keys(featuredExchanges).indexOf(data.Exchange);
+                console.log(`Table click on ${data.Exchange}, calculated index: ${cardIndex}`);
+                if (cardIndex !== -1) {
+                    console.log(`Table scrolling to slide ${cardIndex}`);
+                    carouselSwiper.slideTo(cardIndex);
+                }
+            }
+            
+            // Show/hide trading card pane and adjust layout
+            if (isFeatured) {
+                tradingCardPane.style.display = 'block';
+                hardStatsPane.style.flex = '1';
+                tradingCardPane.style.flex = '1';
+            } else {
+                tradingCardPane.style.display = 'none';
+                hardStatsPane.style.flex = '1';
+                hardStatsPane.style.maxWidth = '100%';
+            }
+            
+            // Populate popover content
+            populatePopoverContent(data, hardStatsContent, tradingCardContent, isFeatured);
             
             overlay.style.display = 'flex';
         }
