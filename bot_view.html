@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Bot Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=UnifrakturCook:wght@700&family=Creepster&family=Nosifer&family=Butcherman&family=Grenze+Gotisch:wght@100;200;300;400;500;600;700;800;900&family=MedievalSharp&family=Uncial+Antiqua&family=IM+Fell+DW+Pica+SC&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1e1e1e;
+            color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #404040;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .table-container {
+            padding: 20px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+         table {
+             width: 100%;
+             border-collapse: collapse;
+             margin-top: 10px;
+         }
+
+        /* Frozen column styles */
+        .frozen-column {
+            position: sticky;
+            left: 0;
+            background-color: #3a3a3a;
+            z-index: 10;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .frozen-column-header {
+            position: sticky;
+            left: 0;
+            background-color: #3a3a3a;
+            z-index: 11;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .text-cell {
+            max-width: 200px;
+            word-wrap: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+        }
+
+        .number-cell {
+            text-align: right;
+            min-width: 80px;
+        }
+
+         th, td {
+             padding: 4px 2px;
+             text-align: left;
+             border-bottom: 1px solid #404040;
+             color: #e0e0e0;
+             white-space: nowrap;
+         }
+
+        th {
+            background-color: #3a3a3a;
+            color: #f0f0f0;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            background-color: #4a4a4a;
+        }
+
+        th.sortable::after {
+            content: ' ↕';
+            opacity: 0.5;
+        }
+
+        th.sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+        }
+
+        th.sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #3a3a3a;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+
+        tbody tr:nth-child(even):hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Popover Styles */
+        .popover-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popover {
+            background: #2d2d2d;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            max-width: 1200px;
+            width: 95%;
+            max-height: 85vh;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .popover-header {
+            background: #1e1e1e;
+            color: #f0f0f0;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #404040;
+        }
+
+        .popover-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .popover-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .popover-pane {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #404040;
+            color: #e0e0e0;
+        }
+
+        .popover-pane:last-child {
+            border-right: none;
+        }
+
+        .pane-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f0f0f0;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #4a9eff;
+        }
+
+        .trading-card {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            text-align: center;
+            font-family: 'Cinzel', 'Bebas Neue', 'Orbitron', 'Exo 2', 'Arial Black', sans-serif;
+        }
+        .card-stat {
+            text-align: center;
+        }
+
+        .card-stat-value {
+            color: #26220a;
+            font-family: 'IM Fell English SC', 'IM Fell DW Pica SC', 'Grenze Gotisch', serif;
+            font-size: .9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            z-index: 5;
+        }
+
+        .card-stat-label {
+            color: #3f3535;
+            font-family: 'IM Fell English SC', 'IM Fell DW Pica SC', 'Grenze Gotisch', serif;
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            z-index: 5;
+        }
+
+        .map-placeholder {
+            background: #3a3a3a;
+            border: 2px dashed #606060;
+            border-radius: 8px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0a0a0;
+            font-style: italic;
+            margin: 20px 0;
+        }
+
+        .map-container {
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .map-container iframe {
+            border-radius: 8px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #404040;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #b0b0b0;
+            min-width: 120px;
+        }
+
+        .detail-value {
+            color: #f0f0f0;
+            text-align: right;
+            flex: 1;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status.active {
+            background-color: #2d5a2d;
+            color: #90ee90;
+        }
+
+        .status.inactive {
+            background-color: #5a2d2d;
+            color: #ff6b6b;
+        }
+
+        .status.pending {
+            background-color: #5a4a1e;
+            color: #ffd700;
+        }
+
+        .tier {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tier.S {
+            background-color: #2d5a2d;
+            color: #90ee90;
+        }
+
+        .tier.A {
+            background-color: #1e3a5f;
+            color: #87ceeb;
+        }
+
+        .tier.B {
+            background-color: #5a4a1e;
+            color: #ffd700;
+        }
+
+        .tier.C {
+            background-color: #5a2d2d;
+            color: #ff6b6b;
+        }
+
+        .tier.D {
+            background-color: #4a4a4a;
+            color: #d0d0d0;
+        }
+
+        .tier.E {
+            background-color: #5a2d2d;
+            color: #ff8c8c;
+        }
+
+        .tier.F {
+            background-color: #4a1e1e;
+            color: #ffa0a0;
+        }
+
+        .dex-indicator {
+            font-size: 1.2rem;
+        }
+
+         .number-cell {
+             text-align: right;
+         }
+
+         .ratio-high {
+             background-color: #8B8000;
+             color: #000000;
+             font-weight: bold;
+         }
+
+         .ratio-very-high {
+             background-color: #8B0000;
+             color: #FFFFFF;
+             font-weight: bold;
+         }
+
+        /* Carousel Styles */
+        .carousel-container {
+            padding: 20px;
+            background: #1e1e1e;
+            border-bottom: 1px solid #404040;
+        }
+
+        .carousel-title {
+            text-align: center;
+            color: #f0f0f0;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .swiper {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px 0;
+        }
+
+        .swiper-wrapper {
+            padding-bottom: 3rem;
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            width: 280px;
+            height: 400px;
+        }
+
+        .carousel-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .carousel-card:hover {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-frame {
+            width: 100%;
+            height: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            z-index: 3;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .card-title {
+            position: absolute;
+            top: -0.5%;
+            width: 100%;
+            color: #000000;
+            font-family: 'IM Fell English SC', 'IM Fell DW Pica SC', 'Grenze Gotisch', serif;
+            font-size: 1.0rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin: 5% 0 0 0;
+            text-align: center;
+            z-index: 4;
+        }
+
+        .card-image {
+            position: absolute;
+            top: 7%;
+            left: 5%;
+            width: 90%;
+            height: 52%;
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        .card-image-u {
+            position: absolute;
+            top: 7%;
+            left: 5%;
+            width: 90%;
+            height: 52%;
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        .card-stats {
+            position: absolute;
+            top: 57%;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 10px;
+            box-sizing: border-box;
+            z-index: 4;
+        }
+
+        .card-stats-u {
+            position: absolute;
+            top: 56%;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 10px;
+            box-sizing: border-box;
+            z-index: 4;
+        }
+
+        .card-stat-value {
+            color: #26220a;
+            font-family: 'IM Fell English SC', 'IM Fell DW Pica SC', 'Grenze Gotisch', serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            z-index: 4;
+        }
+
+        .card-stat-label {
+            color: #3f3535;
+            font-family: 'IM Fell English SC', 'IM Fell DW Pica SC', 'Grenze Gotisch', serif;
+            font-size: 0.7rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            z-index: 4;
+        }
+
+        .card-flavor-text p {
+            position: absolute;
+            top: 65%;
+            left: 7%;
+            width: 86%;
+            color: #000000;
+            font-family: 'Cinzel', 'Playfair Display', serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            line-height: 1.3;
+            text-align: left;
+            font-style: italic;
+            letter-spacing: 0.3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Stale's Exchange Ratings</h1>
+            <p>Click on a row to view exchange details</p>
+        </div>
+        
+        <!-- Carousel Section -->
+        <div class="carousel-container">
+            <div class="swiper" id="carouselSwiper">
+                <div class="swiper-wrapper" id="carousel">
+                    <!-- Cards will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                     <tr>
+                         <th class="sortable frozen-column-header" data-column="Exchange">Exchange</th>
+                         <th class="sortable" data-column="Kind">Kind</th>
+                         <th class="sortable" data-column="Fun">Fun</th>
+                         <th class="sortable" data-column="New">New</th>
+                         <th class="sortable" data-column="KYC">KYC</th>
+                         <th class="sortable" data-column="Data">Data</th>
+                         <th class="sortable" data-column="Danger">Danger</th>
+                         <th class="sortable" data-column="24h Volume">24h Volume</th>
+                         <th class="sortable" data-column="OI">OI</th>
+                         <th class="sortable" data-column="OI / Asset">OI/Asset</th>
+                         <th class="sortable" data-column="Vol / Asset">Vol/Asset</th>
+                         <th class="sortable" data-column="Clean assets ($m, Defillama)">Clean Assets</th>
+                     </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Popover Overlay -->
+    <div class="popover-overlay" id="popoverOverlay">
+        <div class="popover">
+            <div class="popover-header">
+                <div class="popover-title">Exchange Details</div>
+                <button class="close-btn" id="closeBtn">&times;</button>
+            </div>
+             <div class="popover-content" id="popoverContent">
+                 <!-- Left Pane - Hard Stats -->
+                 <div class="popover-pane" id="hardStatsPane">
+                     <div class="pane-title">Hard Stats</div>
+                     <div id="hardStatsContent">
+                         <!-- Content will be populated by JavaScript -->
+                     </div>
+                 </div>
+                 
+                 <!-- Right Pane - Trading Card (only for featured exchanges) -->
+                 <div class="popover-pane" id="tradingCardPane" style="display: none;">
+                     <div class="pane-title">Trading Card</div>
+                     <div id="tradingCardContent">
+                         <!-- Content will be populated by JavaScript -->
+                     </div>
+                 </div>
+             </div>
+        </div>
+    </div>
+
+    <script>
+         const rawTradingData = `Exchange 	Kind	Fun	New	KYC	Data	Danger	24h Volume	OI	OI / Asset	Vol / Asset	Clean assets ($m, Defillama)	# Markets	Main base	Flavor text	Commentary	CM Lauched	Tier
+Hyperliquid	DEX	⭐⭐⭐⭐⭐		👻			8522	14516	2.5	1.4	5900	178	USDC	A new faith rises promising hope in a war torn land. Its prophet is generous, its rites are rich, and its followers devoted. To the uninitiated, though, it looks less like citadel and more like cult.	DEX, so no KYC but ip and wallet-based restrictions. Extremely generous airdrop and community commitment	--	1
+Bybit	CEX	⭐⭐⭐⭐⭐					24346	29177	1.1	0.9	26471	759	USDT	The golden stripe crowns a warhound champion, stalwart before the siege engines. His strength inspires those who rally behind him. Still, in the storm of battle, he is known to retreat into a savage bloodlust, deaf to all else.	Good Binance alternative. Key differentiators: laxer KYC, more listings, UTA which allows shared margin, more generous bonuses, API goes to shit at peaks	1-Mar-18	1
+Binance	CEX	⭐⭐⭐⭐⭐		👮			66742	43452	0.3	0.4	167884	601	USDT	To step onto its field is to be bound by the rhythm of power. But behind the proud sigils of its house lies a harsher law: all who kneel must pay, must serve, and must never stray.	Market leader. Deepest liquidity, good fees, support for the many chains	1-Jul-17	1
+Deribit	CEX	 ⭐⭐⭐⭐		👮			1168	3556	0.7	0.2	5256	64	BTC		Preeminent source for crypto options. Very long running exchange. EU based servers good for trading by hand in EU, but create latency challenges for small algo traders. Relatively illiquid spot and futures offerings. Potential CB acquisition.	1-Jun-16	2
+OKX	CEX	 ⭐⭐⭐⭐		👮			29714	12325	0.4	1.0	28760	386	USDT	Like its sentinel, the branded wolf, the fortress bears the weight of old trials. Rumors of dark accounts still linger, but its halls now offer shelter to the countless who seek strength within.	Credible Binance alternative, one of the longest running exchanges. Significant fake volume in the past, now much less significant	1-Jan-17	1
+lighter	DEX	 ⭐⭐⭐⭐	🆕	👻	⚠️		900	3500	7.8	2.0	450				#N/A	#N/A	
+extended	DEX	 ⭐⭐⭐⭐	🆕	👻			159	46	0.9	3.1	52				#N/A	#N/A	
+Coinbase International	Safe CEX	 ⭐⭐⭐⭐		👮			7983	816	0.0	0.0	425000	187	USD		Credible CEX futures. Bad liquidity and few pairs, but good fees (for now). Coinbase is very much not cypherpunk. Good promos for futures, bad UX and not great liquidity	0-Jan-00	2
+edgeX	DEX	 ⭐⭐⭐		👻			1487	449	2.7	8.8	169	144			#N/A	#N/A	
+Paradex	DEX	 ⭐⭐⭐		👻			333	235	2.5	3.6	93	550			#N/A	#N/A	
+Ostium	AMM DEX	  ⭐⭐⭐	🆕	👻			36	152	3.4	0.8	45	31			#N/A	#N/A	
+BitMEX	CEX	  ⭐⭐⭐		👮			630	2010	0.3	0.1	5811	176	BTC		Historic leader, past unfair API accusations, less USDT ticker liquidity	1-Apr-18	3
+Kraken	Safe CEX	  ⭐⭐⭐		👮			832	820	0.0	0.0	43200	426	USD		Safeish futures with horrible liquidity. EU based servers create latency issues	1-Jul-11	2
+MEXC	Risky CEX	  ⭐⭐⭐		👻	⚠️	☠️	21886	9879	2.3	5.0	4342	1024		The rat smiles through the haze, offering the rarest delights. To accept is easy, for his wares tempt every soul. But the bargain binds tight, and the cost is always cruel.	Great place to trade, except if they steal your money. VERY broad listings. T&C allow them to take your money for basically any reason.	1-Apr-18	3
+Bitget	Risky CEX	  ⭐⭐⭐			⚠️	⚠️	20432	27886	4.8	3.5	5797	713	USDT	The assassin deals in coin and death with equal ease. For the right price, he’ll grant you fortune or silence your foe - but either way, the bargain rarely ends in your favor.	Low KYC, but many red flags: unfair API that suggests internal MM is B-booking traders; occasional accusations of theft; fake volume	1-Nov-19	2
+Bitfinex	CEX	  ⭐⭐		👮			72	2103	0.1	0.0	21355	82	USDC		Another very long running venue. Associated with USDT in shady ways. Hacked long ago, but handled it fairly well	1-Apr-14	3
+Crypto.com	CEX	  ⭐⭐		👮			3795	1609	0.4	1.0	3663	247	USDT		An okay exchange that has fiat rails to many countries but gives off a bad smell - internal MM trading against users, high fee app, etc. Matt Damon. Significant bad actions against CRO holders	--	3
+Drift	AMM DEX	   ⭐⭐		👻			378	645	0.4	0.3	1440	63	USDC	The testudine were slow and clumsy fighters, yet their fighting spirit was renowned. Victory eluded them, but surrender never crossed their minds	The top female founded open source DEX built on a crime-chain	1-Dec-21	
+Gate.io	Risky CEX	   ⭐⭐			⚠️	⚠️	21259	23128	3.3	3.0	6980	698	USDT		Broad listing, known for spot. Reports of theft from users and unfair API	1-Jan-13	3
+KuCoin	Risky CEX	   ⭐⭐				⚠️	1823	4179	1.0	0.4	4313	499	USDT		Low KYC, but red flag (reports of theft from users). A historic leader in spot. 	1-Aug-17	3
+Phemex	Risky CEX	   ⭐⭐			⚠️	⚠️	1419	2218	3.8	2.5	576.57	561	USDT		Low KYC, fake volume, likely avoid	1-Nov-19	
+HTX	Risky CEX	   ⭐⭐			⚠️	⚠️	2691	9546	1.3	0.4	7251	306	USDT		Broad listing, Jsun + reserve concerns	1-Sep-13	
+Aster	DEX	   ⭐⭐		👻	⚠️		1040	250	2.9	12.1	86				#N/A	#N/A	
+Orderly	DEX	   ⭐⭐		👻	⚠️		563	69	1.6	12.8	44	170			#N/A	#N/A	
+ApeX	DEX	   ⭐⭐		👻	⚠️		503	66	2.6	19.4	26	134			#N/A	#N/A	
+dYdX	DEX	   ⭐⭐		👻			165	200	0.6	0.5	308	224			#N/A	#N/A	
+GMX	AMM DEX	   ⭐⭐		👻			4	330	0.5	0.0	681	94			#N/A	#N/A	
+Gemini	Safe CEX	   ⭐⭐		👮			4	14	0.0	0.0	23000	28			#N/A	#N/A	3
+Backpack	Risky CEX	   ⭐⭐			⚠️	☠️	977	566	2.9	5.0	195.3	48			#N/A	#N/A	
+CoinEx	Risky CEX	   ⭐⭐			⚠️	☠️	929	584	2.2	3.6	261	260			#N/A	#N/A	
+XT.COM	Risky CEX	    💩			⚠️	☠️	15767	11693	58.0	78.2	201.5	690			A third of their proven reserves are in the form of physical gold token issued by a $10b token company who only the exchange holds and whose online presence is a fiver+chatGPT website	1-Oct-18	
+BingX	Risky CEX	    💩			⚠️	☠️	9865	5858	4.3	7.2	1363	616			0	1-May-18	3
+LBank	Risky CEX	    💩			⚠️	☠️	7158	4287	6.9	11.5	624	683			0	1-Oct-16	
+OrangeX	Risky CEX	    💩			⚠️	☠️	55835	17448	251.0	803.4	69.5	439			0	1-Jun-21	
+CoinW	Risky CEX	    💩			⚠️	☠️	33289	22880	349.9	509.0	65.4	140			0	1-Jul-17	
+Bitmart	Risky CEX	    💩			⚠️	☠️	22018	9861	210.3	469.5	46.9	518			0	1-Mar-18	
+Toobit	Risky CEX	    💩			⚠️	☠️	14892	6110	65.6	160.0	93.1	496			0	1-Oct-22	
+WEEX	Risky CEX	    💩			⚠️	☠️	13860	12140	62.1	70.9	195.6	825			0	1-Apr-18	
+Deepcoin	Risky CEX	    💩			⚠️	☠️	10254	4710	18.6	40.5	253	347			0	1-Nov-18	
+Bitrue	Risky CEX	    💩			⚠️	☠️	9622	853	1.8	20.4	470.57	607			0	1-Jul-18	
+Bitunix	Risky CEX	    💩			⚠️	☠️	4867	3154	27.0	41.6	117	475			0	1-Oct-21	
+WhiteBIT	Risky CEX	    💩			⚠️	☠️	4391	7570				238	USDT		Not willing to call this a scam but lots of red flags	1-Dec-18	
+BVOX	Risky CEX	    💩			⚠️	☠️	21775	6178	44.6	157.2	138.5	95			#N/A	#N/A	
+Ourbit	Risky CEX	    💩			⚠️	☠️	10238	508	6.5	131.3	78	677			#N/A	#N/A	
+Zoomex	Risky CEX	    💩			⚠️	☠️	8862	2717	42.1	137.4	64.5	586			#N/A	#N/A	
+Biconomy	Risky CEX	    💩			⚠️	☠️	6163	674	16.6	151.8	40.6	114			#N/A	#N/A	
+BYDFi	Risky CEX	    💩			⚠️	☠️	4364	2993	22.0	32.1	136	477			#N/A	#N/A	
+BTSE	Risky CEX	    💩			⚠️	☠️	3166	674	292.9	1376.7	2.3	136			#N/A	#N/A	
+PrimeXBT	Risky CEX	    💩			⚠️	☠️	2528	1783				136			#N/A	#N/A	
+BloFin	Risky CEX	    💩			⚠️	☠️	1353	1578	20.4	17.5	77.2	548			#N/A	#N/A	
+KCEX	Risky CEX	    💩			⚠️	☠️	16681	2148				759			#N/A	#N/A	`;
+
+        // Function to parse TSV data and convert to tradingData format
+        function parseTradingData(tsvData) {
+            const lines = tsvData.trim().split('\n');
+            const headers = lines[0].split('\t');
+            const data = [];
+            
+            // Build column mapping dynamically from the header row
+            const columnMapping = {};
+            headers.forEach((header, index) => {
+                columnMapping[index] = header.trim(); // Trim headers for consistency
+            });
+            
+            // Debug: Log the headers and mapping
+            console.log('Headers:', headers);
+            console.log('Column mapping:', columnMapping); 
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split('\t');
+                const row = {};
+                
+                // Map each column using the dynamic mapping
+                values.forEach((value, index) => {
+                    const columnName = columnMapping[index];
+                    if (columnName) {
+                        // Clean up the value
+                        if (value === '' || value === '--' || value === '#DIV/0!' || value === '#N/A') {
+                            value = null;
+                        } else if (value === 'NOT AVAILIBLE') {
+                            value = 'NOT AVAILABLE';
+                        }
+                        
+                        // Clean up currency values first
+                        if (columnName.includes('Volume') || columnName.includes('OI') || 
+                            columnName.includes('Clean assets')) {
+                            if (value && typeof value === 'string' && value.startsWith('$')) {
+                                value = value.replace(/[$,]/g, '');
+                                if (!isNaN(value)) {
+                                    value = Number(value);
+                                }
+                            }
+                        }
+                        
+                        // Convert other numeric values based on column name patterns
+                        if (columnName.includes('Tier') || columnName.includes('Good') || 
+                            columnName.includes('OI / Asset') || columnName.includes('Vol / Asset') ||
+                            columnName.includes('# Markets')) {
+                            if (value && !isNaN(value)) {
+                                value = Number(value);
+                            }
+                        }
+                        
+                        row[columnName] = value;
+                    }
+                });
+                
+                data.push(row);
+            }
+            
+            return data;
+        }
+
+        // Parse the raw data and create tradingData
+        const tradingData = parseTradingData(rawTradingData);
+        
+        // Debug: Check if data is being parsed correctly
+        console.log('Trading data length:', tradingData.length);
+        if (tradingData.length > 0) {
+            console.log('First row:', tradingData[0]);
+            console.log('Exchange field:', tradingData[0].Exchange);
+            console.log('Available keys:', Object.keys(tradingData[0]));
+        }
+        
+        
+        
+        
+        
+        
+
+        let currentSort = { column: null, direction: 'asc' };
+
+        // Initialize the table
+        function initializeTable() {
+            populateTable(tradingData);
+            setupSorting();
+            setupPopover();
+            populateCarousel();
+            initializeSwiper();
+        }
+
+        // Swiper instance
+        let carouselSwiper = null;
+
+         // Populate carousel with specific exchanges
+         function populateCarousel() {
+             const carousel = document.getElementById('carousel');
+             
+             carousel.innerHTML = '';
+             
+             // Define the specific exchanges to show in order
+             const featuredExchanges = ['MEXC', 'Hyperliquid', 'Bybit', 'Binance', 'OKX', 'Bitget', 'Drift'];
+             
+             // Create cards for the featured exchanges
+             featuredExchanges.forEach((exchangeName, index) => {
+                 const exchangeData = tradingData.find(exchange => exchange.Exchange === exchangeName);
+                 if (exchangeData) {
+                     const slide = document.createElement('div');
+                     slide.className = 'swiper-slide';
+                     const card = createCarouselCard(exchangeData, index + 1);
+                     slide.appendChild(card);
+                     carousel.appendChild(slide);
+                 }
+             });
+         }
+
+         // Initialize Swiper
+         function initializeSwiper() {
+             carouselSwiper = new Swiper('#carouselSwiper', {
+                 effect: 'cards',
+                 grabCursor: true,
+                 centeredSlides: true,
+                 slidesPerView: 'auto',
+                 loop: true,
+                 initialSlide: 1, // Start with Hyperliquid (index 1 in our array)
+                 spaceBetween: 100,
+                 speed: 300,
+                 touchRatio: 2,
+                 touchAngle: 45,
+                 threshold: 10,
+                 cardsEffect: {
+                     perSlideOffset: 25,
+                     perSlideRotate: 2,
+                     rotate: true,
+                     slideShadows: true,
+                 },
+                 breakpoints: {
+                     640: {
+                         slidesPerView: 1,
+                         spaceBetween: 80,
+                     },
+                     768: {
+                         slidesPerView: 2,
+                         spaceBetween: 120,
+                     },
+                     1024: {
+                         slidesPerView: 3,
+                         spaceBetween: 150,
+                     },
+                 },
+             });
+         }
+
+        // Create a carousel card
+        function createCarouselCard(data, index = 1) {
+            const card = document.createElement('div');
+            card.className = 'carousel-card';
+            
+             // Format values safely
+             const formatValue = (value) => {
+                 if (value === null || value === undefined) return '';
+                 if (typeof value === 'number') return value.toLocaleString();
+                 if (typeof value === 'string' && value === 'NOT AVAILIBLE') return '';
+                 if (typeof value === 'string' && !isNaN(value) && value !== '') {
+                     return Number(value).toLocaleString();
+                 }
+                 return value;
+             };
+
+            const formatTier = (tier) => {
+                if (!tier) return 'N/A';
+                return `<span class="tier ${tier}">${tier}</span>`;
+            };
+
+            // Determine frame based on danger and kind
+            let frameImagePath = 'gold_frame.png';
+            
+            // First check for danger indicators
+            if (data.Danger === 'X' || data.Danger === 'XX' || data.Kind === 'Risky CEX') {
+                frameImagePath = 'black_frame.png';
+            } else {
+                // If no danger, determine frame by kind
+                if (data.Kind === 'DEX' || data.Kind === 'AMM DEX') {
+                    frameImagePath = 'blue_frame.png';
+                } else if (data.Kind === 'CEX') {
+                    frameImagePath = 'red_frame.png';
+                } else if (data.Kind === 'Safe CEX') {
+                    frameImagePath = 'gold_frame.png';
+                } 
+            }
+
+            const exchangeName = data.Exchange || 'Exchange';
+            // Use actual exchange images if they exist, otherwise use placeholder
+            const exchangeImages = {
+                'binance': 'binance.png',
+                'bybit': 'bybit.png', 
+                'okx': 'okx.png',
+                'hyperliquid': 'hyperliquid.png',
+                'mexc': 'mexc.png',
+                'bitget': 'bitget.png',
+                'drift': 'drift.png'
+            };
+            
+            const exchangeKey = exchangeName.toLowerCase();
+            const exchangeImage = exchangeImages[exchangeKey] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg==';
+
+            card.innerHTML = `
+                <img src="${exchangeImage}" alt="${exchangeName}" class="card-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg=='">
+                <img src="${frameImagePath}" alt="Card Frame" class="card-frame" onerror="this.style.display='none'">
+                <div class="card-content">
+                    <div class="card-title">${exchangeName} ${data.Fun || ''}</div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <span class="card-stat-value">${data.Kind || 'Exchange'}</span>
+                        </div>
+                        <div class="card-stat">
+                            <span class="card-stat-value">$${formatValue(data['24h Volume']/1000)}b</span>
+                            <span class="card-stat-label">daily volume</span>
+                        </div>
+                    </div>
+                    <div class="card-flavor-text">
+                        <p>${data['Flavor text'] || ''}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Add click event to show popover
+            card.addEventListener('click', () => showPopover(data));
+            
+            return card;
+        }
+
+        // Populate table with data
+        function populateTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                
+             // Format values safely
+             const formatValue = (value) => {
+                 if (value === null || value === undefined) return '';
+                 if (typeof value === 'number') return value.toLocaleString();
+                 if (typeof value === 'string' && value === 'NOT AVAILIBLE') return '';
+                 if (typeof value === 'string' && !isNaN(value) && value !== '') {
+                     return Number(value).toLocaleString();
+                 }
+                 return value;
+             };
+
+             // Format clean assets with 0 decimals
+             const formatCleanAssets = (value) => {
+                 if (value === null || value === undefined) return '';
+                 if (typeof value === 'number') return Math.round(value).toLocaleString();
+                 if (typeof value === 'string' && !isNaN(value) && value !== '') {
+                     return Math.round(Number(value)).toLocaleString();
+                 }
+                 return value;
+             };
+
+             // Format ratios with 1 decimal and highlighting
+             const formatRatio = (value) => {
+                 if (value === null || value === undefined) return '';
+                 let numValue = value;
+                 if (typeof value === 'string' && !isNaN(value) && value !== '') {
+                     numValue = Number(value);
+                 }
+                 if (typeof numValue === 'number') {
+                     const formatted = numValue.toFixed(1);
+                     if (numValue >= 10) {
+                         return `<span class="ratio-very-high">☠️ ${formatted}</span>`;
+                     } else if (numValue >= 4) {
+                         return `<span class="ratio-high">⚠️ ${formatted}</span>`;
+                     }
+                     return formatted;
+                 }
+                 return value;
+             };
+
+                const formatTier = (tier) => {
+                    if (!tier) return 'N/A';
+                    return `<span class="tier ${tier}">${tier}</span>`;
+                };
+
+                const formatDEX = (isDex) => {
+                    if (isDex === "😁") return '<span class="dex-indicator">🔗</span>';
+                    return '';
+                };
+
+                tr.innerHTML = `
+                    <td class="frozen-column">${row.Exchange || ''}</td>
+                    <td>${row.Kind || ''}</td>
+                    <td>${row.Fun || ''}</td>
+                    <td>${row.New || ''}</td>
+                    <td>${row.KYC || ''}</td>
+                    <td>${row.Data || ''}</td>
+                    <td>${row.Danger || ''}</td>
+                    <td class="number-cell">$${formatValue(row['24h Volume'])}</td>
+                    <td class="number-cell">$${formatValue(row['OI'])}</td>
+                    <td class="number-cell">${formatRatio(row['OI / Asset'])}</td>
+                    <td class="number-cell">${formatRatio(row['Vol / Asset'])}</td>
+                    <td class="number-cell">$${formatCleanAssets(row['Clean assets ($m, Defillama)'])}</td>
+                `;
+                tr.addEventListener('click', () => showPopover(row));
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Setup sorting functionality
+        function setupSorting() {
+            const headers = document.querySelectorAll('th.sortable');
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.dataset.column;
+                    const direction = currentSort.column === column && currentSort.direction === 'asc' ? 'desc' : 'asc';
+                    
+                    // Update sort indicators
+                    headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+                    header.classList.add(`sort-${direction}`);
+                    
+                    currentSort = { column, direction };
+                    sortTable(column, direction);
+                });
+            });
+        }
+
+        // Sort table data
+        function sortTable(column, direction) {
+            const sortedData = [...tradingData].sort((a, b) => {
+                let aVal = a[column];
+                let bVal = b[column];
+                
+                 // Handle numeric columns
+                 if (column === '24h Volume' || column === 'OI' || column === 'Clean assets ($m, Defillama)' ||
+                     column === 'OI / Asset' || column === 'Vol / Asset') {
+                    aVal = Number(aVal) || 0;
+                    bVal = Number(bVal) || 0;
+                } else {
+                    // Handle string columns - ensure they are strings first
+                    aVal = (aVal === null || aVal === undefined) ? '' : String(aVal);
+                    bVal = (bVal === null || bVal === undefined) ? '' : String(bVal);
+                    
+                    // Convert to lowercase for string comparison
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+                
+                if (direction === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+            
+            populateTable(sortedData);
+        }
+
+        // Setup popover functionality
+        function setupPopover() {
+            const overlay = document.getElementById('popoverOverlay');
+            const closeBtn = document.getElementById('closeBtn');
+            
+            closeBtn.addEventListener('click', hidePopover);    
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    hidePopover();
+                }
+            });
+            
+            // Close on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    hidePopover();
+                }
+            });
+        }
+
+         // Show popover with exchange details
+         function showPopover(data) {
+             const overlay = document.getElementById('popoverOverlay');
+             const hardStatsContent = document.getElementById('hardStatsContent');
+             const tradingCardContent = document.getElementById('tradingCardContent');
+             const tradingCardPane = document.getElementById('tradingCardPane');
+             const hardStatsPane = document.getElementById('hardStatsPane');
+             
+             // Define featured exchanges
+             const featuredExchanges = ['Hyperliquid', 'Binance', 'Bybit', 'OKX', 'Bitget', 'MEXC', 'Drift'];
+             const isFeatured = featuredExchanges.includes(data.Exchange);
+             
+             // Show/hide trading card pane and adjust layout
+             if (isFeatured) {
+                 tradingCardPane.style.display = 'block';
+                 hardStatsPane.style.flex = '1';
+                 tradingCardPane.style.flex = '1';
+             } else {
+                 tradingCardPane.style.display = 'none';
+                 hardStatsPane.style.flex = '1';
+                 hardStatsPane.style.maxWidth = '100%';
+             }
+            
+             // Format values safely
+             const formatValue = (value) => {
+                 if (value === null || value === undefined) return '';
+                 if (typeof value === 'number') return value.toLocaleString();
+                 if (typeof value === 'string' && value === 'NOT AVAILIBLE') return '';
+                 if (typeof value === 'string' && !isNaN(value) && value !== '') {
+                     return Number(value).toLocaleString();
+                 }
+                 return value;
+             };
+
+            const formatTier = (tier) => {
+                if (!tier) return 'N/A';
+                return `<span class="tier ${tier}">${tier}</span>`;
+            };
+
+            const formatDEX = (isDex) => {
+                if (isDex === "😁") return 'Yes (DEX)';
+                return 'No (CEX)';
+            };
+
+             const formatGood = (good) => {
+                 if (!good) return 'N/A';
+                 if (typeof good === 'number') return `${good}/5 Rating`;
+                 const count = (good.match(/😁/g) || []).length;
+                 return `${count}/3 Good`;
+             };
+
+             // Format clean assets with 0 decimals
+             const formatCleanAssets = (value) => {
+                 if (value === null || value === undefined) return '';
+                 if (typeof value === 'number') return Math.round(value).toLocaleString();
+                 if (typeof value === 'string' && !isNaN(value) && value !== '') {
+                     return Math.round(Number(value)).toLocaleString();
+                 }
+                 return value;
+             };
+
+             // Format ratios with 1 decimal and highlighting
+             const formatRatio = (value) => {
+                 if (value === null || value === undefined) return '';
+                 let numValue = value;
+                 if (typeof value === 'string' && !isNaN(value) && value !== '') {
+                     numValue = Number(value);
+                 }
+                 if (typeof numValue === 'number') {
+                     const formatted = numValue.toFixed(1);
+                     if (numValue >= 10) {
+                         return `<span class="ratio-very-high">☠️ ${formatted}</span>`;
+                     } else if (numValue >= 4) {
+                         return `<span class="ratio-high">⚠️ ${formatted}</span>`;
+                     }
+                     return formatted;
+                 }
+                 return value;
+             };
+
+            // Left Pane - Hard Stats
+            hardStatsContent.innerHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">Exchange Name:</span>
+                    <span class="detail-value">${data.Exchange || ''}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Kind:</span>
+                    <span class="detail-value">${data.Kind || ''}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Score:</span>
+                    <span class="detail-value">${data.Fun || ''}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">New?:</span>
+                    <span class="detail-value">${data.New || ''}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">KYC Requirement Notes:</span>
+                    <span class="detail-value">${data.KYC || ''}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Data Quality Notes:</span>
+                    <span class="detail-value">${data.Data || ''}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Danger Level:</span>
+                    <span class="detail-value">${data.Danger || ''}</span>
+                </div>
+                 <div class="detail-row">
+                     <span class="detail-label">24h Volume:</span>
+                     <span class="detail-value">$${formatValue(data['24h Volume'])}</span>
+                 </div>
+                 <div class="detail-row">
+                     <span class="detail-label">Open Interest:</span>
+                     <span class="detail-value">$${formatValue(data['OI'])}</span>
+                 </div>
+                <div class="detail-row">
+                    <span class="detail-label">OI/Asset Ratio:</span>
+                    <span class="detail-value">${formatRatio(data['OI / Asset'])}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Vol/Asset Ratio:</span>
+                    <span class="detail-value">${formatRatio(data['Vol / Asset'])}</span>
+                </div>
+                 <div class="detail-row">
+                     <span class="detail-label">Clean Assets:</span>
+                     <span class="detail-value">$${formatCleanAssets(data['Clean assets ($m, Defillama)'])}</span>
+                 </div>  
+                <div class="detail-row">
+                    <span class="detail-label">Commentary:</span>
+                    <span class="detail-value" style="max-width: 300px; word-wrap: break-word;">${data.Commentary || ''}</span>
+                </div>
+            `;
+            
+            // Trading Card (only for featured exchanges)
+            if (isFeatured) {
+                const exchangeName = data.Exchange || 'Exchange';
+            // Use actual exchange images if they exist, otherwise use placeholder
+            const exchangeImages = {
+                'binance': 'binance.png',
+                'bybit': 'bybit.png', 
+                'okx': 'okx.png',
+                'hyperliquid': 'hyperliquid.png',
+                'mexc': 'mexc.png',
+                'bitget': 'bitget.png',
+                'drift': 'drift.png'
+            };
+            
+            const exchangeKey = exchangeName.toLowerCase();
+            const exchangeImage = exchangeImages[exchangeKey] || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg==';
+            
+            // Determine frame based on danger and kind
+            let frameImagePath = 'gold_frame.png';
+            
+            // First check for danger indicators
+            if (data.Danger === 'X' || data.Danger === 'XX') {
+                frameImagePath = 'black_frame.png';
+            } else {
+                // If no danger, determine frame by kind
+                if (data.Kind === 'DEX' || data.Kind === 'AMM DEX') {
+                    frameImagePath = 'blue_frame.png';
+                } else if (data.Kind === 'OFFSHORE') {
+                    frameImagePath = 'red_frame.png';
+                } else if (data.Kind === 'ONSHORE') {
+                    frameImagePath = 'gold_frame.png';
+                } else {
+                    // Default fallback based on tier
+                    if (data.Tier === 1 || data.Tier === '1') {
+                        frameImagePath = 'gold_frame.png';
+                    } else if (data.Tier === 2 || data.Tier === '2') {
+                        frameImagePath = 'silver_frame.png';
+                    } else if (data.Tier === 3 || data.Tier === '3') {
+                        frameImagePath = 'bronze_frame.png';
+                    } else if (data.Tier === 4 || data.Tier === '4') {
+                        frameImagePath = 'copper_frame.png';
+                    } else if (data.Tier === 5 || data.Tier === '5') {
+                        frameImagePath = 'iron_frame.png';
+                    }
+                }
+            }
+            
+            tradingCardContent.innerHTML = `
+                <div class="trading-card">
+                    <img src="${frameImagePath}" alt="Card Frame" class="card-frame" onerror="this.style.display='none'">
+                    <div class="card-content">
+                        <img src="${exchangeImage}" alt="${exchangeName}" class="card-image-u" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPg=='">
+                        <div class="card-title">${exchangeName} ${data.Fun || ''}</div>
+                        <div class="card-stats-u">
+                        <div class="card-stat">
+                            <span class="card-stat-value">${data.Kind || 'Exchange'}</span>
+                        </div>
+                        <div class="card-stat-u">
+                            <span class="card-stat-value">$${formatValue(data['24h Volume']/1000)}b</span>
+                            <span class="card-stat-label">daily volume</span>
+                        </div>
+                        </div>
+                        <div class="card-flavor-text">
+                            <p>${data['Flavor text'] || ''}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }
+            
+            
+            overlay.style.display = 'flex';
+        }
+
+        // Load Bing Maps
+        function loadBingMap(mapId) {
+            try {
+                const map = new Microsoft.Maps.Map(document.getElementById(mapId), {
+                    zoom: 6,
+                    mapTypeId: Microsoft.Maps.MapTypeId.road,
+                    center: new Microsoft.Maps.Location(35.6762, 139.6503)
+                });
+                
+                // Add pushpin for Tokyo
+                const pushpin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(35.6762, 139.6503), {
+                    title: 'Tokyo, Japan',
+                    color: '#ff0000'
+                });
+                map.entities.push(pushpin);
+                
+                // Apply dark mode styling
+                const mapElement = document.getElementById(mapId);
+                if (mapElement) {
+                    mapElement.style.filter = 'invert(1) hue-rotate(180deg)';
+                }
+            } catch (error) {
+                console.error('Error loading Bing Maps:', error);
+            }
+        }
+
+        // Hide popover
+        function hidePopover() {
+            const overlay = document.getElementById('popoverOverlay');
+            overlay.style.display = 'none';
+        }
+
+        // Add some CSS for positive/negative values
+        const style = document.createElement('style');
+        style.textContent = `
+            .positive { color: #4ade80; }
+            .negative { color: #f87171; }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeTable);
+    </script>
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+</body>
+</html>
