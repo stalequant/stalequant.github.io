@@ -539,19 +539,36 @@
             z-index: 4;
         }
 
-        .card-flavor-text p {
+        .card-text-block {
             position: absolute;
-            top: 65%;
+            top: 64%;
             left: 7%;
             width: 86%;
+            z-index: 4;
+        }
+
+        .card-action-text p {
             color: #000000;
             font-family: 'Cinzel', 'Playfair Display', serif;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+            text-align: left;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+            margin: 0 0 8px 0;
+        }
+
+        .card-flavor-text p {
+            color: #000000;
+            font-family: 'Cinzel', 'Playfair Display', serif;
+            font-size: 0.75rem;
             font-weight: 500;
             line-height: 1.3;
             text-align: left;
             font-style: italic;
             letter-spacing: 0.3px;
+            margin: 0;
         }
     </style>
 </head>
@@ -635,6 +652,7 @@
             'Hyperliquid': 'hyperliquid.png',
             'BitMEX': 'bitmex.png',
             'XT': 'xt.png',
+            'Crypto.com': 'cryptocom.png',
             'Drift': 'drift.png',
             'Coinbase': 'coinbase.png',
             'Lighter': 'lighter.png',
@@ -643,59 +661,58 @@
             'Bitget': 'bitget.png'
         };
 
-         const rawTradingData = `Exchange 	Kind	Fun	New	KYC	Data	Danger	24h Volume	OI	OI / Asset	Vol / Asset	Clean assets ($m, Defillama)	# Markets	Main base	Flavor text	Commentary	CM Lauched	Tier
-Hyperliquid	DEX	⭐⭐⭐⭐⭐		👻			8522	14516	2.5	1.4	5900	178	USDC	A new faith rises promising hope in a war torn land. Its prophet is generous, its rites are rich, and its followers devoted. To the uninitiated, though, it looks less like citadel and more like cult.	DEX, so no KYC but ip and wallet-based restrictions. Extremely generous airdrop and community commitment	--	1
-Bybit	CEX	⭐⭐⭐⭐⭐					24346	29177	1.1	0.9	26471	759	USDT	The golden stripe crowns a warhound champion, stalwart before the siege engines. His strength inspires those who rally behind him. Still, in the storm of battle, he is known to retreat into a savage bloodlust, deaf to all else.	Good Binance alternative. Key differentiators: laxer KYC, more listings, UTA which allows shared margin, more generous bonuses, API goes to shit at peaks	1-Mar-18	1
-Binance	CEX	⭐⭐⭐⭐⭐		👮			66742	43452	0.3	0.4	167884	601	USDT	To step onto its field is to be bound by the rhythm of power. But behind the proud sigils of its house lies a harsher law: all who kneel must pay, must serve, and must never stray.	Market leader. Deepest liquidity, good fees, support for the many chains	1-Jul-17	1
-Deribit	CEX	 ⭐⭐⭐⭐		👮			1168	3556	0.7	0.2	5256	64	BTC		Preeminent source for crypto options. Very long running exchange. EU based servers good for trading by hand in EU, but create latency challenges for small algo traders. Relatively illiquid spot and futures offerings. Potential CB acquisition.	1-Jun-16	2
-OKX	CEX	 ⭐⭐⭐⭐		👮			29714	12325	0.4	1.0	28760	386	USDT	Like its sentinel, the branded wolf, the fortress bears the weight of old trials. Rumors of dark accounts still linger, but its halls now offer shelter to the countless who seek strength within.	Credible Binance alternative, one of the longest running exchanges. Significant fake volume in the past, now much less significant	1-Jan-17	1
-Lighter	DEX	 ⭐⭐⭐⭐	🆕	👻	⚠️		900	3500	7.8	2.0	450			The Muticus legion’s legend was forged at Highwatch Pass, where bribed spies and Potemkin war camps convinced the much stronger tiger host to retreat. Fowl praise the stratagem; enemies curse the ruse.	#N/A	#N/A	
-extended	DEX	 ⭐⭐⭐⭐	🆕	👻			159	46	0.9	3.1	52				#N/A	#N/A	
-Coinbase	Safe CEX	 ⭐⭐⭐⭐		👮			7983	816	0.0	0.0	425000	187	USD	The rabbit house had noble bearing, yet disorder reigned behind its gilded banners. Priests sat in judgment where generals should have ruled, and so, though their vows were noble, their deeds fell to confusion and delay.	Credible CEX futures. Bad liquidity and few pairs, but good fees (for now). Coinbase is very much not cypherpunk. Good promos for futures, bad UX and not great liquidity	0-Jan-00	2
-edgeX	DEX	 ⭐⭐⭐		👻			1487	449	2.7	8.8	169	144			#N/A	#N/A	
-Paradex	DEX	 ⭐⭐⭐		👻			333	235	2.5	3.6	93	550			#N/A	#N/A	
-Ostium	AMM DEX	  ⭐⭐⭐	🆕	👻			36	152	3.4	0.8	45	31			#N/A	#N/A	
-BitMEX	CEX	  ⭐⭐⭐		👮			630	2010	0.3	0.1	5811	176	BTC	The iron doors swing wide, and the old bear emerges, scarred but unbroken. His shouts fill the decks once more—half command, half madness. Past accusations add to the weight of years, yet his banner still flies.	Historic leader, past unfair API accusations, less USDT ticker liquidity	1-Apr-18	3
-Kraken	Safe CEX	  ⭐⭐⭐		👮			832	820	0.0	0.0	43200	426	USD		Safeish futures with horrible liquidity. EU based servers create latency issues	1-Jul-11	2
-MEXC	Risky CEX	  ⭐⭐⭐		👻	⚠️	☠️	21886	9879	2.3	5.0	4342	1024		The rat smiles through the haze, offering the rarest delights. To accept is easy, for his wares tempt every soul. But the bargain binds tight, and the cost is always cruel.	Great place to trade, except if they steal your money. VERY broad listings. T&C allow them to take your money for basically any reason.	1-Apr-18	3
-Bitget	Risky CEX	  ⭐⭐⭐			⚠️	⚠️	20432	27886	4.8	3.5	5797	713	USDT	The assassin deals in coin and death with equal ease. For the right price, he’ll grant you fortune or silence your foe - but either way, the bargain rarely ends in your favor.	Low KYC, but many red flags: unfair API that suggests internal MM is B-booking traders; occasional accusations of theft; fake volume	1-Nov-19	2
-Bitfinex	CEX	  ⭐⭐		👮			72	2103	0.1	0.0	21355	82	USDC		Another very long running venue. Associated with USDT in shady ways. Hacked long ago, but handled it fairly well	1-Apr-14	3
-Crypto.com	CEX	  ⭐⭐		👮			3795	1609	0.4	1.0	3663	247	USDT		An okay exchange that has fiat rails to many countries but gives off a bad smell - internal MM trading against users, high fee app, etc. Matt Damon. Significant bad actions against CRO holders	--	3
-Drift	AMM DEX	   ⭐⭐		👻			378	645	0.4	0.3	1440	63	USDC	The testudine were slow and clumsy fighters, yet their fighting spirit was renowned. Victory eluded them, but surrender never crossed their minds.	The top female founded open source DEX built on a crime-chain	1-Dec-21	
-Gate.io	Risky CEX	   ⭐⭐			⚠️	⚠️	21259	23128	3.3	3.0	6980	698	USDT		Broad listing, known for spot. Reports of theft from users and unfair API	1-Jan-13	3
-KuCoin	Risky CEX	   ⭐⭐				⚠️	1823	4179	1.0	0.4	4313	499	USDT		Low KYC, but red flag (reports of theft from users). A historic leader in spot. 	1-Aug-17	3
-Phemex	Risky CEX	   ⭐⭐			⚠️	⚠️	1419	2218	3.8	2.5	576.57	561	USDT		Low KYC, fake volume, likely avoid	1-Nov-19	
-HTX	Risky CEX	   ⭐⭐			⚠️	⚠️	2691	9546	1.3	0.4	7251	306	USDT		Broad listing, Jsun + reserve concerns	1-Sep-13	
-Aster	DEX	   ⭐⭐		👻	⚠️		1040	250	2.9	12.1	86				#N/A	#N/A	
-Orderly	DEX	   ⭐⭐		👻	⚠️		563	69	1.6	12.8	44	170			#N/A	#N/A	
-ApeX	DEX	   ⭐⭐		👻	⚠️		503	66	2.6	19.4	26	134			#N/A	#N/A	
-dYdX	DEX	   ⭐⭐		👻			165	200	0.6	0.5	308	224			#N/A	#N/A	
-GMX	AMM DEX	   ⭐⭐		👻			4	330	0.5	0.0	681	94			#N/A	#N/A	
-Gemini	Safe CEX	   ⭐⭐		👮			4	14	0.0	0.0	23000	28			#N/A	#N/A	3
-Backpack	CEX	   ⭐⭐			⚠️		977	566	2.9	5.0	195.3	48			#N/A	#N/A	
-CoinEx	Risky CEX	   ⭐⭐			⚠️	☠️	929	584	2.2	3.6	261	260			#N/A	#N/A	
-XT	Risky CEX	    ☠️			⚠️	☠️	15767	11693	58.0	78.2	201.5	690		A straight road joins the two great cities through the Andrais Pass, but few walk it. The creatures upon its heights revel in torment, driving all but the most desperate to the safer, winding paths beyond the mountain.	A third of their proven reserves are in the form of physical gold token issued by a $10b token company who only the exchange holds and whose online presence is a fiver+chatGPT website	1-Oct-18	
-BingX	Risky CEX	    ☠️			⚠️	☠️	9865	5858	4.3	7.2	1363	616			0	1-May-18	3
-LBank	Risky CEX	    ☠️			⚠️	☠️	7158	4287	6.9	11.5	624	683			0	1-Oct-16	
-OrangeX	Risky CEX	    ☠️			⚠️	☠️	55835	17448	251.0	803.4	69.5	439			0	1-Jun-21	
-CoinW	Risky CEX	    ☠️			⚠️	☠️	33289	22880	349.9	509.0	65.4	140			0	1-Jul-17	
-Bitmart	Risky CEX	    ☠️			⚠️	☠️	22018	9861	210.3	469.5	46.9	518			0	1-Mar-18	
-Toobit	Risky CEX	    ☠️			⚠️	☠️	14892	6110	65.6	160.0	93.1	496			0	1-Oct-22	
-WEEX	Risky CEX	    ☠️			⚠️	☠️	13860	12140	62.1	70.9	195.6	825			0	1-Apr-18	
-Deepcoin	Risky CEX	    ☠️			⚠️	☠️	10254	4710	18.6	40.5	253	347			0	1-Nov-18	
-Bitrue	Risky CEX	    ☠️			⚠️	☠️	9622	853	1.8	20.4	470.57	607			0	1-Jul-18	
-Bitunix	Risky CEX	    ☠️			⚠️	☠️	4867	3154	27.0	41.6	117	475			0	1-Oct-21	
-WhiteBIT	Risky CEX	    ☠️			⚠️	☠️	4391	7570				238	USDT		Not willing to call this a scam but lots of red flags	1-Dec-18	
-BVOX	Risky CEX	    ☠️			⚠️	☠️	21775	6178	44.6	157.2	138.5	95			#N/A	#N/A	
-Ourbit	Risky CEX	    ☠️			⚠️	☠️	10238	508	6.5	131.3	78	677			#N/A	#N/A	
-Zoomex	Risky CEX	    ☠️			⚠️	☠️	8862	2717	42.1	137.4	64.5	586			#N/A	#N/A	
-Biconomy	Risky CEX	    ☠️			⚠️	☠️	6163	674	16.6	151.8	40.6	114			#N/A	#N/A	
-BYDFi	Risky CEX	    ☠️			⚠️	☠️	4364	2993	22.0	32.1	136	477			#N/A	#N/A	
-BTSE	Risky CEX	    ☠️			⚠️	☠️	3166	674	292.9	1376.7	2.3	136			#N/A	#N/A	
-PrimeXBT	Risky CEX	    ☠️			⚠️	☠️	2528	1783				136			#N/A	#N/A	
-BloFin	Risky CEX	    ☠️			⚠️	☠️	1353	1578	20.4	17.5	77.2	548			#N/A	#N/A	
-KCEX	Risky CEX	    ☠️			⚠️	☠️	16681	2148				759			#N/A	#N/A	
-`;
+         const rawTradingData = `Exchange 	Kind	Fun	New	KYC	Data	Danger	24h Volume	OI	OI / Asset	Vol / Asset	Clean assets ($m, Defillama)	# Markets	Main base	Action	Flavor text	Commentary	CM Lauched	Tier
+Hyperliquid	DEX	⭐⭐⭐⭐⭐		👻			8522	14516	2.5	1.4	5900	178	USDC	↗️Validation: Destroy target attacker	A new faith rises promising hope in a war torn land. Its prophet is generous, its rites are rich, and its followers devoted. To the uninitiated, though, it looks less like citadel and more like cult.	DEX, so no KYC but ip and wallet-based restrictions. Extremely generous airdrop and community commitment. I am reliably able to build positions at extremely low markouts.	--	1
+Bybit	CEX	⭐⭐⭐⭐⭐					24346	29177	1.1	0.9	26471	759	USDT		The golden stripe crowns a warhound champion, stalwart before the siege engines. His strength inspires those who rally behind him. Still, in the storm of battle, he is known to retreat into a savage bloodlust, deaf to all else.	Good Binance alternative. Key differentiators: laxer KYC, more listings, UTA which allows shared margin, USDE interest, generous bonuses. I trust the leadership team, they seem to be more 3,3 than the other majors (Coinbase, Binance, OKX). Caveats here are that I get worse execution than Hyperliquid and the API goes to shit at peaks.	1-Mar-18	1
+Binance	CEX	⭐⭐⭐⭐⭐		👮			66742	43452	0.3	0.4	167884	601	USDT	↗️Diligence: Destroy damaged target	To step onto its field is to be bound by the rhythm of power. But behind the proud sigils of its house lies a harsher law: all who kneel must pay, must serve, and must never stray.	Market leader. Deepest liquidity, good fees, support for the many chains. You must hold BNB, which I do not like. Also, CZ is a ruthless guy.	1-Jul-17	1
+Deribit	CEX	 ⭐⭐⭐⭐		👮			1168	3556	0.7	0.2	5256	64	BTC			Preeminent source for crypto options. Very long running exchange. EU based servers good for trading by hand in EU, but create latency challenges for small algo traders. Relatively illiquid spot and futures offerings, but options are the best.  CB acquisition underway.	1-Jun-16	2
+OKX	CEX	 ⭐⭐⭐⭐		👮			29714	12325	0.4	1.0	28760	386	USDT		Like its sentinel, the branded wolf, the fortress bears the weight of old trials. Rumors of dark accounts still linger, but its halls now offer shelter to the countless who seek strength within.	Credible Binance alternative, one of the longest running exchanges. Significant fake volume in the past, now much less significant. Would be five stars for spot, but their futures offering is sort of a worse version of Binance, unlike Bybit which offers differentiated, cool features.	1-Jan-17	1
+Lighter	DEX	 ⭐⭐⭐⭐	🆕	👻	⚠️		3500	900	2.0	7.8	450				The Muticus legion’s legend was forged at Highwatch Pass, where bribed spies and Potemkin war camps convinced the much stronger tiger host to retreat. Fowl praise the stratagem; enemies curse the ruse.	Interesting upcoming exchange. Zero fees promo makes them a tempting choice for backhaul, but the combo of zero fees and points leads to inflated volume stats (as shown). Some API issues, which isn't unusual.	#N/A	
+extended	DEX	 ⭐⭐⭐⭐	🆕	👻			159	46	0.9	3.1	52					Another interesting upcoming venue. Pending detail	#N/A	
+Coinbase	Safe CEX	 ⭐⭐⭐⭐		👮			7983	816	0.0	0.0	425000	187	USD	↗️Freeze: Target cannot move	The rabbit house had noble bearing, yet disorder reigned behind its gilded banners. Priests sat in judgment where generals should have ruled, and so, though their vows were noble, their deeds fell to confusion and delay.	Credible CEX futures. Bad UX and not great liquidity, but good fees (for now) and occasional great promos (e.g., 12% yield). Coinbase is very much not cypherpunk.	0-Jan-00	2
+Paradex	DEX	 ⭐⭐⭐⯪		👻			333	235	2.5	3.6	93	550				A credible DEX entrant with a strong team, good backing, and a current zero fees promo. I think they are less likely to lose your money than most of the other listed DEXes, but you are not early here which means less farming potential and a fairly competitive MM environment.	#N/A	
+edgeX	DEX	  ⭐⭐⭐		👻			1487	449	2.7	8.8	169	144				Pending.	#N/A	
+Ostium	AMM DEX	  ⭐⭐⭐	🆕	👻			36	152	3.4	0.8	45	31				Pending.	#N/A	
+Kraken	Safe CEX	  ⭐⭐⭐		👮			832	820	0.0	0.0	43200	426	USD			Safeish futures with horrible liquidity. EU based servers create latency issues	1-Jul-11	2
+Bitget	Risky CEX	  ⭐⭐⭐			⚠️	⚠️	20432	27886	4.8	3.5	5797	713	USDT	↗️Made market: Add a coin to this card 	The assassin deals in coin and death with equal ease. For the right price, he’ll grant you fortune or silence your foe - but either way, the bargain rarely ends in your favor.	Low KYC, but many red flags: unfair API that suggests internal MM is B-booking traders; occasional accusations of theft; fake volume. They DO have legit futures volume, some very accessible VIP tiers, and a reasonable interface, but I'd be very cautious using them.	1-Nov-19	2
+BitMEX	CEX	  ⭐⭐⯪		👮			630	2010	0.3	0.1	5811	176	BTC	↗️Run the stops: Add a coin to this card	The iron doors swing wide, and the old bear emerges, scarred but unbroken. His shouts fill the decks once more—half command, half madness. Past accusations add to the weight of years, yet his banner still flies.	Historic leader, past unfair API accusations, less USDT ticker liquidity	1-Apr-18	3
+Bitfinex	CEX	   ⭐⭐		👮			72	2103	0.1	0.0	21355	82	USDC			A very long running venue. Associated with USDT in shady ways. Hacked long ago, but handled it fairly well. I have never seen a reason to trade here, but I don't think they are bad, per se.	1-Apr-14	3
+Crypto.com	CEX	   ⭐⭐		👮			3795	1609	0.4	1.0	3663	247	USDT	↗️Sumon Damon: Sacrifice this card, tap any targets<br> ↗️Reissue: Add a coin to this card	Certain their gifts would flower into eternity, the faithful gave without end. The friar’s coffers swelled, but the temple’s stones collapsed.	An okay exchange that has fiat rails to many countries but gives off a bad smell -  repeatedly screwed over CRO holders, internal MM trading against users, gross fees on the app, etc. Matt Damon. 	--	3
+Drift	AMM DEX	   ⭐⭐		👻			378	645	0.4	0.3	1440	63	USDC	↗️Cursed funding: remove one coin from any number of targets	The testudine were slow and clumsy fighters, yet their fighting spirit was renowned. Victory eluded them, but surrender never crossed their minds.	The top female founded open source DEX built on a crime-chain. Not sure why you would trade here, they aren't even good for FR arb because they follow the "cursed" funding model.	1-Dec-21	
+Gate.io	Risky CEX	   ⭐⭐			⚠️	⚠️	21259	23128	3.3	3.0	6980	698	USDT			Broad listing, known for spot. Reports of theft from users and unfair API	1-Jan-13	3
+KuCoin	Risky CEX	   ⭐⭐				⚠️	1823	4179	1.0	0.4	4313	499	USDT			Low KYC, but red flag (reports of theft from users). A historic leader in spot. 	1-Aug-17	3
+Phemex	Risky CEX	   ⭐⭐			⚠️	⚠️	1419	2218	3.8	2.5	576.57	561	USDT			Low KYC, fake volume, likely avoid	1-Nov-19	
+HTX	Risky CEX	   ⭐⭐			⚠️	⚠️	2691	9546	1.3	0.4	7251	306	USDT			Broad listing, Jsun + reserve concerns	1-Sep-13	
+Aster	DEX	   ⭐⭐		👻	⚠️		1040	250	2.9	12.1	86					#N/A	#N/A	
+Orderly	DEX	   ⭐⭐		👻	⚠️		563	69	1.6	12.8	44	170				#N/A	#N/A	
+ApeX	DEX	   ⭐⭐		👻	⚠️		503	66	2.6	19.4	26	134				#N/A	#N/A	
+dYdX	DEX	   ⭐⭐		👻			165	200	0.6	0.5	308	224				#N/A	#N/A	
+GMX	AMM DEX	   ⭐⭐		👻			4	330	0.5	0.0	681	94				#N/A	#N/A	
+Gemini	Safe CEX	   ⭐⭐		👮			4	14	0.0	0.0	23000	28				#N/A	#N/A	3
+Backpack	CEX	   ⭐⭐			⚠️		977	566	2.9	5.0	195.3	48				#N/A	#N/A	
+CoinEx	Risky CEX	   ⭐⭐			⚠️	☠️	929	584	2.2	3.6	261	260				#N/A	#N/A	
+MEXC	Risky CEX	    ☠️		👻	⚠️	☠️	21886	9879	2.3	5.0	4342	1024		↗️Crawback: Move all coins from target to this card	The rat smiles through the haze, offering the rarest delights. To accept is easy, for his wares tempt every soul. But the bargain binds tight, and the cost is always cruel.	Great place to trade, except if they steal your money, which the T&C allow them to do for basically any reason. VERY broad listings, great liquidity as you are trading in a bucket shop and they assume you are a moron. Futures API limited. I cannot recommend their futures offerings. They are useful for specific spot strategies and as a Chainanalysis-approved mixer.	1-Apr-18	3
+XT	Risky CEX	    ☠️			⚠️	☠️	15767	11693	58.0	78.2	201.5	690		Sacrifice this card at the beginning of your turn.	A straight road joins the cities through the Andrais Pass, but few walk it. The creatures upon its heights revel in torment, driving all but the most desperate to the safer, winding paths beyond the mountain.	A third of their proven reserves are in the form of physical gold token issued by a $10b token company who only the exchange holds and whose online presence is a fiver+chatGPT website	1-Oct-18	
+BingX	Risky CEX	    ☠️			⚠️	☠️	9865	5858	4.3	7.2	1363	616				0	1-May-18	3
+LBank	Risky CEX	    ☠️			⚠️	☠️	7158	4287	6.9	11.5	624	683				0	1-Oct-16	
+OrangeX	Risky CEX	    ☠️			⚠️	☠️	55835	17448	251.0	803.4	69.5	439				0	1-Jun-21	
+CoinW	Risky CEX	    ☠️			⚠️	☠️	33289	22880	349.9	509.0	65.4	140				0	1-Jul-17	
+Bitmart	Risky CEX	    ☠️			⚠️	☠️	22018	9861	210.3	469.5	46.9	518				0	1-Mar-18	
+Toobit	Risky CEX	    ☠️			⚠️	☠️	14892	6110	65.6	160.0	93.1	496				0	1-Oct-22	
+WEEX	Risky CEX	    ☠️			⚠️	☠️	13860	12140	62.1	70.9	195.6	825				0	1-Apr-18	
+Deepcoin	Risky CEX	    ☠️			⚠️	☠️	10254	4710	18.6	40.5	253	347				0	1-Nov-18	
+Bitrue	Risky CEX	    ☠️			⚠️	☠️	9622	853	1.8	20.4	470.57	607				0	1-Jul-18	
+Bitunix	Risky CEX	    ☠️			⚠️	☠️	4867	3154	27.0	41.6	117	475				0	1-Oct-21	
+WhiteBIT	Risky CEX	    ☠️			⚠️	☠️	4391	7570				238	USDT			Not willing to call this a scam but lots of red flags	1-Dec-18	
+BVOX	Risky CEX	    ☠️			⚠️	☠️	21775	6178	44.6	157.2	138.5	95				#N/A	#N/A	
+Ourbit	Risky CEX	    ☠️			⚠️	☠️	10238	508	6.5	131.3	78	677				#N/A	#N/A	
+Zoomex	Risky CEX	    ☠️			⚠️	☠️	8862	2717	42.1	137.4	64.5	586				#N/A	#N/A	
+Biconomy	Risky CEX	    ☠️			⚠️	☠️	6163	674	16.6	151.8	40.6	114				#N/A	#N/A	
+BYDFi	Risky CEX	    ☠️			⚠️	☠️	4364	2993	22.0	32.1	136	477				#N/A	#N/A	
+BTSE	Risky CEX	    ☠️			⚠️	☠️	3166	674	292.9	1376.7	2.3	136				#N/A	#N/A	
+PrimeXBT	Risky CEX	    ☠️			⚠️	☠️	2528	1783				136				#N/A	#N/A	
+BloFin	Risky CEX	    ☠️			⚠️	☠️	1353	1578	20.4	17.5	77.2	548				#N/A	#N/A	
+KCEX	Risky CEX	    ☠️			⚠️	☠️	16681	2148				759				#N/A	#N/A	`;
 
         // Function to parse TSV data and convert to tradingData format
         function parseTradingData(tsvData) {
@@ -905,8 +922,9 @@ KCEX	Risky CEX	    ☠️			⚠️	☠️	16681	2148				759			#N/A	#N/A
                             <span class="card-stat-label">daily volume</span>
                         </div>
                     </div>
-                    <div class="card-flavor-text">
-                        <p>${data['Flavor text'] || ''}</p>
+                    <div class="card-text-block">
+                        ${data['Action'] ? `<div class="card-action-text"><p>${data['Action']}</p></div>` : ''}
+                        ${data['Flavor text'] ? `<div class="card-flavor-text"><p>${data['Flavor text']}</p></div>` : ''}
                     </div>
                 </div>
             `;
@@ -1274,8 +1292,9 @@ KCEX	Risky CEX	    ☠️			⚠️	☠️	16681	2148				759			#N/A	#N/A
                                 <span class="card-stat-label">daily volume</span>
                             </div>
                         </div>
-                        <div class="card-flavor-text">
-                            <p>${data['Flavor text'] || ''}</p>
+                        <div class="card-text-block">
+                            ${data['Action'] ? `<div class="card-action-text"><p>${data['Action']}</p></div>` : ''}
+                            ${data['Flavor text'] ? `<div class="card-flavor-text"><p>${data['Flavor text']}</p></div>` : ''}
                         </div>
                     </div>
                 </div>
