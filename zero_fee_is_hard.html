@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>The Robinhood model doesn’t work for crypto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Why zero-fee models and PFOF don’t translate to crypto perpetuals DEXs like Lighter." />
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";line-height:1.6;margin:2rem;max-width:860px}
+    h1,h2{line-height:1.25}
+    hr{border:0;border-top:1px solid #ddd;margin:2rem 0}
+    a{color:#0a63ff;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .lede{font-size:1.1rem}
+    ul,ol{padding-left:1.5rem}
+    code,kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .callout{background:#f6f8fa;border:1px solid #e5e7eb;border-radius:8px;padding:1rem}
+  </style>
+</head>
+<body>
+  <article>
+    <header>
+      <h1>The Robinhood model doesn’t work for crypto</h1>
+      <p class="lede">
+        I’ve seen a few posts recently about Lighter, the hot zero-fee perpetuals DEX, and its future business model.
+        One post that triggered me (and this essay) argued that good market makers earn 10 basis points per trade—so the platform can just "charge them" and call it a business model. That logic doesn’t hold up. Let’s unpack why.
+      </p>
+      <p>
+        Before anything else: I like Lighter. I’ve ranked it in the tier just below Binance, Hyperliquid (HL), and Bybit in my perp exchange rankings
+        <a href="https://stalequant.github.io/bot_view.html" target="_blank" rel="noopener">here</a>.
+        It’s not one of my top venues, but I currently have millions in notional open interest there and a few thousand dollars’ worth of points. I prefer Hyperliquid, but I admit my biases—yes, I own multiple Hypurr NFTs.
+      </p>
+      <p>
+        My goal here isn’t to FUD Lighter. It’s to lay out some basic economic realities that are easy to miss when talking about "free trading."
+      </p>
+    </header>
+
+    <section id="market-makers-barely-make-it">
+      <h2>Market Makers Barely Make It</h2>
+      <p>
+        If a platform promises free trades for users, someone still has to pay the bills. The obvious candidate is market makers (MMs). Hence the argument: just charge them.
+      </p>
+      <p>
+        The problem? "Good" market makers make maybe 1bp before cost, plus a bit from rebates. You can check this yourself: take the largest MMs on Hyperliquid, divide their P&amp;L by their trading volume, subtract the maker rebates, and you’ll see something around 1bp. (Make sure to exclude spot, since the HYPE airdrop and HYPE holding profit distorts the math.)
+      </p>
+      <p>
+        That 1bp is gross profit. It doesn’t include the cost of actually running a market-making operation:
+      </p>
+      <ul>
+        <li>hedging risk on other venues or facing drawdowns,</li>
+        <li>paying engineers and quants,</li>
+        <li>deploying millions in capital (and possibly staking more),</li>
+        <li>managing contract risk, platform risk, and the risk of being attacked,</li>
+        <li>paying AWS, data uplinks, and infrastructure costs.</li>
+      </ul>
+      <p>None of that is free.</p>
+    </section>
+
+    <hr />
+
+    <section id="mm-taxes-to-spreads">
+      <h2>Taxes on Market Makers Go Straight to Spreads</h2>
+      <p>
+        If MMs are barely breaking even, what happens when you charge them? They widen their spreads. A 10bp maker fee becomes a 20bp bid–ask spread. You could see this clearly on Kraken, which historically had high maker fees and correspondingly wide spreads.
+      </p>
+      <p>
+        That’s why most exchanges do the opposite: they pay maker rebates. Hyperliquid pays 0.3bp, and many venues pay even more. Charging MMs is fighting gravity—it pushes spreads up, liquidity down, and retail away.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="robinhood-isnt-what-you-think">
+      <h2>Robinhood Isn’t What You Think</h2>
+      <p>
+        Many people think Robinhood makes money on payment for order flow (PFOF) from zero-fee TSLA trades. In reality, they’re close to break-even on equities. The profits come from:
+      </p>
+      <ol>
+        <li>0.5% crypto spreads,</li>
+        <li>massive PFOF on options, and</li>
+        <li>interest income on idle balances.</li>
+      </ol>
+      <p>Even Robinhood isn’t using the "Robinhood" model on crypto.</p>
+      <p>
+        Don’t take my word for it—check the filings. Roughly 40% of Robinhood’s trading volume is equities, yet equities produce only about 6% of revenue. Within that, large-cap names like TSLA contribute disproportionately little. The equity PFOF profits come from small, illiquid names with wide spreads.
+      </p>
+    </section>
+
+    <hr />
+
+    <section id="pfof-works-because-of-spreads">
+      <h2>PFOF Works Because of Spreads</h2>
+      <p>
+        PFOF works when you can segment traders and share part of a wide spread.
+      </p>
+      <p>
+        In TradFi, suppose a stock has a $100 / $101 bid–ask. That $1 spread covers market makers’ risk of being run over by smarter traders. They make money when uninformed ("dumb") traders buy at $101 and lose money when informed ones buy before news hits $102.
+      </p>
+      <p>
+        If you can separate the dumb flow, you can offer it a better price—say $100.8 instead of $101—while still earning a profit. The leftover margin can be shared between the broker and the market maker.
+      </p>
+      <p><strong>Key point:</strong> PFOF depends on spreads. No spread, no PFOF.</p>
+    </section>
+
+    <hr />
+
+    <section id="crypto-spreads-are-tiny">
+      <h2>Crypto Spreads Are Tiny, So PFOF Doesn’t Work</h2>
+      <p>
+        Crypto perps don’t have that room. Spreads are microscopic. If BTC trades at 100,000.12 / 100,000.13, there’s simply no economic space to pay for order flow.
+      </p>
+      <p>
+        That’s why, again, Robinhood earns little from popular equities. Equity trading dominates volume but not profits. Within equities, tiny small caps with wide spreads generate most of the PFOF revenue. In crypto perps, there’s no equivalent—spreads are too tight to extract meaningful value.
+      </p>
+    </section>
+
+    <section id="retail-flow-has-value">
+      <h2>Retail Flow Has Value, But Isn’t Magic and Is Hard on DEXs</h2>
+      <p>
+        Segmenting users does help, even if you aren’t giving them price improvement like PFOF. "Bucket shop" CEXs like MEXC or Bitget do this aggressively—by banning or throttling skilled traders to protect the flow of the people dumb enough to use their platforms. That’s one way to keep spreads profitable: kick out the smart money.
+      </p>
+      <p>
+        DEXs can’t do that. One thing they can do is play around with the microstructure. Hyperliquid was one of the first to add taker speed bumps and many venues (incl. Lighter I believe) have followed their leads. A short delay blunts toxic taker strategies without hurting normal users much, allowing tighter spreads for everyone else.
+      </p>
+      <p>
+        That’s fairer than banning good traders—but there’s a ceiling and I think current speedbumps are already at that. DEXs can’t stop anonymous addresses or shady on-chain behavior. Toxic flow is part of the game. I’ve personally been carried out by insider flow on DEXs; it happens. Unless Lighter has a new way to handle that, these constraints remain.
+      </p>
+    </section>
+
+    <section id="microstructure-tricks">
+      <h2>Going Further With Microstructure Tricks Will Piss Off Users</h2>
+      <p>
+        You can go beyond speed bumps and build hidden subsidies into the system—essentially transferring a few extra bp from takers to makers.
+      </p>
+      <p>
+        That sounds appealing until you remember Hyperliquid’s MMs already average about 1bp profit after their current subsidy. I think Hyperliquid’s speed bump is already annoying as a trader. Cranking the knobs further risks turning your venue into what feels like a "rigged game." If retail traders feel disadvantaged, they leave.
+      </p>
+      <p>
+        And it’s important to distinguish this from PFOF. PFOF gives users better prices through segmentation. Microstructure gimmicks usually do the opposite: worse prices hidden under "zero fees."
+      </p>
+    </section>
+
+    <section id="zero-fees-wont-last">
+      <h2>Even If Zero Fees Work Now, They Won’t Forever</h2>
+      <p>
+        It’s possible Lighter currently charges MMs modest fees and they’re happily paying. That doesn’t make it sustainable.
+      </p>
+      <p>
+        I’ve been there. Years ago, I was the #2 or 3 MM on a platform that launched with zero fees and point rewards. I happily ran tight spreads and farmed the point farmers. Then points ended, a small fee was added, and the flow turned toxic. Spreads widened, volume cratered, and the venue faded.
+      </p>
+      <p>Lot’s of stuff works when you are pumping money into the system.</p>
+    </section>
+
+    <section id="how-to-fund-zero-fees">
+      <h2>How Can Exchanges Fund Zero Fees?</h2>
+      <div class="callout">
+        <ol>
+          <li>Charge MMs and let them pass it to users via wider spreads. Users won’t love that.</li>
+          <li>Charge MMs but pay them back in tokens. Works short term, ends with heavy dilution (see: VERTEX).</li>
+          <li>Hide the costs via microstructure tricks. Might fool users temporarily; long-term, it erodes trust.</li>
+          <li>Find other revenue streams—like Robinhood’s interest income. Feasible, but doesn’t support high valuations.</li>
+          <li>Charge modest retail fees. Boring but sustainable—and the normal competitive equilibrium anyway.</li>
+        </ol>
+      </div>
+      <p>
+        Also, I’m not convinced that "zero fees" are a strong selling point for perp traders. My impression: they care more about UI, reputation, farming, liquidity, leverage, and market access, with fees being less important.
+      </p>
+    </section>
+
+    <section id="bottom-line">
+      <h2>The Bottom Line</h2>
+      <p>
+        Crypto just doesn’t have the wide spreads or clean flow segmentation that make PFOF viable elsewhere. Unless Lighter invents a genuinely new way to extract value—beyond rebates, points, or stealth microstructure tweaks—it’s hard to see how the math works out.
+      </p>
+    </section>
+  </article>
+</body>
+</html>
