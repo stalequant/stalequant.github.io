@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/quasar@2.14.2/dist/quasar.prod.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 
   <style>
@@ -479,11 +480,14 @@
 	app.use(Quasar)
 	Quasar.Dark.set(true)
 	app.mount('#q-app')
-  </script>
-    <script type="module">
-      import fig from './my_plot.json';
-
-      Plotly.newPlot('plotDiv', fig.data, fig.layout);
+  </script>   <script>
+      fetch('my_plot.json')
+        .then(r => r.json())
+        .then(fig => {
+          Plotly.newPlot('plotDiv', fig.data, fig.layout);
+        });
+ 
     </script>
 </body>
+
 </html>
