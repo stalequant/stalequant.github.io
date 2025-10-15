@@ -434,7 +434,7 @@ def process_hl_data(raw_hl_data: list[dict[str, Any]]) -> pd.DataFrame:
     universe, asset_ctxs = raw_hl_data[0]["universe"], raw_hl_data[1]
     merged_data = [u | a for u, a in zip(universe, asset_ctxs)]
     output_df = pd.DataFrame(merged_data)
-    output_df = output_df[~output_df.isDelisted]
+    output_df = output_df[True != output_df.isDelisted]
     output_df.index = [
         name[1:] if name.startswith("k") else name for name in output_df.name
     ]
@@ -874,13 +874,16 @@ fig.update_layout(
 
 fig_json = fig.to_json()
 with open("hl_delisting_data.json", "w") as f:
-    f.write(
+    json.dump(
         {
             "data": df_for_main_data.to_dict(orient="records"),
-            "time": datetime.datetime.now().isoformat()[:10],
-            "version": 1.1,
-            "fig": fig_json,
-        }
+            "meta": {
+                "time": datetime.datetime.now().isoformat()[:10],
+                "version": 1.1,
+            },
+            "fig": json.loads(fig_json),
+        },
+        f,
     )
 
 
