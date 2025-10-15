@@ -66,10 +66,7 @@
               Visualization of Recommendations
             </div>
             <div id="plotDiv"></div>
-
-			  <q-card-section>
-				<canvas id="myChart" height="90"></canvas>
-			  </q-card-section>
+ 
 			</q-card>
 						
 			<q-card flat bordered class="q-pa-md ">
@@ -345,136 +342,14 @@
 		  return {
 			backgroundColor: `hsl(${(Math.log(value+.0001)*50) % 255 }, 100%, 10%)`
 		  }
-		},
-
-		drawChart() {
-		  const ctx = document.getElementById('myChart').getContext('2d')
-		  new Chart(ctx, {
-			type: 'scatter',
-			data: {
-			  datasets: [ 
-			  
-			  { 
-				data: this.hl_data_rows.filter(
-				r => (r.Recommendation == 'List'|| r.Recommendation == 'Inc. Lev.' ) && r.Strict == ''
-				).map(r => ({
-				  x: Math.sqrt(r['Max Lev. on HL']),
-				  y: r.Score,
-				  symbol: r.Symbol,
-				  symbolL: r.Recommendation ? r.Symbol : '',
-				  originalX: r['Max Lev. on HL'],
-				})),
-				pointRadius: 4 ,
-				backgroundColor: 'rgba(0,255,0,.8)',
-			  },
-			  { 
-				data: this.hl_data_rows.filter(
-				r => (r.Recommendation == 'Delist' || r.Recommendation == 'Dec. Lev.') && r.Strict == ''
-				).map(r => ({
-				  x: Math.sqrt(r['Max Lev. on HL']),
-				  y: r.Score,
-				  symbol: r.Symbol,
-				  symbolL: r.Recommendation ? r.Symbol : '',
-				  originalX: r['Max Lev. on HL'],
-				})),
-				pointRadius: 4 ,
-				backgroundColor: 'rgba(255,0,0,.8)',
-			  },
-			  
-			  { 
-				data: this.hl_data_rows.filter(
-				r => r.Strict != ''
-				).map(r => ({
-				  x: Math.sqrt(r['Max Lev. on HL']),
-				  y: r.Score,
-				  symbol: r.Symbol,
-				  symbolL: r.Recommendation ? r.Symbol : '',
-				  originalX: r['Max Lev. on HL'],
-				})),
-				pointRadius: 4 ,
-				backgroundColor: 'rgba(255,255,255,.4)',
-			  },
-			  
-			  
-			  { 
-				data: this.hl_data_rows.filter(
-				r => r.Recommendation == '' && r.Strict == ''
-				).map(r => ({
-				  x: Math.sqrt(r['Max Lev. on HL']),
-				  y: r.Score,
-				  symbol: r.Symbol,
-				  symbolL: r.Recommendation ? r.Symbol : '',
-				  originalX: r['Max Lev. on HL'],
-				})),
-				pointRadius: 4 ,
-				backgroundColor: 'rgba(255,255,255,.4)',
-			  },
-			  
-			  
-			  ]
-			},
-			options: {
-			  responsive: true,
-			  plugins: {
-				legend: { display: false },
-				tooltip: {
-				  backgroundColor: '#2c2c2c',
-				  titleColor: 'white',
-				  bodyColor: 'white',
-				  borderColor: 'white',
-				  borderWidth: 1,
-				  callbacks: {
-					label: ({ raw }) => {
-					  const label = raw.x === 0 ? 'Not Listed' : `Max Lev. on HL  ${raw.originalX}`
-					  return `${raw.symbol}: ${label}, Score ${raw.y}`
-					}
-				  }
-				}
-			  },
-			  scales: {
-				x: {
-				  type: 'linear',
-				  title: {
-					display: true,
-					text: 'Current Hyperliquid Max Leverage (0 = Not Listed)',
-					color: 'white'
-				  },
-				  ticks: {
-					color: 'white',
-					callback: val => Math.round(val * val)
-				  },
-				  grid: { color: 'rgba(255,255,255,0.1)' },
-				  afterBuildTicks: axis => {
-					axis.ticks = [0, 3, 5, 10, 20, 25, 40].map(v => ({ value: Math.sqrt(v) }))
-				  }
-				},
-				y: {
-				  title: { display: true, text: 'Score', color: 'white' },
-				  ticks: { color: 'white' },
-				  grid: { color: 'rgba(255,255,255,0.1)' }
-				}
-			  }
-			}
-		  })
-		},
-
-		getPointColor(recommendation, Strict) {
-		  if (Strict) {return `rgba(100,100,255,.7)`}
-		  switch (recommendation) {
-			case 'List':
-			case 'Inc. Lev.': return `rgba(0,255,0,.5)`
-			case 'Delist':
-			case 'Dec. Lev.': return `rgba(255,0,0,.5)`
-			default: return `rgba(255,255,255,.1 )`
-		  }
-		}
+		}, 
+ 
 	  },
 
 	  mounted() {
 	    this.selectedColumns = ['Symbol', 'Max Lev. on HL', 'Recommendation', 'Score',  
 		 'MC $m',  'Spot Volume $m',  'Fut Volume $m',  ]
-
-		this.drawChart()
+ 
 	  }
 	}) 
 	app.use(Quasar)
@@ -491,3 +366,4 @@
 </body>
 
 </html>
+
