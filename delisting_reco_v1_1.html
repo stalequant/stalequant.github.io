@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hyperliquid Listing Policy Recommendations</title>
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.14.2/dist/quasar.prod.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+    <style>
+        html,
+        body {
+            background-color: black;
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .vertical-header {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .scrollable-table .q-table__middle {
+            overflow-x: auto;
+        }
+
+        .fixed-width {
+            width: 200px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="q-app">
+        <q-layout view="lHh Lpr lFf">
+            <q-header elevated>
+                <q-toolbar class="justify-center" style="color: hsl(172, 47%, 61%); background: black">
+                    <q-toolbar-title class="text-center">
+                        Hyperliquid Delisting and Leverage Recommendations
+                        <q-badge class="q-ml-sm" style="color: hsl(172, 47%, 61%); background: black" outline
+                            v-if="meta">
+                            v{{ meta.version }} — {{ meta.time }}
+                        </q-badge>
+                    </q-toolbar-title>
+                </q-toolbar>
+            </q-header>
+
+            <q-page-container>
+                <q-page class="q-pa-md">
+                    <div class="q-mx-auto q-gutter-md column" style="max-width: 1000px; width: 90%;">
+
+                        <!-- Intro -->
+                        <q-card class="q-pa-md">
+                            <q-card-section>
+                                This page offers recommendations on listing and delisting policies for the hyperliquid
+                                exchange. - stalequant
+                            </q-card-section>
+                        </q-card>
+                        <!-- Chart Card -->
+                        <q-card class="q-pa-md">
+                            <div class="text-h6 ">
+                                Visualization of Recommendations
+                            </div>
+                            <div id="plotDiv"></div>
+
+                        </q-card>
+
+                        <q-card flat bordered class="q-pa-md ">
+                            <q-card-section>
+                                <div class="text-h6 ">
+                                    Data
+                                </div>
+                            </q-card-section>
+                            <q-card-section>
+
+                                <!-- Filter Buttons -->
+                                <q-btn-toggle v-model="selectedFilter" toggle-color="teal" spread :options="[
+                                    { label: 'Recommend Downgrade', value: 'downgrade' },
+                                    { label: 'Recommend Upgrade', value: 'upgrade' },
+                                    { label: 'All', value: 'all' },
+                                    { label: 'Listed', value: 'listed' },
+                                    { label: 'Not listed', value: 'unlisted' }
+                                ]" />
+
+                            </q-card-section>
+                            <q-card-section>
+
+                                <q-table :rows="filteredRows" :columns="visibleColumns"
+                                    :pagination="{ page: 1, rowsPerPage: 25 }" row-key="Symbol" dense>
+                                    <template v-slot:header="props">
+                                        <q-tr :props="props">
+                                            <!-- Visible column headers -->
+                                            <q-th v-for="col in visibleColumns" :key="col.name" :props="props">
+                                                <template
+                                                    v-if="col.name !== 'Symbol' && col.name !== 'Recommendation' && col.name !== 'Max Lev. on HL'">
+                                                    <q-checkbox v-model="selectedColumns" :val="col.name"
+                                                        color="primary" size="xs" class="q-mr-sm" @click.stop />
+                                                </template>
+                                                {{ col.label }}
+                                            </q-th>
+
+
+                                            <!-- "More" button header -->
+                                            <q-th auto-width>
+                                                <q-btn dense round flat icon="more_vert" color="white">
+                                                    <q-menu>
+                                                        <q-list dense style="min-width: 180px">
+                                                            <q-item-label header>Extra Columns</q-item-label>
+                                                            <q-item v-for="col in hiddenColumns" :key="col.name"
+                                                                clickable>
+                                                                <q-item-section side>
+                                                                    <q-checkbox v-model="selectedColumns"
+                                                                        :val="col.name" color="primary" dense
+                                                                        @click.stop />
+                                                                </q-item-section>
+                                                                <q-item-section>{{ col.label }}</q-item-section>
+                                                            </q-item>
+                                                        </q-list>
+                                                    </q-menu>
+                                                </q-btn>
+                                            </q-th>
+                                        </q-tr>
+                                    </template>
+
+                                    <!-- Default body rendering -->
+                                    <template v-slot:body-cell="props">
+                                        <q-td :props="props" :style="getCellStyle(props)">
+                                            {{ props.value }}
+                                        </q-td>
+                                    </template>
+                                </q-table>
+                            </q-card-section>
+                            <q-card-section>
+                                <div class="row q-gutter-x-sm q-mb-md">
+                                    <div>
+                                        <q-btn label="Download CSV" icon="download"
+                                            style="color: white !important; background: teal !important;"
+                                            @click="downloadCSV" />
+                                    </div>
+                                    <div>
+
+                                        <q-btn label="Code" icon="code"
+                                            style="color: white !important; background: teal !important;"
+                                            href="https://github.com/stalequant/stalequant.github.io/blob/main/build_delisting_recos.py"
+                                            target="_blank" />
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                        <q-card class="q-pa-md">
+                            <q-card-section>
+
+                                <q-card-section>
+                                    <div class="text-h6 ">Methodology</div>
+                                </q-card-section>
+                                <!-- Methodology -->
+                                <div class="text">
+                                    Scoring is based on a total of 100 points, equally divided across five measures,
+                                    plus 5 bonus points for HL spot tokens.
+                                </div>
+
+                                <div class="text-bold q-my-sm">Market Cap (15 points)</div>
+                                <div class="text">
+                                    Low market cap coins are typically less significant, less profitable, and more
+                                    susceptible to manipulation. We use CoinMarketCap-reported market caps, assigning 0
+                                    points for caps below $1M and 15 points for caps above $5B.
+                                </div>
+
+                                <div class="text-bold q-my-sm">Spot Volumes (20 points)</div>
+                                <div class="text">
+                                    Illiquid spot markets suggest less important, less profitable, and more easily
+                                    manipulated coins. They also impact oracle stability. We use two metrics: average
+                                    daily volume across exchanges and a geometric mean of the per-venue volume designed
+                                    to favors coins with liquidity on multiple venues. Specifically, the geometric mean
+                                    is of the average daily volume of the three most liquid exchanges for each coin,
+                                    with $1m added prior to the geomean and subtracted after the geomean for
+                                    regularization. To penalize coins with large price drops, daily volume is dollarized
+                                    using the lower of that day’s low and the current price. We consider USD and
+                                    USD-stablecoin pairs on Binance, Bybit, Coinbase, Crypto.com, Gate, Hyperliquid,
+                                    Kraken, Kucoin, MEXC, and OKX. Each measure is scored from 0 (below $10K/day) to 10
+                                    points (above $1B/day).
+                                </div>
+
+                                <div class="text-bold q-my-sm">Futures Volumes (20 points)</div>
+                                <div class="text">
+                                    Illiquid futures markets are undesirable for similar reasons as illiquid spot
+                                    markets. We apply a similar methodology, focusing only on USD and
+                                    USD-stablecoin-denominated linear futures. Exchanges considered include Binance,
+                                    BitMEX, Bybit, Crypto.com, Gate, HTX, Hyperliquid, Kraken Futures, MEXC, and OKX.
+                                </div>
+                                <div class="text-bold q-my-sm">Spot Price Behavior (10 points)</div>
+                                <div class="text">
+                                    Dramatic spot price fluctuations create risk for the platform and hint at
+                                    illiquidity. We consider the volatility and intraday range of daily spot returns for
+                                    the most liquid pairs in the spot venues considered above.
+                                </div>
+
+                                <div class="text-bold q-my-sm">Hyperliquid Activity (15 points)</div>
+                                <div class="text">
+                                    Coins with low trading activity on Hyperliquid are less relevant and less desirable.
+                                    We use 30-day averages for both daily volume and daily open interest, assigning 0
+                                    points for values under $1K and 10 points for values above $100M (per metric).
+                                </div>
+
+                                <div class="text-bold q-my-sm">Hyperliquid Liquidity (20 points)</div>
+                                <div class="text ">
+                                    Poor market maker support on Hyperliquid increases susceptibility to manipulation.
+                                    We score four metrics (5 points each):
+                                    <ul>
+                                        <li>HLP share of volume (30-day average): 0 points if &gt; 50%, 5 points if 0%.
+                                        </li>
+                                        <li>HLP share of open interest: 0 points if &gt; 10%, 5 points if 0%.</li>
+                                        <li>Average slippage on $3K orders: 0 points if &gt; 5bps, 5 points if 0bps.
+                                        </li>
+                                        <li>Slippage on $30K orders: 0 points if &gt; 50bps, 5 points if 0bps.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="text-bold q-my-sm">Hyperliquid Spot Listings (5 points)</div>
+                                <div class="text ">
+                                    Coins with a primary listing on Hyperliquid's "Strict" spot list benefit from the
+                                    platform's liquidity and are awarded an extra 5 points.
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                </q-page>
+            </q-page-container>
+        </q-layout>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.14.2/dist/quasar.umd.prod.js"></script>
+    <script>
+        fetch('hl_delisting_data.json')
+            .then(response => response.json())
+            .then(delisting_data => {
+
+                const hl_data_rows = delisting_data.data;
+                const fig = delisting_data.fig;
+                const meta = delisting_data.meta;
+
+                const { createApp } = Vue
+
+                const { Quasar } = window
+
+                const col_subset_scoring = ['Symbol', 'Max Lev. on HL', 'Recommendation', 'Score', 'Market Cap Score', 'Spot Volume Score', 'Futures Volume Score', 'Price Behavior Score', 'HL Activity Score', 'HL Liquidity Score'].map(f => ({ name: f, label: f, field: f, sortable: true, }));
+                const hl_data_columns = [
+                    'Symbol', 'Max Lev. on HL', 'Strict', 'Recommendation', 'Score',
+                    'Market Cap Score', 'MC $m', 'Spot Volume Score', 'Spot Volume $m',
+                    'Spot Volume Geomean-3 $m', 'Futures Volume Score', 'Fut Volume $m',
+                    'Fut Volume Geomean-3 $m', 'Price Behavior Score',
+                    'Spot Volatility (std)', 'Spot Intraday range (std)',
+                    'HL Activity Score', 'Volume on HL $m', 'OI on HL $m',
+                    'HL Liquidity Score', 'HLP Vol Share %', 'HLP OI Share %',
+                    'HL Slip. $3k', 'HL Slip. $30k',
+
+                ].map(f => ({ field: f, name: f, label: f, sortable: true }));
+
+                const NUMERIC_FIELDS = ['Max Lev. on HL', 'Score',
+                    'Market Cap Score', 'MC $m', 'Spot Volume Score', 'Spot Volume $m',
+                    'Spot Volume Geomean-3 $m', 'Futures Volume Score', 'Fut Volume $m',
+                    'Fut Volume Geomean-3 $m', 'Price Behavior Score',
+                    'Spot Volatility (std)', 'Spot Intraday range (std)',
+                    'HL Activity Score', 'Volume on HL $m', 'OI on HL $m',
+                    'HL Liquidity Score', 'HLP Vol Share %', 'HLP OI Share %',
+                    'HL Slip. $3k', 'HL Slip. $30k',
+                ]
+
+
+                const app = createApp({
+                    data: () => ({
+                        meta,
+                        hl_data_rows,
+                        hl_data_columns,
+                        col_subset_scoring,
+                        selectedFilter: 'downgrade',
+                        selectedColumns: ['Symbol', 'Max Lev. on HL', 'Recommendation', 'Score',
+                            'MC $m', 'Spot Volume $m', 'Fut Volume $m',],
+                    }),
+
+                    computed: {
+                        visibleColumns() {
+                            return this.hl_data_columns.filter(col => this.selectedColumns.includes(col.name))
+                        },
+                        hiddenColumns() {
+                            return this.hl_data_columns.filter(col => !this.selectedColumns.includes(col.name))
+                        },
+
+                        filteredRows() {
+                            const r = this.hl_data_rows
+                            switch (this.selectedFilter) {
+                                case 'upgrade': return r.filter(r => r.Recommendation === "List" || r.Recommendation === "Inc. Lev.")
+                                case 'downgrade': return r.filter(r => r.Recommendation === "Delist" || r.Recommendation === "Dec. Lev.")
+                                case 'unlisted': return r.filter(r => r['Max Lev. on HL'] === 0)
+                                case 'listed': return r.filter(r => r['Max Lev. on HL'] > 0)
+                                default: return r
+                            }
+                        }
+                    },
+
+                    methods: {
+
+                        downloadCSV() {
+                            const rows = this.hl_data_rows
+                            const columns = this.hl_data_columns
+
+                            const header = columns.map(col => `"${col.label}"`).join(',')
+                            const csvRows = rows.map(row =>
+                                columns.map(col => {
+                                    const val = row[col.field]
+                                    return typeof val === 'string' ? `"${val.replace(/"/g, '""')}"` : val
+                                }).join(',')
+                            )
+
+                            const csvContent = [header, ...csvRows].join('\r\n')
+                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+                            const link = document.createElement('a')
+                            link.href = URL.createObjectURL(blob)
+                            link.setAttribute('download', 'hyperliquid_recos_all.csv')
+                            document.body.appendChild(link)
+                            link.click()
+                            document.body.removeChild(link)
+                        },
+
+
+                        getCellStyle({ col, value }) {
+                            return NUMERIC_FIELDS.includes(col.name) ? this.getStyle(col.name, value) : {}
+                        },
+
+                        getStyle(field, value) {
+                            return {
+                                backgroundColor: `hsl(${(Math.log(value + .0001) * 50) % 255}, 100%, 10%)`
+                            }
+                        },
+
+                    },
+
+                })
+                app.use(Quasar)
+                Quasar.Dark.set(true)
+                app.mount('#q-app')
+
+                Plotly.newPlot('plotDiv', fig.data, fig.layout);
+
+            });
+    </script>
+</body>
+
+</html>
