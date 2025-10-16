@@ -723,23 +723,25 @@ for c in df_for_main_data.columns:
 
 # %%
 
-print_message("Saving figure data to file", level=1)
 
 import plotly.express as px
 import pandas as pd
 
-# Example df (replace with your own)
-# df = pd.DataFrame({
-#     "Score": [0.8, 0.6, 0.9],
-#     "Max Lev. on HL ": [3, 10, 20]
-# }, index=["BTC", "ETH", "SOL"])
-
-# Define the leverage list
-lev_list = [0, 3, 5, 10, 20, 25, 40]
+lev_map = {
+    0: "Not listed",
+    3: "3x",
+    5: "5x",
+    10: "10x",
+    20: "20x+",
+    25: "20x+",
+    40: "20x+",
+}
+lev_list = list(lev_map.values())
 
 # Map each "Max Lev. on HL " value to its index in lev_list
 df2 = df.copy()
-df2["x_index"] = df2["Max Lev. on HL"].apply(
+df2["x_bucket"] = df2["Max Lev. on HL"].map(lev_map)
+df2["x_index"] = df2["x_bucket"].apply(
     lambda v: lev_list.index(v) if v in lev_list else None
 )
 df2["show"] = df2.index
@@ -748,12 +750,10 @@ df2["coin"] = df2.index
 df2["offset_o"] = 0
 df2["max_offset_o"] = 0
 
-# Compute horizontal offset per (x_index, Score) group
 for _, group in df2.groupby(["x_index", "Score"], sort=False):
     df2.loc[group.index, "offset_o"] = range(len(group))
     df2.loc[group.index, "max_offset_o"] = len(group)
 
-# Compute horizontal offset per (x_index, Score) group
 for _, group in df2.groupby(["x_index"], sort=False):
     score_orders = group.Score.sort_values()
     if len(score_orders) > 10:
@@ -767,8 +767,7 @@ for _, group in df2.groupby(["x_index"], sort=False):
 df2 = df2.loc[df2.Score.gt(55) | df2.x_index.gt(0)]
 df2["x_offset"] = (
     df2["x_index"]
-    + (1 + df2.offset_o % 5) / (1 + np.minimum(df2.max_offset_o, 5))
-    - 1 / 2
+    + (0.5 + df2.offset_o % 5 - np.minimum(df2.max_offset_o, 5) / 2) / 6
 )
 df2["y_offset"] = df2["Score"] + df2.offset_o // 5 / 2
 
@@ -790,7 +789,7 @@ def make_hover_template(item):
     if item["Max Lev. on HL"] == 0:
         z += "Not listed on Hyperliquid<br>"
     else:
-        z += f"Current HL Leverage Limit: {item['Score']}<br>"
+        z += f"Current HL Leverage Limit: {item['Max Lev. on HL']}<br>"
     z += f"Score: {item['Score']}<br>"
     for k, v in SCORE_CUTOFFS.items():
         z += f"{k}: {item[k]}<br>"
@@ -801,27 +800,26 @@ def make_hover_template(item):
 
 fig.update_traces(
     mode="markers+text",
-    textposition="middle center",
     textfont=dict(size=8),
     hovertemplate=[make_hover_template(a) for n, a in df2.iterrows()],
     marker=dict(size=8, opacity=0.75),
+    textposition="middle center",
 )
-# Improve layout
-fig.update_traces(textposition="middle center", marker=dict(size=10))
+
 fig.update_layout(
     xaxis=dict(
-        tickvals=list(range(len(lev_list))),
+        tickvals=list(range(len(lev_list[:4]))),
         ticktext=[str(x) for x in lev_list],
         title="Max Leverage on Hyperliquid",
     )
 )
 import plotly.graph_objects as go
 
-lev_to_idx = {lev: i for i, lev in enumerate(lev_list)}
+lev_to_idx = {lev: i for i, lev in enumerate(lev_map)}
 
 bars = []
 for lev, x_min in SCORE_UB.items():
-    if lev not in lev_to_idx:
+    if lev not in lev_map:
         continue
     xi = lev_to_idx[lev]
     height = max(0.0, 100.0 - float(x_min))
@@ -830,14 +828,14 @@ for lev, x_min in SCORE_UB.items():
             x=[xi],
             y=[height],  # bar height
             base=[x_min],  # start at x_min, extend to 100
-            width=0.6,
+            width=0.8,
             marker=dict(color="rgba(0,200,0,0.25)"),  # transparent green
             showlegend=False,
             hoverinfo="skip",
         )
     )
 for lev, x_min in SCORE_LB.items():
-    if lev not in lev_to_idx:
+    if lev not in lev_map:
         continue
     xi = lev_to_idx[lev]
     bars.append(
@@ -845,7 +843,7 @@ for lev, x_min in SCORE_LB.items():
             x=[xi],
             y=[x_min],  # bar height
             base=[0],  # start at x_min, extend to 100
-            width=0.6,
+            width=0.8,
             marker=dict(color="rgba(200,0,0,0.25)"),  # transparent green
             showlegend=False,
             hoverinfo="skip",
@@ -871,7 +869,7 @@ fig.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",  # outer background
     plot_bgcolor="rgba(0,0,0,0)",  # inner plotting area
 )
-
+fig.show(renderer="browser")
 fig_json = fig.to_json()
 with open("hl_delisting_data.json", "w") as f:
     json.dump(
